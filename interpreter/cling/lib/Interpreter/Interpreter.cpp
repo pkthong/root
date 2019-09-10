@@ -1740,8 +1740,10 @@ namespace cling {
         }();
         if (!ret.isValid()) {
           std::string msg = "Error evaluating expression ";
+#if !defined(LLVM_ON_WIN32)
           CompilationException::throwingHandler(nullptr, msg + DEI->getExpr(),
                                                 false /*backtrace*/);
+#endif
         }
         return ret;
       }
