@@ -2273,13 +2273,17 @@ Long_t TCling::ProcessLine(const char* line, EErrorCode* error/*=0*/)
          // not ACLiC
          size_t unnamedMacroOpenCurly;
          {
-            std::string code;
             std::string codeline;
-            std::ifstream in(fname);
-            while (in) {
-               std::getline(in, codeline);
-               code += codeline + "\n";
-            }
+            std::ifstream in(fname, std::ifstream::binary);
+            in.seekg(0, std::ios::end);
+            const size_t size = in.tellg();
+            in.seekg(0);
+            std::string code(size, ' ');
+            in.read(&code[0], size);
+//            while (in) {
+//               std::getline(in, codeline);
+//               code += codeline + "\n";
+//            }
             unnamedMacroOpenCurly
               = cling::utils::isUnnamedMacro(code, fInterpreter->getCI()->getLangOpts());
          }
