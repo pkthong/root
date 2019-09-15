@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #define __STDC__ 1
 #endif
 #ifdef __MWERKS__

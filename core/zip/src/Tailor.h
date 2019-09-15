@@ -10,7 +10,7 @@
 /* tailor.h -- Not copyrighted 1993 Mark Adler */
 
 /* Define MSDOS for Turbo C and Power C */
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #define MSDOS
 #endif
 #ifdef __POWERC
@@ -95,7 +95,7 @@
 #if defined(MACOS) || defined(__MWERKS__)
 #  define DYN_ALLOC
 #endif
-#if (defined(MSDOS) && !defined(__GO32__) && !defined(WIN32))
+#if (defined(MSDOS) && !defined(__GO32__) && !defined(WIN32) && !defined(_WIN64))
 #  ifdef __TURBOC__
 #    include <alloc.h>
 #    define DYN_ALLOC
@@ -110,7 +110,7 @@
 #    define fcfree(ptr) hfree((void huge *)(ptr))
 #  endif /* ?__TURBOC__ */
 #else /* !MSDOS */
-#  if defined(WIN32)
+#if defined(WIN32) || defined(_WIN64)
 #    include <malloc.h>
 #  endif
 #  ifdef __WATCOMC__

@@ -117,7 +117,7 @@
 #  undef MSDOS /* avoid the processor specific parts */
    /* (but the Atari should never define MSDOS anyway ...) */
 #endif
-#if defined(MSDOS) && !defined(NO_ASM) && !defined(ASMV) && !defined(WIN32)
+#if defined(MSDOS) && !defined(NO_ASM) && !defined(ASMV) && !defined(WIN32) && !defined(_WIN64)
 #  define ASMV
 #endif
 #if defined(ASMV) && !defined(MSDOS) && defined(DYN_ALLOC)
