@@ -33,7 +33,7 @@
 #ifdef R__SSL
 #include "TSSLSocket.h"
 #endif
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #include "TWin32SplashThread.h"
 #endif
 

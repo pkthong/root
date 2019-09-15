@@ -1,6 +1,6 @@
 /* @(#)root/clib:$Id$ */
 /* Author: */
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #include <windows.h>
 #include "mmalloc.h"
 

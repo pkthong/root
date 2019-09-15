@@ -28,7 +28,7 @@ required, use TTimeStamp.
 
 #include <time.h>
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #include "Windows4Root.h"
 #include <string.h>
 #endif
@@ -39,7 +39,6 @@ required, use TTimeStamp.
 #include "TError.h"
 #include "Bytes.h"
 #include "TString.h"
-
 
 ClassImp(TDatime);
 
@@ -64,8 +63,7 @@ TDatime::TDatime(Int_t date, Int_t time)
 /// Create a TDatime and set it to the specified year, month,
 /// day, time, hour, minute and second. See Set() about the format.
 
-TDatime::TDatime(Int_t year, Int_t month, Int_t day,
-                 Int_t hour, Int_t min, Int_t sec)
+TDatime::TDatime(Int_t year, Int_t month, Int_t day, Int_t hour, Int_t min, Int_t sec)
 {
    Set(year, month, day, hour, min, sec);
 }
@@ -84,14 +82,14 @@ TDatime::TDatime(const char *sqlDateTime)
 
 Int_t TDatime::GetDayOfWeek() const
 {
-   static TString weekDays[7] = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
+   static TString weekDays[7] = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
    TString wd = AsString();
-   int  day;
+   int day;
    for (day = 0; day < 7; day++) {
       if (wd(0, 3) == weekDays[day])
          break;
    }
-   return (day < 7) ? day+1: -1;
+   return (day < 7) ? day + 1 : -1;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -152,15 +150,14 @@ const char *TDatime::AsSQLString() const
 {
    static char sqldate[20];
 
-   UInt_t year  = fDatime>>26;
-   UInt_t month = (fDatime<<6)>>28;
-   UInt_t day   = (fDatime<<10)>>27;
-   UInt_t hour  = (fDatime<<15)>>27;
-   UInt_t min   = (fDatime<<20)>>26;
-   UInt_t sec   = (fDatime<<26)>>26;
+   UInt_t year = fDatime >> 26;
+   UInt_t month = (fDatime << 6) >> 28;
+   UInt_t day = (fDatime << 10) >> 27;
+   UInt_t hour = (fDatime << 15) >> 27;
+   UInt_t min = (fDatime << 20) >> 26;
+   UInt_t sec = (fDatime << 26) >> 26;
 
-   snprintf(sqldate,20, "%04d-%02d-%02d %02d:%02d:%02d", (year+1995), month, day,
-           hour, min, sec);
+   snprintf(sqldate, 20, "%04d-%02d-%02d %02d:%02d:%02d", (year + 1995), month, day, hour, min, sec);
 
    return sqldate;
 }
@@ -180,20 +177,20 @@ const char *TDatime::AsSQLString() const
 
 UInt_t TDatime::Convert(Bool_t toGMT) const
 {
-   UInt_t year  = fDatime>>26;
-   UInt_t month = (fDatime<<6)>>28;
-   UInt_t day   = (fDatime<<10)>>27;
-   UInt_t hour  = (fDatime<<15)>>27;
-   UInt_t min   = (fDatime<<20)>>26;
-   UInt_t sec   = (fDatime<<26)>>26;
+   UInt_t year = fDatime >> 26;
+   UInt_t month = (fDatime << 6) >> 28;
+   UInt_t day = (fDatime << 10) >> 27;
+   UInt_t hour = (fDatime << 15) >> 27;
+   UInt_t min = (fDatime << 20) >> 26;
+   UInt_t sec = (fDatime << 26) >> 26;
 
    struct tm tp;
-   tp.tm_year  = year+95;
-   tp.tm_mon   = month-1;
-   tp.tm_mday  = day;
-   tp.tm_hour  = hour;
-   tp.tm_min   = min;
-   tp.tm_sec   = sec;
+   tp.tm_year = year + 95;
+   tp.tm_mon = month - 1;
+   tp.tm_mday = day;
+   tp.tm_hour = hour;
+   tp.tm_min = min;
+   tp.tm_sec = sec;
    tp.tm_isdst = -1;
 
    time_t t = mktime(&tp);
@@ -209,7 +206,7 @@ UInt_t TDatime::Convert(Bool_t toGMT) const
       struct tm *tgp = gmtime(&t);
 #endif
       tgp->tm_isdst = -1;
-      t  = mktime(tgp);
+      t = mktime(tgp);
    }
    return (UInt_t)t;
 }
@@ -246,10 +243,10 @@ UInt_t TDatime::Get() const
 
 Int_t TDatime::GetDate() const
 {
-   UInt_t year  = fDatime>>26;
-   UInt_t month = (fDatime<<6)>>28;
-   UInt_t day   = (fDatime<<10)>>27;
-   return 10000*(year+1995) + 100*month + day;
+   UInt_t year = fDatime >> 26;
+   UInt_t month = (fDatime << 6) >> 28;
+   UInt_t day = (fDatime << 10) >> 27;
+   return 10000 * (year + 1995) + 100 * month + day;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -257,10 +254,10 @@ Int_t TDatime::GetDate() const
 
 Int_t TDatime::GetTime() const
 {
-   UInt_t hour  = (fDatime<<15)>>27;
-   UInt_t min   = (fDatime<<20)>>26;
-   UInt_t sec   = (fDatime<<26)>>26;
-   return 10000*hour + 100*min + sec;
+   UInt_t hour = (fDatime << 15) >> 27;
+   UInt_t min = (fDatime << 20) >> 26;
+   UInt_t sec = (fDatime << 26) >> 26;
+   return 10000 * hour + 100 * min + sec;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -288,31 +285,31 @@ void TDatime::ReadBuffer(char *&buffer)
 void TDatime::Set()
 {
 #ifndef WIN32
-   time_t tloc   = time(0);
+   time_t tloc = time(0);
 #ifdef _REENTRANT
    struct tm tpa;
    struct tm *tp = localtime_r(&tloc, &tpa);
 #else
    struct tm *tp = localtime(&tloc);
 #endif
-   UInt_t year   = tp->tm_year;
-   UInt_t month  = tp->tm_mon + 1;
-   UInt_t day    = tp->tm_mday;
-   UInt_t hour   = tp->tm_hour;
-   UInt_t min    = tp->tm_min;
-   UInt_t sec    = tp->tm_sec;
+   UInt_t year = tp->tm_year;
+   UInt_t month = tp->tm_mon + 1;
+   UInt_t day = tp->tm_mday;
+   UInt_t hour = tp->tm_hour;
+   UInt_t min = tp->tm_min;
+   UInt_t sec = tp->tm_sec;
 #else
    SYSTEMTIME tp;
    GetLocalTime(&tp);
-   UInt_t year   = tp.wYear-1900;
-   UInt_t month  = tp.wMonth;
-   UInt_t day    = tp.wDay;
-   UInt_t hour   = tp.wHour;
-   UInt_t min    = tp.wMinute;
-   UInt_t sec    = tp.wSecond;
+   UInt_t year = tp.wYear - 1900;
+   UInt_t month = tp.wMonth;
+   UInt_t day = tp.wDay;
+   UInt_t hour = tp.wHour;
+   UInt_t min = tp.wMinute;
+   UInt_t sec = tp.wSecond;
 #endif
 
-   fDatime = (year-95)<<26 | month<<22 | day<<17 | hour<<12 | min<<6 | sec;
+   fDatime = (year - 95) << 26 | month << 22 | day << 17 | hour << 12 | min << 6 | sec;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -326,29 +323,29 @@ void TDatime::Set(UInt_t tloc, Bool_t dosDate)
    UInt_t year, month, day, hour, min, sec;
 
    if (dosDate) {
-      year  = ((tloc >> 25) & 0x7f) + 80;
+      year = ((tloc >> 25) & 0x7f) + 80;
       month = ((tloc >> 21) & 0xf);
-      day   = (tloc >> 16) & 0x1f;
-      hour  = (tloc >> 11) & 0x1f;
-      min   = (tloc >> 5) & 0x3f;
-      sec   = (tloc & 0x1f) * 2;
+      day = (tloc >> 16) & 0x1f;
+      hour = (tloc >> 11) & 0x1f;
+      min = (tloc >> 5) & 0x3f;
+      sec = (tloc & 0x1f) * 2;
    } else {
-      time_t t = (time_t) tloc;
+      time_t t = (time_t)tloc;
 #ifdef _REENTRANT
       struct tm tpa;
       struct tm *tp = localtime_r(&t, &tpa);
 #else
       struct tm *tp = localtime(&t);
 #endif
-      year   = tp->tm_year;
-      month  = tp->tm_mon + 1;
-      day    = tp->tm_mday;
-      hour   = tp->tm_hour;
-      min    = tp->tm_min;
-      sec    = tp->tm_sec;
+      year = tp->tm_year;
+      month = tp->tm_mon + 1;
+      day = tp->tm_mday;
+      hour = tp->tm_hour;
+      min = tp->tm_min;
+      sec = tp->tm_sec;
    }
 
-   fDatime = (year-95)<<26 | month<<22 | day<<17 | hour<<12 | min<<6 | sec;
+   fDatime = (year - 95) << 26 | month << 22 | day << 17 | hour << 12 | min << 6 | sec;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -361,46 +358,47 @@ void TDatime::Set(UInt_t tloc, Bool_t dosDate)
 
 void TDatime::Set(Int_t date, Int_t time)
 {
-   if (date > 19000000) date -= 19000000;
+   if (date > 19000000)
+      date -= 19000000;
    if (date < 950101) {
       Error("TDatime::Set", "year smaller than 1995");
       return;
    }
 
-   Int_t year  = date/10000;
-   Int_t month = (date-year*10000)/100;
-   Int_t day   = date%100;
+   Int_t year = date / 10000;
+   Int_t month = (date - year * 10000) / 100;
+   Int_t day = date % 100;
 
    Int_t hour, min, sec;
 
-   hour = time/10000;
-   min  = (time-hour*10000)/100;
-   sec  = time%100;
+   hour = time / 10000;
+   min = (time - hour * 10000) / 100;
+   sec = time % 100;
 
-   fDatime = (year-95)<<26 | month<<22 | day<<17 | hour<<12 | min<<6 | sec;
+   fDatime = (year - 95) << 26 | month << 22 | day << 17 | hour << 12 | min << 6 | sec;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Set date and time. Year may be xx where 95 <= xx <= 158 (158 being 2058).
 /// The year must be >= 1995.
 
-void TDatime::Set(Int_t year, Int_t month, Int_t day,
-                  Int_t hour, Int_t min, Int_t sec)
+void TDatime::Set(Int_t year, Int_t month, Int_t day, Int_t hour, Int_t min, Int_t sec)
 {
-   if (year < 159) year += 1900;
+   if (year < 159)
+      year += 1900;
    if (year < 1995) {
       Error("TDatime::Set", "year must be >= 1995");
       return;
    }
 
-   fDatime = (year-1995)<<26 | month<<22 | day<<17 | hour<<12 | min<<6 | sec;
+   fDatime = (year - 1995) << 26 | month << 22 | day << 17 | hour << 12 | min << 6 | sec;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Expects as input a string in SQL date/time compatible format, like:
 /// yyyy-mm-dd hh:mm:ss.
 
-void TDatime::Set(const char* sqlDateTime)
+void TDatime::Set(const char *sqlDateTime)
 {
    Int_t yy, mm, dd, hh, mi, ss;
 
@@ -408,7 +406,7 @@ void TDatime::Set(const char* sqlDateTime)
       Set(yy, mm, dd, hh, mi, ss);
    else {
       Error("TDatime(sqlDatTime)", "input string not in right format, set"
-            " to current date/time");
+                                   " to current date/time");
       Set();
    }
 }
@@ -433,14 +431,14 @@ void TDatime::Streamer(TBuffer &b)
 
 void TDatime::GetDateTime(UInt_t datetime, Int_t &date, Int_t &time)
 {
-   UInt_t year  = datetime>>26;
-   UInt_t month = (datetime<<6)>>28;
-   UInt_t day   = (datetime<<10)>>27;
-   UInt_t hour  = (datetime<<15)>>27;
-   UInt_t min   = (datetime<<20)>>26;
-   UInt_t sec   = (datetime<<26)>>26;
-   date         =  10000*(year+1995) + 100*month + day;
-   time         =  10000*hour + 100*min + sec;
+   UInt_t year = datetime >> 26;
+   UInt_t month = (datetime << 6) >> 28;
+   UInt_t day = (datetime << 10) >> 27;
+   UInt_t hour = (datetime << 15) >> 27;
+   UInt_t min = (datetime << 20) >> 26;
+   UInt_t sec = (datetime << 26) >> 26;
+   date = 10000 * (year + 1995) + 100 * month + day;
+   time = 10000 * hour + 100 * min + sec;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -453,12 +451,12 @@ Int_t TDatime::GetGlobalDayFromDate(Int_t date)
 {
    // date is in form yyyymmdd
    Int_t dy = date / 10000;
-   Int_t dm = (date - dy*10000)/100;
-   Int_t dd = (date - dy*10000 - dm*100);
+   Int_t dm = (date - dy * 10000) / 100;
+   Int_t dd = (date - dy * 10000 - dm * 100);
 
-   Int_t m = (dm + 9)%12;                   // mar=0, feb=11
-   Int_t y = dy - m/10;                     // if Jan/Feb, year--
-   return y*365 + y/4 - y/100 + y/400 + (m*306 + 5)/10 + (dd - 1);
+   Int_t m = (dm + 9) % 12; // mar=0, feb=11
+   Int_t y = dy - m / 10;   // if Jan/Feb, year--
+   return y * 365 + y / 4 - y / 100 + y / 400 + (m * 306 + 5) / 10 + (dd - 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -469,18 +467,18 @@ Int_t TDatime::GetGlobalDayFromDate(Int_t date)
 Int_t TDatime::GetDateFromGlobalDay(Int_t day)
 {
    Long_t ld = day;
-   Int_t y = int((10000*ld + 14780)/3652425);
-   Int_t ddd = day - (y*365 + y/4 - y/100 + y/400);
+   Int_t y = int((10000 * ld + 14780) / 3652425);
+   Int_t ddd = day - (y * 365 + y / 4 - y / 100 + y / 400);
    if (ddd < 0) {
       y--;
-      ddd = day - (y*365 + y/4 - y/100 + y/400);
+      ddd = day - (y * 365 + y / 4 - y / 100 + y / 400);
    }
-   Int_t mi = (52 + 100*ddd)/3060;
-   Int_t dy = y + (mi + 2)/12;
-   Int_t dm = (mi + 2)%12 + 1;
-   Int_t dd = ddd - (mi*306 + 5)/10 + 1;
+   Int_t mi = (52 + 100 * ddd) / 3060;
+   Int_t dy = y + (mi + 2) / 12;
+   Int_t dm = (mi + 2) % 12 + 1;
+   Int_t dd = ddd - (mi * 306 + 5) / 10 + 1;
 
-   return dy*10000 + dm*100 + dd;
+   return dy * 10000 + dm * 100 + dd;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -511,7 +509,8 @@ Int_t TDatime::GetLegalGlobalDayFromDate(Int_t date)
 ////////////////////////////////////////////////////////////////////////////////
 /// Print a TDatime at the prompt.
 
-std::string cling::printValue(const TDatime* val) {
+std::string cling::printValue(const TDatime *val)
+{
    char buf[30];
    return std::string(val->AsString(buf));
 }
