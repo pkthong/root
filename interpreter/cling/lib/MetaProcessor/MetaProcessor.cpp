@@ -31,7 +31,7 @@
 #include <cctype>
 #include <sstream>
 #include <stdio.h>
-#ifndef WIN32
+#if !defined(_WIN32) || !defined(_WIN64)
 #include <unistd.h>
 #else
 #include <io.h>

@@ -63,7 +63,7 @@ Double_t TMath::Hypot(Double_t x, Double_t y)
 
 Double_t TMath::ASinH(Double_t x)
 {
-#if defined(WIN32)
+#if defined(_WIN32) || defined(_WIN64)
    if(x==0.0) return 0.0;
    Double_t ax = Abs(x);
    return log(x+ax*sqrt(1.+1./(ax*ax)));
@@ -76,7 +76,7 @@ Double_t TMath::ASinH(Double_t x)
 
 Double_t TMath::ACosH(Double_t x)
 {
-#if defined(WIN32)
+#if defined(_WIN32) || defined(_WIN64)
    if(x==0.0) return 0.0;
    Double_t ax = Abs(x);
    return log(x+ax*sqrt(1.-1./(ax*ax)));
@@ -89,7 +89,7 @@ Double_t TMath::ACosH(Double_t x)
 
 Double_t TMath::ATanH(Double_t x)
 {
-#if defined(WIN32)
+#if defined(_WIN32) || defined(_WIN64)
    return log((1+x)/(1-x))/2;
 #else
    return atanh(x);

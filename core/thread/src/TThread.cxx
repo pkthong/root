@@ -317,7 +317,7 @@ void TThread::Init()
 {
    if (fgThreadImp || fgIsTearDown) return;
 
-#if !defined (_REENTRANT) && !defined (WIN32)
+#if !defined (_REENTRANT) && (!defined(_WIN32) || !defined(_WIN64))
    // Not having it means (See TVirtualMutext.h) that the LOCKGUARD macro are empty.
    ::Fatal("Init","_REENTRANT must be #define-d for TThread to work properly.");
 #endif

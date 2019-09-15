@@ -19,7 +19,7 @@ string plus vararg's. In the end these functions call an
 errorhandler function. By default DefaultErrorHandler() is used.
 */
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #include <windows.h>
 #endif
 

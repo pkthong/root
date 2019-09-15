@@ -22,7 +22,7 @@ Allows to read PS/EPS/PDF files via GhostScript
 #ifdef R__HAS_COCOA
 #   define X_DISPLAY_MISSING 1
 #   define popen_flags "r"
-#elif defined (WIN32)
+#elif defined(_WIN32) || defined(_WIN64)
 #   include "Windows4root.h"
 #   define popen_flags "rb"
 #else
@@ -30,7 +30,7 @@ Allows to read PS/EPS/PDF files via GhostScript
 #   define popen_flags "r"
 #endif
 
-#ifndef WIN32
+#if !defined(_WIN32) || !defined(_WIN64)
 #   include <afterbase.h>
 #else
 #   include <win32/config.h>

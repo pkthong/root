@@ -24,7 +24,7 @@ the start and stop events.
 #  include <sys/times.h>
 #  include <unistd.h>
 static Double_t gTicks = 0;
-#elif defined(WIN32)
+#elif defined(_WIN32) || defined(_WIN64)
 #  include "TError.h"
 const Double_t gTicks = 1.0e-7;
 #  include "Windows4Root.h"
@@ -140,7 +140,7 @@ Double_t TStopwatch::GetRealTime()
 {
 #if defined(R__UNIX)
    return TTimeStamp();
-#elif defined(WIN32)
+#elif defined(_WIN32) || defined(_WIN64)
    union {
       FILETIME ftFileTime;
       __int64  ftInt64;
@@ -161,7 +161,7 @@ Double_t TStopwatch::GetCPUTime()
    struct tms cpt;
    times(&cpt);
    return (Double_t)(cpt.tms_utime+cpt.tms_stime) / gTicks;
-#elif defined(WIN32)
+#elif defined(_WIN32) || defined(_WIN64)
 
    OSVERSIONINFO OsVersionInfo;
 

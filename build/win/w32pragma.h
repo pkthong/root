@@ -59,12 +59,12 @@
 /* loop control variable is used outside the for-loop scope */
 #pragma warning (3: 4289)
 
-#define WIN32 1
-#define _WINDOWS 1
+//#define WIN32 1
+//#define _WINDOWS 1
 #define WINVER 0x0500
 #define CRTAPI1 _cdecl 
 #define CRTAPI2 _cdecl
-#define _X86_ 1 
+//#define _X86_ 1 
 // #define _DLL  - used to be explicitly defined, 
 // but it's implicitely defined via /MD(d)
 #define G__REDIRECTIO 1

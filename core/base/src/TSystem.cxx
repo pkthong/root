@@ -21,7 +21,7 @@ that the method should be overridden in a derived class), which
 allows a simple partial implementation for new OS'es.
 */
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #include <io.h>
 #endif
 #include <stdlib.h>

@@ -534,7 +534,7 @@ TMapFile::TMapFile(const TMapFile &f, Long_t offset) : TObject(f)
    fWritten     = f.fWritten;
    fSumBuffer   = f.fSumBuffer;
    fSum2Buffer  = f.fSum2Buffer;
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
    CreateSemaphore(fSemaphore);
 #else
    fhSemaphore = f.fhSemaphore;

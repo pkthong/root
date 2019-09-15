@@ -4392,7 +4392,7 @@ Long64_t TFile::SysSeek(Int_t fd, Long64_t offset, Int_t whence)
 {
 #if defined (R__SEEK64)
    return ::lseek64(fd, offset, whence);
-#elif defined(WIN32)
+#elif defined(_WIN32) || defined(_WIN64)
    return ::_lseeki64(fd, offset, whence);
 #else
    return ::lseek(fd, offset, whence);

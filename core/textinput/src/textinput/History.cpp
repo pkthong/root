@@ -18,7 +18,7 @@
 #include <fstream>
 #include <sstream>
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 # include <stdio.h>
 extern "C" unsigned long __stdcall GetCurrentProcessId(void);
 #else

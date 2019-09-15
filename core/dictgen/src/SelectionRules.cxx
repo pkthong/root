@@ -17,7 +17,7 @@ The class representing the collection of selection rules.
 #include <iostream>
 #include <sstream>
 #include <algorithm>
-#ifndef WIN32
+#if !defined(_WIN32) !defined(_WIN64)
 #include <fnmatch.h>
 #else
 #include "Shlwapi.h"

@@ -36,7 +36,7 @@ extern "C"
     typedef GLvoid (*tessfuncptr_t)(...);
 #elif defined(__linux__) || defined(__FreeBSD__) || defined( __OpenBSD__ ) || defined(__sun) || defined (__CYGWIN__) || defined (__APPLE__)
     typedef GLvoid (*tessfuncptr_t)();
-#elif defined (WIN32)
+#elif defined(_WIN32) || defined(_WIN64)
     typedef GLvoid (CALLBACK *tessfuncptr_t)();
 #else
     #error "Error - need to define type tessfuncptr_t for this platform/compiler"
