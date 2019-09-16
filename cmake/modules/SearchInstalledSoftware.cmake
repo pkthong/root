@@ -171,9 +171,12 @@ if(builtin_lzma)
       URL ${CMAKE_SOURCE_DIR}/core/lzma/src/xz-${lzma_version}.tar.gz
       URL_HASH SHA256=b512f3b726d3b37b6dc4c8570e137b9311e7552e8ccbab4d39d47ce5f4177145
       INSTALL_DIR ${CMAKE_BINARY_DIR}
+      INSTALL_COMMAND ${CMAKE_COMMAND} -E copy <INSTALL_DIR>/liblzma.dll  ${CMAKE_BINARY_DIR}/liblzma.dll
       PATCH_COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/core/lzma/patch <SOURCE_DIR>
       LOG_DOWNLOAD 1 LOG_CONFIGURE 1 LOG_BUILD 1 LOG_INSTALL 1 BUILD_IN_SOURCE 1 LOG_PATCH 1
       BUILD_BYPRODUCTS ${LZMA_LIBRARIES})
+   install(FILES ${CMAKE_BINARY_DIR}/include/lzma.h DESTINATION ${CMAKE_BINARY_DIR}/include)
+
     set(LZMA_INCLUDE_DIR ${CMAKE_BINARY_DIR}/include)
 #    set(LZMA_LIBRARIES ${CMAKE_BINARY_DIR}/LZMA/src/LZMA/lib/liblzma.lib)
 #    ExternalProject_Add(

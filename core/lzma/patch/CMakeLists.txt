@@ -21,4 +21,6 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 	add_subdirectory(src)
 endif()
 
+INSTALL(FILES src/liblzma/api/lzma.h DESTINATION include)
+install(TARGETS liblzma DESTINATION bin)
 
