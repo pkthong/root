@@ -592,6 +592,9 @@ const void* DLSym(const std::string& Name, std::string* Err) {
   if (s.compare("_CxxThrowException@8") == 0)
     s = "_CxxThrowException";
 
+  auto atSignIndex = s.find_last_of('@');
+  const std::string s2 = atSignIndex != std::string::npos ? s.substr(0, atSignIndex) : s;
+
   DWORD Bytes;
   std::string ErrStr;
   llvm::SmallVector<HMODULE, 128> Modules;
@@ -613,6 +616,9 @@ const void* DLSym(const std::string& Name, std::string* Err) {
         if (void* Addr = ::GetProcAddress(*It, s.c_str())) {
           return CheckImp(Addr, dllimp);
         }
+        if (void* Addr = ::GetProcAddress(*It, s2.c_str())) {
+          return CheckImp(Addr, dllimp);
+        }
       }
     }
     if (NumNeeded > NumFirst) {
@@ -621,8 +627,12 @@ const void* DLSym(const std::string& Name, std::string* Err) {
       if (::EnumProcessModulesEx(::GetCurrentProcess(), &Modules[0],
                                Modules.capacity_in_bytes(), &Bytes, Flags) != 0) {
         for (DWORD i = NumNeeded-1; i > NumFirst; --i) {
-          if (void* Addr = ::GetProcAddress(Modules[i], s.c_str()))
+          if (void* Addr = ::GetProcAddress(Modules[i], s.c_str())) {
             return CheckImp(Addr, dllimp);
+          }
+          if (void* Addr = ::GetProcAddress(Modules[i], s2.c_str())) {
+             return CheckImp(Addr, dllimp);
+          }
         }
       } else if (Err)
         GetLastErrorAsString(*Err, "EnumProcessModulesEx");
@@ -651,7 +661,7 @@ bool GetSystemLibraryPaths(llvm::SmallVectorImpl<std::string>& Paths) {
   }
   Paths.push_back(Buf);
   Buf[0] = 0; // Reset Buf.
-  
+
   // Generic form of C:\Windows
   result = ::SHGetFolderPathA(NULL, CSIDL_FLAG_CREATE | CSIDL_WINDOWS,
                               NULL, SHGFP_TYPE_CURRENT, Buf);
@@ -731,7 +741,7 @@ bool Popen(const std::string& Cmd, llvm::SmallVectorImpl<char>& Buf, bool RdE) {
   CloseHandle(hOutputWrite);
   if (RdE)
     CloseHandle(hErrorWrite);
-  
+
   if (Result != 0) {
     DWORD dwRead;
     const size_t Chunk = Buf.capacity_in_bytes();
