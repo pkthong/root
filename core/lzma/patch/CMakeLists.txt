@@ -22,5 +22,6 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 endif()
 
 INSTALL(FILES src/liblzma/api/lzma.h DESTINATION include)
-INSTALL(TARGETS liblzma DESTINATION lib)
+INSTALL(DIRECTORY src/liblzma/api/lzma/ DESTINATION include/lzma)
+INSTALL(TARGETS lzma DESTINATION lib)
 

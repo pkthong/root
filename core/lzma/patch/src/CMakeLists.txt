@@ -1,4 +1,4 @@
-PROJECT(LIBLZMA C)
+PROJECT(LZMA C)
 
 include(CheckCSourceCompiles)
 include(CheckIncludeFile)
