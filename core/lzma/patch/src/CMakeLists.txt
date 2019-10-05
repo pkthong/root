@@ -1,4 +1,4 @@
-PROJECT(LZMA C)
+PROJECT(LIBLZMA C)
 
 include(CheckCSourceCompiles)
 include(CheckIncludeFile)
@@ -189,7 +189,7 @@ ELSEIF(CMAKE_C_COMPILER_ID STREQUAL "PathScale")
   SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -woffall")
 ENDIF()
 
-ADD_LIBRARY(liblzma STATIC ${LZMA_SRCS})
+ADD_LIBRARY(lzma STATIC ${LZMA_SRCS})
 
 IF(CMAKE_C_COMPILER_ID STREQUAL "XL")
   # Disable the XL compiler optimizer because it causes crashes
