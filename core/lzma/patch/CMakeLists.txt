@@ -23,5 +23,9 @@ endif()
 
 INSTALL(FILES src/liblzma/api/lzma.h DESTINATION include)
 INSTALL(DIRECTORY src/liblzma/api/lzma/ DESTINATION include/lzma)
-INSTALL(TARGETS lzma DESTINATION lib)
+INSTALL(TARGETS liblzma 
+   ARCHIVE DESTINATION lib
+   LIBRARY DESTINATION lib
+   RUNTIME DESTINATION bin)
+
 

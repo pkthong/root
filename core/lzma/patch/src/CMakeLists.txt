@@ -189,7 +189,8 @@ ELSEIF(CMAKE_C_COMPILER_ID STREQUAL "PathScale")
   SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -woffall")
 ENDIF()
 
-ADD_LIBRARY(lzma STATIC ${LZMA_SRCS})
+ADD_LIBRARY(liblzma SHARED ${LZMA_SRCS})
+target_compile_definitions(liblzma PRIVATE DLL_EXPORT=1)
 
 IF(CMAKE_C_COMPILER_ID STREQUAL "XL")
   # Disable the XL compiler optimizer because it causes crashes
