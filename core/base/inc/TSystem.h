@@ -26,7 +26,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <fcntl.h>
-#ifndef WIN32
+#if (!defined(_WIN32) || !defined(_WIN64))
 #include <unistd.h>
 #endif
 #endif
