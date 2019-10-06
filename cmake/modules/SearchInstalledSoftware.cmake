@@ -181,7 +181,7 @@ if(builtin_lzma)
    #install(FILES ${CMAKE_BINARY_DIR}/include/lzma.h DESTINATION ${CMAKE_BINARY_DIR}/include)
 
     set(LZMA_INCLUDE_DIR ${CMAKE_BINARY_DIR}/include)
-#    set(LZMA_LIBRARIES ${CMAKE_BINARY_DIR}/LZMA/src/LZMA/lib/liblzma.lib)
+    set(LZMA_LIBRARIES ${CMAKE_BINARY_DIR}/lib/liblzma.lib)
 #    ExternalProject_Add(
 #      LZMA
 #      URL ${CMAKE_SOURCE_DIR}/core/lzma/src/xz-${lzma_version}-win32.tar.gz
