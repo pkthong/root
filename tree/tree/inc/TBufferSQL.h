@@ -97,8 +97,10 @@ public:
    virtual   void     WriteFastArray(const UInt_t    *i, Int_t n);
    virtual   void     WriteFastArray(const Long_t    *l, Int_t n);
    virtual   void     WriteFastArray(const ULong_t   *l, Int_t n);
+#if !defined(_WIN64)
    virtual   void     WriteFastArray(const Long64_t  *l, Int_t n);
    virtual   void     WriteFastArray(const ULong64_t *l, Int_t n);
+#endif
    virtual   void     WriteFastArray(const Float_t   *f, Int_t n);
    virtual   void     WriteFastArray(const Double_t  *d, Int_t n);
    virtual   void     WriteFastArray(void  *start,  const TClass *cl, Int_t n=1, TMemberStreamer *s=0);
@@ -114,8 +116,10 @@ public:
    virtual   void     ReadFastArray(UInt_t    *, Int_t );
    virtual   void     ReadFastArray(Long_t    *, Int_t );
    virtual   void     ReadFastArray(ULong_t   *, Int_t );
+#if !defined(_WIN64)
    virtual   void     ReadFastArray(Long64_t  *, Int_t );
    virtual   void     ReadFastArray(ULong64_t *, Int_t );
+#endif
    virtual   void     ReadFastArray(Float_t   *, Int_t );
    virtual   void     ReadFastArray(Double_t  *, Int_t );
    virtual   void     ReadFastArrayFloat16(Float_t  *f, Int_t n, TStreamerElement *ele=0);

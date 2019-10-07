@@ -538,7 +538,7 @@ void TBufferSQL::WriteFastArray(const ULong_t   *ul, Int_t n)
       ++fIter;
    }
 }
-
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// WriteFastArray SQL implementation.
 
@@ -562,7 +562,7 @@ void TBufferSQL::WriteFastArray(const ULong64_t *ul, Int_t n)
       ++fIter;
    }
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// WriteFastArray SQL implementation.
 
@@ -710,7 +710,7 @@ void TBufferSQL::ReadFastArray(ULong_t   *ul, Int_t n)
       (*this) >> ul[i];
    }
 }
-
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// ReadFastArray SQL implementation.
 
@@ -730,7 +730,7 @@ void TBufferSQL::ReadFastArray(ULong64_t *ull, Int_t n)
       (*this) >> ull[i];
    }
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// ReadFastArray SQL implementation.
 
