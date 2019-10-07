@@ -46,6 +46,7 @@ typedef unsigned int   UInt_t;      //Unsigned integer 4 bytes (unsigned int)
 typedef int            Seek_t;      //File pointer (int)
 
 #ifdef _WIN64
+//#error hihi
 typedef intptr_t           Long_t;      //Signed long integer 8 bytes (long)
 typedef uintptr_t  ULong_t;     //Unsigned long integer 8 bytes (unsigned long)
 #else

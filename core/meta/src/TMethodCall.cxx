@@ -624,6 +624,7 @@ void TMethodCall::SetParam(Double_t d)
    gCling->CallFunc_SetArg(fFunc,d);
 }
 
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// Add a long long method parameter.
 
@@ -641,3 +642,4 @@ void TMethodCall::SetParam(ULong64_t ull)
    if (!fFunc) return;
    gCling->CallFunc_SetArg(fFunc,ull);
 }
+#endif

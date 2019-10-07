@@ -126,8 +126,10 @@ public:
    virtual   Int_t    ReadArray(UInt_t    *&i);
    virtual   Int_t    ReadArray(Long_t    *&l);
    virtual   Int_t    ReadArray(ULong_t   *&l);
+#if !defined(_WIN64)
    virtual   Int_t    ReadArray(Long64_t  *&l);
    virtual   Int_t    ReadArray(ULong64_t *&l);
+#endif
    virtual   Int_t    ReadArray(Float_t   *&f);
    virtual   Int_t    ReadArray(Double_t  *&d);
    virtual   Int_t    ReadArrayFloat16(Float_t  *&f, TStreamerElement *ele=0);
@@ -142,8 +144,10 @@ public:
    virtual   Int_t    ReadStaticArray(UInt_t    *i);
    virtual   Int_t    ReadStaticArray(Long_t    *l);
    virtual   Int_t    ReadStaticArray(ULong_t   *l);
+#if !defined(_WIN64)
    virtual   Int_t    ReadStaticArray(Long64_t  *l);
    virtual   Int_t    ReadStaticArray(ULong64_t *l);
+#endif
    virtual   Int_t    ReadStaticArray(Float_t   *f);
    virtual   Int_t    ReadStaticArray(Double_t  *d);
    virtual   Int_t    ReadStaticArrayFloat16(Float_t  *f, TStreamerElement *ele=0);
@@ -159,8 +163,10 @@ public:
    virtual   void     ReadFastArray(UInt_t    *i, Int_t n);
    virtual   void     ReadFastArray(Long_t    *l, Int_t n);
    virtual   void     ReadFastArray(ULong_t   *l, Int_t n);
+#if !defined(_WIN64)
    virtual   void     ReadFastArray(Long64_t  *l, Int_t n);
    virtual   void     ReadFastArray(ULong64_t *l, Int_t n);
+#endif
    virtual   void     ReadFastArray(Float_t   *f, Int_t n);
    virtual   void     ReadFastArray(Double_t  *d, Int_t n);
    virtual   void     ReadFastArrayFloat16(Float_t  *f, Int_t n, TStreamerElement *ele=0);
@@ -181,8 +187,10 @@ public:
    virtual   void     WriteArray(const UInt_t    *i, Int_t n);
    virtual   void     WriteArray(const Long_t    *l, Int_t n);
    virtual   void     WriteArray(const ULong_t   *l, Int_t n);
+#if !defined(_WIN64)
    virtual   void     WriteArray(const Long64_t  *l, Int_t n);
    virtual   void     WriteArray(const ULong64_t *l, Int_t n);
+#endif
    virtual   void     WriteArray(const Float_t   *f, Int_t n);
    virtual   void     WriteArray(const Double_t  *d, Int_t n);
    virtual   void     WriteArrayFloat16(const Float_t  *f, Int_t n, TStreamerElement *ele=0);
@@ -198,8 +206,10 @@ public:
    virtual   void     WriteFastArray(const UInt_t    *i, Int_t n);
    virtual   void     WriteFastArray(const Long_t    *l, Int_t n);
    virtual   void     WriteFastArray(const ULong_t   *l, Int_t n);
+#if !defined(_WIN64)
    virtual   void     WriteFastArray(const Long64_t  *l, Int_t n);
    virtual   void     WriteFastArray(const ULong64_t *l, Int_t n);
+#endif
    virtual   void     WriteFastArray(const Float_t   *f, Int_t n);
    virtual   void     WriteFastArray(const Double_t  *d, Int_t n);
    virtual   void     WriteFastArrayFloat16(const Float_t  *f, Int_t n, TStreamerElement *ele=0);
@@ -463,10 +473,11 @@ inline Int_t TBufferFile::ReadArray(UInt_t *&i)
 //______________________________________________________________________________
 inline Int_t TBufferFile::ReadArray(ULong_t *&l)
    {  return TBufferFile::ReadArray((Long_t *&)l); }
-//______________________________________________________________________________
+#if !defined(_WIN64)
+   //______________________________________________________________________________
 inline Int_t TBufferFile::ReadArray(ULong64_t *&ll)
    {  return TBufferFile::ReadArray((Long64_t *&)ll); }
-
+#endif
 //______________________________________________________________________________
 inline Int_t TBufferFile::ReadStaticArray(UChar_t *c)
    {  return TBufferFile::ReadStaticArray((Char_t *)c); }
@@ -480,9 +491,10 @@ inline Int_t TBufferFile::ReadStaticArray(UInt_t *i)
 inline Int_t TBufferFile::ReadStaticArray(ULong_t *l)
    {  return TBufferFile::ReadStaticArray((Long_t *)l); }
 //______________________________________________________________________________
-inline Int_t TBufferFile::ReadStaticArray(ULong64_t *ll)
+#if !defined(_WIN64)
+   inline Int_t TBufferFile::ReadStaticArray(ULong64_t *ll)
    {  return TBufferFile::ReadStaticArray((Long64_t *)ll); }
-
+#endif
 //______________________________________________________________________________
 inline void TBufferFile::ReadFastArray(UChar_t *c, Int_t n)
    {        TBufferFile::ReadFastArray((Char_t *)c, n); }
@@ -496,9 +508,10 @@ inline void TBufferFile::ReadFastArray(UInt_t *i, Int_t n)
 inline void TBufferFile::ReadFastArray(ULong_t *l, Int_t n)
    {        TBufferFile::ReadFastArray((Long_t *)l, n); }
 //______________________________________________________________________________
-inline void TBufferFile::ReadFastArray(ULong64_t *ll, Int_t n)
+#if !defined(_WIN64)
+   inline void TBufferFile::ReadFastArray(ULong64_t *ll, Int_t n)
    {        TBufferFile::ReadFastArray((Long64_t *)ll, n); }
-
+#endif
 //______________________________________________________________________________
 inline void TBufferFile::WriteArray(const UChar_t *c, Int_t n)
    {        TBufferFile::WriteArray((const Char_t *)c, n); }
@@ -509,8 +522,10 @@ inline void TBufferFile::WriteArray(const UShort_t *h, Int_t n)
 inline void TBufferFile::WriteArray(const UInt_t *i, Int_t n)
    {        TBufferFile::WriteArray((const Int_t *)i, n); }
 //______________________________________________________________________________
-inline void TBufferFile::WriteArray(const ULong64_t *ll, Int_t n)
+#if !defined(_WIN64)
+   inline void TBufferFile::WriteArray(const ULong64_t *ll, Int_t n)
    {        TBufferFile::WriteArray((const Long64_t *)ll, n); }
+#endif
 
 //______________________________________________________________________________
 inline void TBufferFile::WriteFastArray(const UChar_t *c, Int_t n)
@@ -522,7 +537,8 @@ inline void TBufferFile::WriteFastArray(const UShort_t *h, Int_t n)
 inline void TBufferFile::WriteFastArray(const UInt_t *i, Int_t n)
    {        TBufferFile::WriteFastArray((const Int_t *)i, n); }
 //______________________________________________________________________________
-inline void TBufferFile::WriteFastArray(const ULong64_t *ll, Int_t n)
+#if !defined(_WIN64)
+   inline void TBufferFile::WriteFastArray(const ULong64_t *ll, Int_t n)
    {        TBufferFile::WriteFastArray((const Long64_t *)ll, n); }
-
+#endif
 #endif

@@ -94,12 +94,13 @@ Long_t* getaddress<Long_t>(TGenCollectionProxy::StreamHelper &itm)
    return &itm.s_long;
 }
 
+#if !defined(_WIN64)
 template <>
 Long64_t* getaddress<Long64_t>(TGenCollectionProxy::StreamHelper &itm)
 {
    return &itm.s_longlong;
 }
-
+#endif
 template <>
 Float_t* getaddress<Float_t>(TGenCollectionProxy::StreamHelper &itm)
 {
@@ -136,11 +137,13 @@ ULong_t* getaddress<ULong_t>(TGenCollectionProxy::StreamHelper &itm)
    return &itm.u_long;
 }
 
+#if !defined(_WIN64)
 template <>
 ULong64_t* getaddress<ULong64_t>(TGenCollectionProxy::StreamHelper &itm)
 {
    return &itm.u_longlong;
 }
+#endif
 
 template <typename From, typename To>
 void ConvertArray(TGenCollectionProxy::StreamHelper *read, TGenCollectionProxy::StreamHelper *write, int nElements)

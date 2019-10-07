@@ -2530,6 +2530,7 @@ Int_t TBufferJSON::ReadArray(ULong_t *&l)
    return JsonReadArray(l);
 }
 
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// Read array of Long64_t from buffer
 
@@ -2545,7 +2546,7 @@ Int_t TBufferJSON::ReadArray(ULong64_t *&l)
 {
    return JsonReadArray(l);
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// Read array of Float_t from buffer
 
@@ -2644,6 +2645,7 @@ Int_t TBufferJSON::ReadStaticArray(ULong_t *l)
    return JsonReadArray(l);
 }
 
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// Read array of Long64_t from buffer
 
@@ -2659,7 +2661,7 @@ Int_t TBufferJSON::ReadStaticArray(ULong64_t *l)
 {
    return JsonReadArray(l);
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// Read array of Float_t from buffer
 
@@ -2818,6 +2820,7 @@ void TBufferJSON::ReadFastArray(ULong_t *l, Int_t n)
    JsonReadFastArray(l, n);
 }
 
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// read array of Long64_t from buffer
 
@@ -2833,7 +2836,7 @@ void TBufferJSON::ReadFastArray(ULong64_t *l, Int_t n)
 {
    JsonReadFastArray(l, n);
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// read array of Float_t from buffer
 
@@ -3103,6 +3106,7 @@ void TBufferJSON::WriteArray(const ULong_t *l, Int_t n)
    JsonWriteArrayCompress(l, n, "Uint64");
 }
 
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// Write array of Long64_t to buffer
 
@@ -3120,7 +3124,7 @@ void TBufferJSON::WriteArray(const ULong64_t *l, Int_t n)
    JsonPushValue();
    JsonWriteArrayCompress(l, n, "Uint64");
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// Write array of Float_t to buffer
 
@@ -3258,7 +3262,7 @@ void TBufferJSON::WriteFastArray(const ULong_t *l, Int_t n)
 {
    JsonWriteFastArray(l, n, "Uint64", &TBufferJSON::JsonWriteArrayCompress<ULong_t>);
 }
-
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// Write array of Long64_t to buffer
 
@@ -3274,7 +3278,7 @@ void TBufferJSON::WriteFastArray(const ULong64_t *l, Int_t n)
 {
    JsonWriteFastArray(l, n, "Uint64", &TBufferJSON::JsonWriteArrayCompress<ULong64_t>);
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// Write array of Float_t to buffer
 
@@ -3787,7 +3791,7 @@ void TBufferJSON::JsonWriteBasic(Long_t value)
    snprintf(buf, sizeof(buf), "%ld", value);
    fValue.Append(buf);
 }
-
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// converts Long64_t to string and add to json value buffer
 
@@ -3795,7 +3799,7 @@ void TBufferJSON::JsonWriteBasic(Long64_t value)
 {
    fValue.Append(std::to_string(value).c_str());
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// converts Float_t to string and add to json value buffer
 
@@ -3875,7 +3879,7 @@ void TBufferJSON::JsonWriteBasic(ULong_t value)
    snprintf(buf, sizeof(buf), "%lu", value);
    fValue.Append(buf);
 }
-
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// converts ULong64_t to string and add to json value buffer
 
@@ -3883,7 +3887,7 @@ void TBufferJSON::JsonWriteBasic(ULong64_t value)
 {
    fValue.Append(std::to_string(value).c_str());
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// writes string value, processing all kind of special characters
 

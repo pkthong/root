@@ -80,7 +80,7 @@ private:
 
    HANDLE            fhProcess;         // Handle of the current process
    void             *fGUIThreadHandle;  // handle of GUI server (aka command) thread
-   ULong_t           fGUIThreadId;      // id of GUI server (aka command) thread
+   DWORD           fGUIThreadId;      // id of GUI server (aka command) thread
    char             *fDirNameBuffer;    // The string buffer to hold path name
    WIN32_FIND_DATA   fFindFileData;     // Structure to look for files (aka OpenDir under UNIX)
 
@@ -100,7 +100,7 @@ private:
    void              TimerThread();
    void              FillWithHomeDirectory(const char *userName, char *mydir) const;
    char             *GetWorkingDirectory(char driveletter) const;
-   
+
 
 protected:
    static int        WinNTUnixConnect(int port);

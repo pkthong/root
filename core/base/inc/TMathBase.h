@@ -123,8 +123,10 @@ inline Short_t TMath::Abs(Short_t d)
 inline Int_t TMath::Abs(Int_t d)
 { return std::abs(d); }
 
+#if !defined(_WIN64)
 inline Long_t TMath::Abs(Long_t d)
 { return std::labs(d); }
+#endif
 
 inline Long64_t TMath::Abs(Long64_t d)
 #if __cplusplus >= 201103
@@ -132,6 +134,7 @@ inline Long64_t TMath::Abs(Long64_t d)
 #else
 { return (d >= 0) ? d : -d;  }
 #endif
+
 
 inline Float_t TMath::Abs(Float_t d)
 { return std::abs(d); }
@@ -195,11 +198,13 @@ inline Long_t TMath::Min(Long_t a, Long_t b)
 inline ULong_t TMath::Min(ULong_t a, ULong_t b)
    { return a <= b ? a : b; }
 
-inline Long64_t TMath::Min(Long64_t a, Long64_t b)
+#if !defined(_WIN32)
+   inline Long64_t TMath::Min(Long64_t a, Long64_t b)
    { return a <= b ? a : b; }
 
 inline ULong64_t TMath::Min(ULong64_t a, ULong64_t b)
    { return a <= b ? a : b; }
+#endif
 
 inline Float_t TMath::Min(Float_t a, Float_t b)
    { return a <= b ? a : b; }
@@ -226,12 +231,13 @@ inline Long_t TMath::Max(Long_t a, Long_t b)
 
 inline ULong_t TMath::Max(ULong_t a, ULong_t b)
    { return a >= b ? a : b; }
-
-inline Long64_t TMath::Max(Long64_t a, Long64_t b)
+#if !defined(_WIN64)
+   inline Long64_t TMath::Max(Long64_t a, Long64_t b)
    { return a >= b ? a : b; }
 
 inline ULong64_t TMath::Max(ULong64_t a, ULong64_t b)
    { return a >= b ? a : b; }
+#endif
 
 inline Float_t TMath::Max(Float_t a, Float_t b)
    { return a >= b ? a : b; }

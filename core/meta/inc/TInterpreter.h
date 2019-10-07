@@ -326,8 +326,10 @@ public:
    virtual void   CallFunc_SetArg(CallFunc_t * /*func */, ULong_t /* param */) const = 0;
    virtual void   CallFunc_SetArg(CallFunc_t * /* func */, Float_t /* param */) const = 0;
    virtual void   CallFunc_SetArg(CallFunc_t * /* func */, Double_t /* param */) const = 0;
+#if !defined(_WIN64)
    virtual void   CallFunc_SetArg(CallFunc_t * /* func */, Long64_t /* param */) const = 0;
    virtual void   CallFunc_SetArg(CallFunc_t * /* func */, ULong64_t /* param */) const = 0;
+#endif
 
    void CallFunc_SetArg(CallFunc_t * func, Char_t param) const { CallFunc_SetArg(func,(Long_t)param); }
    void CallFunc_SetArg(CallFunc_t * func, Short_t param) const { CallFunc_SetArg(func,(Long_t)param); }

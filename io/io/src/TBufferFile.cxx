@@ -836,6 +836,7 @@ Int_t TBufferFile::ReadArray(Long_t *&ll)
    return n;
 }
 
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// Read array of long longs from the I/O buffer. Returns the number of
 /// long longs read. If argument is a 0 pointer then space will be
@@ -863,7 +864,7 @@ Int_t TBufferFile::ReadArray(Long64_t *&ll)
 
    return n;
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// Read array of floats from the I/O buffer. Returns the number of floats
 /// read. If argument is a 0 pointer then space will be allocated for the
@@ -1107,6 +1108,7 @@ Int_t TBufferFile::ReadStaticArray(Long_t *ll)
    return n;
 }
 
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// Read array of long longs from the I/O buffer. Returns the number of
 /// long longs read.
@@ -1133,7 +1135,7 @@ Int_t TBufferFile::ReadStaticArray(Long64_t *ll)
 
    return n;
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// Read array of floats from the I/O buffer. Returns the number of floats
 /// read.
@@ -1352,6 +1354,7 @@ void TBufferFile::ReadFastArray(Long_t *ll, Int_t n)
    }
 }
 
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// Read array of n long longs from the I/O buffer.
 
@@ -1368,7 +1371,7 @@ void TBufferFile::ReadFastArray(Long64_t *ll, Int_t n)
    fBufCur += l;
 #endif
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// Read array of n floats from the I/O buffer.
 
@@ -1815,6 +1818,7 @@ void TBufferFile::WriteArray(const ULong_t *ll, Int_t n)
    for (int i = 0; i < n; i++) tobuf(fBufCur, ll[i]);
 }
 
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// Write array of n long longs into the I/O buffer.
 
@@ -1839,7 +1843,7 @@ void TBufferFile::WriteArray(const Long64_t *ll, Int_t n)
    fBufCur += l;
 #endif
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// Write array of n floats into the I/O buffer.
 
@@ -2065,6 +2069,7 @@ void TBufferFile::WriteFastArray(const ULong_t *ll, Int_t n)
    for (int i = 0; i < n; i++) tobuf(fBufCur, ll[i]);
 }
 
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// Write array of n long longs into the I/O buffer.
 
@@ -2083,7 +2088,7 @@ void TBufferFile::WriteFastArray(const Long64_t *ll, Int_t n)
    fBufCur += l;
 #endif
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// Write array of n floats into the I/O buffer.
 

@@ -1652,6 +1652,7 @@ Int_t TBufferXML::ReadArray(ULong_t *&l)
    return XmlReadArray(l);
 }
 
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// Read array of Long64_t from buffer
 
@@ -1667,7 +1668,7 @@ Int_t TBufferXML::ReadArray(ULong64_t *&l)
 {
    return XmlReadArray(l);
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// Read array of Float_t from buffer
 
@@ -1755,7 +1756,7 @@ Int_t TBufferXML::ReadStaticArray(ULong_t *l)
 {
    return XmlReadArray(l, true);
 }
-
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// Read array of Long64_t from buffer
 
@@ -1771,7 +1772,7 @@ Int_t TBufferXML::ReadStaticArray(ULong64_t *l)
 {
    return XmlReadArray(l, true);
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// Read array of Float_t from buffer
 
@@ -1898,7 +1899,7 @@ void TBufferXML::ReadFastArray(ULong_t *l, Int_t n)
 {
    XmlReadFastArray(l, n);
 }
-
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// Read array of Long64_t from buffer
 
@@ -1914,7 +1915,7 @@ void TBufferXML::ReadFastArray(ULong64_t *l, Int_t n)
 {
    XmlReadFastArray(l, n);
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// Read array of Float_t from buffer
 
@@ -2134,7 +2135,7 @@ void TBufferXML::WriteArray(const ULong_t *l, Int_t n)
 {
    XmlWriteArray(l, n);
 }
-
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// Write array of Long64_t to buffer
 
@@ -2150,7 +2151,7 @@ void TBufferXML::WriteArray(const ULong64_t *l, Int_t n)
 {
    XmlWriteArray(l, n);
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// Write array of Float_t to buffer
 
@@ -2275,7 +2276,7 @@ void TBufferXML::WriteFastArray(const ULong_t *l, Int_t n)
 {
    XmlWriteFastArray(l, n);
 }
-
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// Write array of Long64_t to buffer
 
@@ -2291,7 +2292,7 @@ void TBufferXML::WriteFastArray(const ULong64_t *l, Int_t n)
 {
    XmlWriteFastArray(l, n);
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// Write array of Float_t to buffer
 
@@ -2874,7 +2875,7 @@ XMLNodePointer_t TBufferXML::XmlWriteBasic(Long_t value)
    snprintf(buf, sizeof(buf), "%ld", value);
    return XmlWriteValue(buf, xmlio::Long);
 }
-
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// Converts Long64_t to string and add xml node to buffer
 
@@ -2883,7 +2884,7 @@ XMLNodePointer_t TBufferXML::XmlWriteBasic(Long64_t value)
    std::string buf = std::to_string(value);
    return XmlWriteValue(buf.c_str(), xmlio::Long64);
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// Converts Float_t to string and add xml node to buffer
 
@@ -2951,7 +2952,7 @@ XMLNodePointer_t TBufferXML::XmlWriteBasic(ULong_t value)
    snprintf(buf, sizeof(buf), "%lu", value);
    return XmlWriteValue(buf, xmlio::ULong);
 }
-
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// Converts ULong64_t to string and add xml node to buffer
 
@@ -2960,7 +2961,7 @@ XMLNodePointer_t TBufferXML::XmlWriteBasic(ULong64_t value)
    std::string buf = std::to_string(value);
    return XmlWriteValue(buf.c_str(), xmlio::ULong64);
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// Create xml node with specified name and adds it to stack node
 
@@ -3029,7 +3030,7 @@ void TBufferXML::XmlReadBasic(Long_t &value)
    else
       value = 0;
 }
-
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// Reads string from current xml node and convert it to Long64_t value
 
@@ -3041,7 +3042,7 @@ void TBufferXML::XmlReadBasic(Long64_t &value)
    else
       value = 0;
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// Reads string from current xml node and convert it to Float_t value
 
@@ -3127,7 +3128,7 @@ void TBufferXML::XmlReadBasic(ULong_t &value)
    else
       value = 0;
 }
-
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// Reads string from current xml node and convert it to ULong64_t value
 
@@ -3139,7 +3140,7 @@ void TBufferXML::XmlReadBasic(ULong64_t &value)
    else
       value = 0;
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// read string value from current stack node
 

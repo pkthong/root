@@ -70,7 +70,9 @@ public:
 
    void ExecuteMethod(void *object, Int_t nargs, va_list ap) = delete;
    void ExecuteMethod(void *object);
+#if !defined(_WIN64)
    void ExecuteMethod(void *object, Long_t param);
+#endif
    void ExecuteMethod(void *object, Long64_t param);
    void ExecuteMethod(void *object, Double_t param);
    void ExecuteMethod(void *object, const char *params);
@@ -302,6 +304,7 @@ inline void TQSlot::ExecuteMethod(void *object, Long_t param)
 
 }
 
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// ExecuteMethod the method for the specified object and
 /// with single argument value.
@@ -312,7 +315,7 @@ inline void TQSlot::ExecuteMethod(void *object, Long64_t param)
    ExecuteMethod(object, arg, 1);
 
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// ExecuteMethod the method for the specified object and
 /// with single argument value.
@@ -587,6 +590,7 @@ void TQConnection::ExecuteMethod(Long_t param)
    if (s->References() <= 0) delete s;
 }
 
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// Apply slot-method to the fReceiver object with
 /// single argument value.
@@ -600,6 +604,7 @@ void TQConnection::ExecuteMethod(Long64_t param)
    fSlot->ExecuteMethod(fReceiver, param);
    if (s->References() <= 0) delete s;
 }
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Apply slot-method to the fReceiver object with

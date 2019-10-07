@@ -995,7 +995,7 @@ Int_t TBufferSQL2::ReadArray(ULong_t *&l)
 {
    return SqlReadArray(l);
 }
-
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// Read array of Long64_t from buffer
 
@@ -1011,7 +1011,7 @@ Int_t TBufferSQL2::ReadArray(ULong64_t *&l)
 {
    return SqlReadArray(l);
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// Read array of Float_t from buffer
 
@@ -1099,7 +1099,7 @@ Int_t TBufferSQL2::ReadStaticArray(ULong_t *l)
 {
    return SqlReadArray(l, kTRUE);
 }
-
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// Read array of Long64_t from buffer
 
@@ -1115,7 +1115,7 @@ Int_t TBufferSQL2::ReadStaticArray(ULong64_t *l)
 {
    return SqlReadArray(l, kTRUE);
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// Read array of Float_t from buffer
 
@@ -1224,7 +1224,7 @@ void TBufferSQL2::ReadFastArray(ULong_t *l, Int_t n)
 {
    SqlReadFastArray(l, n);
 }
-
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// Read array of Long64_t from buffer
 
@@ -1240,7 +1240,7 @@ void TBufferSQL2::ReadFastArray(ULong64_t *l, Int_t n)
 {
    SqlReadFastArray(l, n);
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// Read array of Float_t from buffer
 
@@ -1468,7 +1468,7 @@ void TBufferSQL2::WriteArray(const ULong_t *l, Int_t n)
 {
    SqlWriteArray(l, n, kTRUE);
 }
-
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// Write array of Long64_t to buffer
 
@@ -1484,7 +1484,7 @@ void TBufferSQL2::WriteArray(const ULong64_t *l, Int_t n)
 {
    SqlWriteArray(l, n, kTRUE);
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// Write array of Float_t to buffer
 
@@ -1592,7 +1592,7 @@ void TBufferSQL2::WriteFastArray(const ULong_t *l, Int_t n)
 {
    SqlWriteArray(l, n);
 }
-
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// Write array of Long64_t to buffer
 
@@ -1608,7 +1608,7 @@ void TBufferSQL2::WriteFastArray(const ULong64_t *l, Int_t n)
 {
    SqlWriteArray(l, n);
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// Write array of Float_t to buffer
 
@@ -2170,7 +2170,7 @@ Bool_t TBufferSQL2::SqlWriteBasic(Long_t value)
    snprintf(buf, sizeof(buf), "%ld", value);
    return SqlWriteValue(buf, sqlio::Long);
 }
-
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// converts Long64_t to string and creates correspondent sql structure
 
@@ -2179,7 +2179,7 @@ Bool_t TBufferSQL2::SqlWriteBasic(Long64_t value)
    std::string buf = std::to_string(value);
    return SqlWriteValue(buf.c_str(), sqlio::Long64);
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// converts Float_t to string and creates correspondent sql structure
 
@@ -2247,7 +2247,7 @@ Bool_t TBufferSQL2::SqlWriteBasic(ULong_t value)
    snprintf(buf, sizeof(buf), "%lu", value);
    return SqlWriteValue(buf, sqlio::ULong);
 }
-
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// converts ULong64_t to string and creates correspondent sql structure
 
@@ -2256,7 +2256,7 @@ Bool_t TBufferSQL2::SqlWriteBasic(ULong64_t value)
    std::string buf = std::to_string(value);
    return SqlWriteValue(buf.c_str(), sqlio::ULong64);
 }
-
+#endif
 //______________________________________________________________________________
 
 Bool_t TBufferSQL2::SqlWriteValue(const char *value, const char *tname)
@@ -2317,7 +2317,7 @@ void TBufferSQL2::SqlReadBasic(Long_t &value)
    else
       value = 0;
 }
-
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// Read current value from table and convert it to Long64_t value
 
@@ -2329,7 +2329,7 @@ void TBufferSQL2::SqlReadBasic(Long64_t &value)
    else
       value = 0;
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// Read current value from table and convert it to Float_t value
 
@@ -2415,7 +2415,7 @@ void TBufferSQL2::SqlReadBasic(ULong_t &value)
    else
       value = 0;
 }
-
+#if !defined(_WIN64)
 ////////////////////////////////////////////////////////////////////////////////
 /// Read current value from table and convert it to ULong64_t value
 
@@ -2427,7 +2427,7 @@ void TBufferSQL2::SqlReadBasic(ULong64_t &value)
    else
       value = 0;
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// Read string value from current stack node
 

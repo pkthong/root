@@ -2060,10 +2060,18 @@ T TClingCallFunc::ExecT(void *address)
    return sv_to<T>(ret);
 }
 
+#if !defined(_WIN64)
 Long_t TClingCallFunc::ExecInt(void *address)
 {
-   return ExecT<long>(address);
+   return (Long_t)ExecT<long>(address);
 }
+#else
+Long_t TClingCallFunc::ExecInt(void *address)
+{
+   return (Long_t)ExecT<long long>(address);
+}
+
+#endif
 
 long long TClingCallFunc::ExecInt64(void *address)
 {

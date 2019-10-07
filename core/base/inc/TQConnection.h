@@ -54,8 +54,10 @@ protected:
    virtual void SetArg(ULong_t param) override { SetArgImpl(param); }
    virtual void SetArg(Float_t param) override { SetArgImpl(param); }
    virtual void SetArg(Double_t param) override { SetArgImpl(param); }
+#if !defined(_WIN64)
    virtual void SetArg(Long64_t param) override { SetArgImpl(param); }
    virtual void SetArg(ULong64_t param) override { SetArgImpl(param); }
+#endif
    virtual void SetArg(const char * param) override { SetArgImpl(param); }
 
    virtual void SetArg(const Long_t *params, Int_t nparam = -1) override;
@@ -108,7 +110,9 @@ public:
    // FIXME: Remove duplication of code in SendSignal and ExecuteMethod overloads.
    void ExecuteMethod();
    void ExecuteMethod(Long_t param);
+#if !defined(_WIN64)
    void ExecuteMethod(Long64_t param);
+#endif
    void ExecuteMethod(Double_t param);
    void ExecuteMethod(Long_t *params, Int_t nparam = -1);
    void ExecuteMethod(const char *params);

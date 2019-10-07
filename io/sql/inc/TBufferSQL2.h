@@ -74,7 +74,9 @@ protected:
    Bool_t SqlWriteBasic(Short_t value);
    Bool_t SqlWriteBasic(Int_t value);
    Bool_t SqlWriteBasic(Long_t value);
+#if !defined(_WIN64)
    Bool_t SqlWriteBasic(Long64_t value);
+#endif
    Bool_t SqlWriteBasic(Float_t value);
    Bool_t SqlWriteBasic(Double_t value);
    Bool_t SqlWriteBasic(Bool_t value);
@@ -82,14 +84,18 @@ protected:
    Bool_t SqlWriteBasic(UShort_t value);
    Bool_t SqlWriteBasic(UInt_t value);
    Bool_t SqlWriteBasic(ULong_t value);
+#if !defined(_WIN64)
    Bool_t SqlWriteBasic(ULong64_t value);
+#endif
    Bool_t SqlWriteValue(const char *value, const char *tname);
 
    void SqlReadBasic(Char_t &value);
    void SqlReadBasic(Short_t &value);
    void SqlReadBasic(Int_t &value);
    void SqlReadBasic(Long_t &value);
+#if !defined(_WIN64)
    void SqlReadBasic(Long64_t &value);
+#endif
    void SqlReadBasic(Float_t &value);
    void SqlReadBasic(Double_t &value);
    void SqlReadBasic(Bool_t &value);
@@ -97,7 +103,9 @@ protected:
    void SqlReadBasic(UShort_t &value);
    void SqlReadBasic(UInt_t &value);
    void SqlReadBasic(ULong_t &value);
+#if !defined(_WIN64)
    void SqlReadBasic(ULong64_t &value);
+#endif
    const char *SqlReadValue(const char *tname);
    const char *SqlReadCharStarValue();
 
@@ -169,8 +177,10 @@ public:
    virtual Int_t ReadArray(UInt_t *&i);
    virtual Int_t ReadArray(Long_t *&l);
    virtual Int_t ReadArray(ULong_t *&l);
+#if !defined(_WIN64)
    virtual Int_t ReadArray(Long64_t *&l);
    virtual Int_t ReadArray(ULong64_t *&l);
+#endif
    virtual Int_t ReadArray(Float_t *&f);
    virtual Int_t ReadArray(Double_t *&d);
 
@@ -183,8 +193,10 @@ public:
    virtual Int_t ReadStaticArray(UInt_t *i);
    virtual Int_t ReadStaticArray(Long_t *l);
    virtual Int_t ReadStaticArray(ULong_t *l);
+#if !defined(_WIN64)
    virtual Int_t ReadStaticArray(Long64_t *l);
    virtual Int_t ReadStaticArray(ULong64_t *l);
+#endif
    virtual Int_t ReadStaticArray(Float_t *f);
    virtual Int_t ReadStaticArray(Double_t *d);
 
@@ -197,8 +209,10 @@ public:
    virtual void ReadFastArray(UInt_t *i, Int_t n);
    virtual void ReadFastArray(Long_t *l, Int_t n);
    virtual void ReadFastArray(ULong_t *l, Int_t n);
+#if !defined(_WIN64)
    virtual void ReadFastArray(Long64_t *l, Int_t n);
    virtual void ReadFastArray(ULong64_t *l, Int_t n);
+#endif
    virtual void ReadFastArray(Float_t *f, Int_t n);
    virtual void ReadFastArray(Double_t *d, Int_t n);
    virtual void ReadFastArrayString(Char_t *c, Int_t n);
@@ -216,8 +230,10 @@ public:
    virtual void WriteArray(const UInt_t *i, Int_t n);
    virtual void WriteArray(const Long_t *l, Int_t n);
    virtual void WriteArray(const ULong_t *l, Int_t n);
+#if !defined(_WIN64)
    virtual void WriteArray(const Long64_t *l, Int_t n);
    virtual void WriteArray(const ULong64_t *l, Int_t n);
+#endif
    virtual void WriteArray(const Float_t *f, Int_t n);
    virtual void WriteArray(const Double_t *d, Int_t n);
 
@@ -230,8 +246,10 @@ public:
    virtual void WriteFastArray(const UInt_t *i, Int_t n);
    virtual void WriteFastArray(const Long_t *l, Int_t n);
    virtual void WriteFastArray(const ULong_t *l, Int_t n);
+#if !defined(_WIN64)
    virtual void WriteFastArray(const Long64_t *l, Int_t n);
    virtual void WriteFastArray(const ULong64_t *l, Int_t n);
+#endif
    virtual void WriteFastArray(const Float_t *f, Int_t n);
    virtual void WriteFastArray(const Double_t *d, Int_t n);
    virtual void WriteFastArrayString(const Char_t *c, Int_t n);

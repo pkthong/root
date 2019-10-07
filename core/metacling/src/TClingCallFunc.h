@@ -185,7 +185,7 @@ public:
                               int nargs = 0,
                               void* ret = 0);
    void Exec(void* address, TInterpreterValue* interpVal = 0);
-   long ExecInt(void* address);
+   Long_t ExecInt(void* address);
    long long ExecInt64(void* address);
    double ExecDouble(void* address);
    TClingMethodInfo* FactoryMethod() const;

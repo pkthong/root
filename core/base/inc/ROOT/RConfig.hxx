@@ -375,9 +375,9 @@
 #   endif
 #endif
 
-#ifdef _WIN64
-#   define R__B64
-#endif
+#   ifdef _WIN64
+#      define R__B64
+#   endif
 #ifdef _WIN32
 #   define R__WIN32
 #   ifndef WIN32

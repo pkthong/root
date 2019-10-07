@@ -184,8 +184,10 @@ public:
    virtual   Int_t    ReadArray(UInt_t    *&i) = 0;
    virtual   Int_t    ReadArray(Long_t    *&l) = 0;
    virtual   Int_t    ReadArray(ULong_t   *&l) = 0;
+#if !defined(_WIN64)
    virtual   Int_t    ReadArray(Long64_t  *&l) = 0;
    virtual   Int_t    ReadArray(ULong64_t *&l) = 0;
+   #endif
    virtual   Int_t    ReadArray(Float_t   *&f) = 0;
    virtual   Int_t    ReadArray(Double_t  *&d) = 0;
    virtual   Int_t    ReadArrayFloat16(Float_t *&f, TStreamerElement *ele=0) = 0;
@@ -200,8 +202,10 @@ public:
    virtual   Int_t    ReadStaticArray(UInt_t    *i) = 0;
    virtual   Int_t    ReadStaticArray(Long_t    *l) = 0;
    virtual   Int_t    ReadStaticArray(ULong_t   *l) = 0;
+#if !defined(_WIN64)
    virtual   Int_t    ReadStaticArray(Long64_t  *l) = 0;
    virtual   Int_t    ReadStaticArray(ULong64_t *l) = 0;
+#endif
    virtual   Int_t    ReadStaticArray(Float_t   *f) = 0;
    virtual   Int_t    ReadStaticArray(Double_t  *d) = 0;
    virtual   Int_t    ReadStaticArrayFloat16(Float_t  *f, TStreamerElement *ele=0) = 0;
@@ -217,8 +221,10 @@ public:
    virtual   void     ReadFastArray(UInt_t    *i, Int_t n) = 0;
    virtual   void     ReadFastArray(Long_t    *l, Int_t n) = 0;
    virtual   void     ReadFastArray(ULong_t   *l, Int_t n) = 0;
+#if !defined(_WIN64)
    virtual   void     ReadFastArray(Long64_t  *l, Int_t n) = 0;
    virtual   void     ReadFastArray(ULong64_t *l, Int_t n) = 0;
+#endif
    virtual   void     ReadFastArray(Float_t   *f, Int_t n) = 0;
    virtual   void     ReadFastArray(Double_t  *d, Int_t n) = 0;
    virtual   void     ReadFastArrayFloat16(Float_t  *f, Int_t n, TStreamerElement *ele=0) = 0;
@@ -239,8 +245,10 @@ public:
    virtual   void     WriteArray(const UInt_t    *i, Int_t n) = 0;
    virtual   void     WriteArray(const Long_t    *l, Int_t n) = 0;
    virtual   void     WriteArray(const ULong_t   *l, Int_t n) = 0;
+#if !defined(_WIN64)
    virtual   void     WriteArray(const Long64_t  *l, Int_t n) = 0;
    virtual   void     WriteArray(const ULong64_t *l, Int_t n) = 0;
+#endif
    virtual   void     WriteArray(const Float_t   *f, Int_t n) = 0;
    virtual   void     WriteArray(const Double_t  *d, Int_t n) = 0;
    virtual   void     WriteArrayFloat16(const Float_t  *f, Int_t n, TStreamerElement *ele=0) = 0;
@@ -256,8 +264,10 @@ public:
    virtual   void     WriteFastArray(const UInt_t    *i, Int_t n) = 0;
    virtual   void     WriteFastArray(const Long_t    *l, Int_t n) = 0;
    virtual   void     WriteFastArray(const ULong_t   *l, Int_t n) = 0;
+#if !defined(_WIN64)
    virtual   void     WriteFastArray(const Long64_t  *l, Int_t n) = 0;
    virtual   void     WriteFastArray(const ULong64_t *l, Int_t n) = 0;
+#endif
    virtual   void     WriteFastArray(const Float_t   *f, Int_t n) = 0;
    virtual   void     WriteFastArray(const Double_t  *d, Int_t n) = 0;
    virtual   void     WriteFastArrayFloat16(const Float_t  *f, Int_t n, TStreamerElement *ele=0) = 0;
@@ -350,8 +360,11 @@ inline TBuffer &operator>>(TBuffer &buf, Int_t &i)    { buf.ReadInt(i);    retur
 inline TBuffer &operator>>(TBuffer &buf, UInt_t &i)   { buf.ReadUInt(i);   return buf; }
 inline TBuffer &operator>>(TBuffer &buf, Long_t &l)   { buf.ReadLong(l);   return buf; }
 inline TBuffer &operator>>(TBuffer &buf, ULong_t &l)  { buf.ReadULong(l);  return buf; }
+#if !defined(_WIN64)
 inline TBuffer &operator>>(TBuffer &buf, Long64_t &l) { buf.ReadLong64(l); return buf; }
+
 inline TBuffer &operator>>(TBuffer &buf, ULong64_t &l){ buf.ReadULong64(l);return buf; }
+#endif
 inline TBuffer &operator>>(TBuffer &buf, Float_t &f)  { buf.ReadFloat(f);  return buf; }
 inline TBuffer &operator>>(TBuffer &buf, Double_t &d) { buf.ReadDouble(d); return buf; }
 inline TBuffer &operator>>(TBuffer &buf, Char_t *c)   { buf.ReadCharP(c);  return buf; }
@@ -366,8 +379,10 @@ inline TBuffer &operator<<(TBuffer &buf, Int_t i)    { buf.WriteInt(i);    retur
 inline TBuffer &operator<<(TBuffer &buf, UInt_t i)   { buf.WriteUInt(i);   return buf; }
 inline TBuffer &operator<<(TBuffer &buf, Long_t l)   { buf.WriteLong(l);   return buf; }
 inline TBuffer &operator<<(TBuffer &buf, ULong_t l)  { buf.WriteULong(l);  return buf; }
+#if !defined(_WIN64)
 inline TBuffer &operator<<(TBuffer &buf, Long64_t l) { buf.WriteLong64(l); return buf; }
 inline TBuffer &operator<<(TBuffer &buf, ULong64_t l){ buf.WriteULong64(l);return buf; }
+#endif
 inline TBuffer &operator<<(TBuffer &buf, Float_t f)  { buf.WriteFloat(f);  return buf; }
 inline TBuffer &operator<<(TBuffer &buf, Double_t d) { buf.WriteDouble(d); return buf; }
 inline TBuffer &operator<<(TBuffer &buf, const Char_t *c)  { buf.WriteCharP(c);  return buf; }

@@ -195,6 +195,7 @@ inline void tobuf(char *&buf, Long_t x)
    buf += 8;
 }
 
+#if !defined(_WIN64)
 inline void tobuf(char *&buf, ULong64_t x)
 {
 #ifdef R__BYTESWAP
@@ -218,7 +219,7 @@ inline void tobuf(char *&buf, ULong64_t x)
 #endif
    buf += sizeof(ULong64_t);
 }
-
+#endif
 inline void tobuf(char *&buf, Float_t x)
 {
 #ifdef R__BYTESWAP
@@ -352,6 +353,7 @@ inline void frombuf(char *&buf, ULong_t *x)
    buf += 8;
 }
 
+#if !defined(_WIN64)
 inline void frombuf(char *&buf, ULong64_t *x)
 {
 #ifdef R__BYTESWAP
@@ -373,6 +375,7 @@ inline void frombuf(char *&buf, ULong64_t *x)
 #endif
    buf += sizeof(ULong64_t);
 }
+#endif
 
 inline void frombuf(char *&buf, Float_t *x)
 {
@@ -437,13 +440,17 @@ inline void frombuf(char *&buf, Double_t *x)
 inline void tobuf(char *&buf, Char_t x)   { tobuf(buf, (UChar_t) x); }
 inline void tobuf(char *&buf, Short_t x)  { tobuf(buf, (UShort_t) x); }
 inline void tobuf(char *&buf, Int_t x)    { tobuf(buf, (UInt_t) x); }
+#if !defined(_WIN64)
 inline void tobuf(char *&buf, Long64_t x) { tobuf(buf, (ULong64_t) x); }
+#endif
 
 inline void frombuf(char *&buf, Char_t *x)   { frombuf(buf, (UChar_t *) x); }
 inline void frombuf(char *&buf, Short_t *x)  { frombuf(buf, (UShort_t *) x); }
 inline void frombuf(char *&buf, Int_t *x)    { frombuf(buf, (UInt_t *) x); }
 inline void frombuf(char *&buf, Long_t *x)   { frombuf(buf, (ULong_t *) x); }
+#if !defined(_WIN64)
 inline void frombuf(char *&buf, Long64_t *x) { frombuf(buf, (ULong64_t *) x); }
+#endif
 
 
 //______________________________________________________________________________
@@ -493,6 +500,7 @@ inline ULong_t host2net(ULong_t x)
 #endif
 }
 
+#if !defined(_WIN64)
 inline ULong64_t host2net(ULong64_t x)
 {
 #if defined(R__USEASMSWAP)
@@ -514,6 +522,7 @@ inline ULong64_t host2net(ULong64_t x)
    return x;
 #endif
 }
+#endif
 
 inline Float_t host2net(Float_t xx)
 {
@@ -572,7 +581,9 @@ inline Double_t host2net(Double_t x)   { return x; }
 inline Short_t  host2net(Short_t x)    { return host2net((UShort_t)x); }
 inline Int_t    host2net(Int_t x)      { return host2net((UInt_t)x); }
 inline Long_t   host2net(Long_t x)     { return host2net((ULong_t)x); }
+#if !defined(_WIN64)
 inline Long64_t host2net(Long64_t x)   { return host2net((ULong64_t)x); }
+#endif
 
 inline UShort_t  net2host(UShort_t x)  { return host2net(x); }
 inline Short_t   net2host(Short_t x)   { return host2net(x); }
@@ -580,8 +591,10 @@ inline UInt_t    net2host(UInt_t x)    { return host2net(x); }
 inline Int_t     net2host(Int_t x)     { return host2net(x); }
 inline ULong_t   net2host(ULong_t x)   { return host2net(x); }
 inline Long_t    net2host(Long_t x)    { return host2net(x); }
+#if !defined(_WIN64)
 inline ULong64_t net2host(ULong64_t x) { return host2net(x); }
 inline Long64_t  net2host(Long64_t x)  { return host2net(x); }
+#endif
 inline Float_t   net2host(Float_t x)   { return host2net(x); }
 inline Double_t  net2host(Double_t x)  { return host2net(x); }
 

@@ -98,8 +98,10 @@ public:
    virtual Int_t ReadArray(UInt_t *&i);
    virtual Int_t ReadArray(Long_t *&l);
    virtual Int_t ReadArray(ULong_t *&l);
+#if !defined(_WIN64)
    virtual Int_t ReadArray(Long64_t *&l);
    virtual Int_t ReadArray(ULong64_t *&l);
+#endif
    virtual Int_t ReadArray(Float_t *&f);
    virtual Int_t ReadArray(Double_t *&d);
 
@@ -112,8 +114,10 @@ public:
    virtual Int_t ReadStaticArray(UInt_t *i);
    virtual Int_t ReadStaticArray(Long_t *l);
    virtual Int_t ReadStaticArray(ULong_t *l);
+#if !defined(_WIN64)
    virtual Int_t ReadStaticArray(Long64_t *l);
    virtual Int_t ReadStaticArray(ULong64_t *l);
+#endif
    virtual Int_t ReadStaticArray(Float_t *f);
    virtual Int_t ReadStaticArray(Double_t *d);
 
@@ -126,8 +130,10 @@ public:
    virtual void ReadFastArray(UInt_t *i, Int_t n);
    virtual void ReadFastArray(Long_t *l, Int_t n);
    virtual void ReadFastArray(ULong_t *l, Int_t n);
+#if !defined(_WIN64)
    virtual void ReadFastArray(Long64_t *l, Int_t n);
    virtual void ReadFastArray(ULong64_t *l, Int_t n);
+   #endif
    virtual void ReadFastArray(Float_t *f, Int_t n);
    virtual void ReadFastArray(Double_t *d, Int_t n);
    virtual void ReadFastArrayString(Char_t *c, Int_t n);
@@ -145,8 +151,10 @@ public:
    virtual void WriteArray(const UInt_t *i, Int_t n);
    virtual void WriteArray(const Long_t *l, Int_t n);
    virtual void WriteArray(const ULong_t *l, Int_t n);
+#if !defined(_WIN64)
    virtual void WriteArray(const Long64_t *l, Int_t n);
    virtual void WriteArray(const ULong64_t *l, Int_t n);
+#endif
    virtual void WriteArray(const Float_t *f, Int_t n);
    virtual void WriteArray(const Double_t *d, Int_t n);
 
@@ -159,8 +167,10 @@ public:
    virtual void WriteFastArray(const UInt_t *i, Int_t n);
    virtual void WriteFastArray(const Long_t *l, Int_t n);
    virtual void WriteFastArray(const ULong_t *l, Int_t n);
+#if !defined(_WIN64)
    virtual void WriteFastArray(const Long64_t *l, Int_t n);
    virtual void WriteFastArray(const ULong64_t *l, Int_t n);
+#endif
    virtual void WriteFastArray(const Float_t *f, Int_t n);
    virtual void WriteFastArray(const Double_t *d, Int_t n);
    virtual void WriteFastArrayString(const Char_t *c, Int_t n);

@@ -98,8 +98,10 @@ public:
    void     SetParam(Long_t l);
    void     SetParam(Float_t f);
    void     SetParam(Double_t d);
+#if !defined(_WIN64)
    void     SetParam(Long64_t ll);
    void     SetParam(ULong64_t ull);
+#endif
 
    template <typename... T> void SetParams(const T&... params) {
       if (!fFunc) return;
