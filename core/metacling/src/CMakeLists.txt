@@ -92,43 +92,78 @@ if(MSVC)
   set_target_properties(Cling PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
   set(cling_exports
       __std_terminate
-      ??2@YAPAXI@Z
-      ??3@YAXPAX@Z
-      ??3@YAXPAXI@Z
-      ??_U@YAPAXI@Z
-      ??_V@YAXPAX@Z
-      ??_V@YAXPAXI@Z
       ??_7type_info@@6B@
       ?__type_info_root_node@@3U__type_info_node@@A
       ?nothrow@std@@3Unothrow_t@1@B
-      ??6?$basic_ostream@DU?$char_traits@D@std@@@std@@QAEAAV01@H@Z
-      ??6?$basic_ostream@DU?$char_traits@D@std@@@std@@QAEAAV01@M@Z
-      ??6?$basic_ostream@DU?$char_traits@D@std@@@std@@QAEAAV01@N@Z
-      ??$?6U?$char_traits@D@std@@@std@@YAAAV?$basic_ostream@DU?$char_traits@D@std@@@0@AAV10@D@Z
       cling_runtime_internal_throwIfInvalidPointer
-      ?_Facet_Register@std@@YAXPAV_Facet_base@1@@Z
-      ??1Value@cling@@QAE@XZ
-      ?isValid@Value@cling@@QBE_NXZ
-      ?kEmptyCollection@valuePrinterInternal@cling@@3QBDB
-      ?AssertOnUnsupportedTypeCast@Value@cling@@IBEXXZ
-      ?setValueNoAlloc@internal@runtime@cling@@YAXPAX00D@Z
-      ?setValueNoAlloc@internal@runtime@cling@@YAXPAX00DM@Z
-      ?setValueNoAlloc@internal@runtime@cling@@YAXPAX00DN@Z
-      ?setValueNoAlloc@internal@runtime@cling@@YAXPAX00DO@Z
-      ?setValueNoAlloc@internal@runtime@cling@@YAXPAX00D_K@Z
-      ?setValueNoAlloc@internal@runtime@cling@@YAXPAX00DPBX@Z
-      ?setValueWithAlloc@internal@runtime@cling@@YAPAXPAX00D@Z
-      ?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PBM@Z
-      ?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PBN@Z
-      ?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PBH@Z
-      ?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PBX@Z
-      ?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PB_N@Z
-      ?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PAPBX@Z
-      ?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PAPBD@Z
-      ?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PBV23@@Z
-      ??$toUTF8@D@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@QBDID@Z
-      ?EvaluateDynamicExpression@internal@runtime@cling@@YA?AVValue@3@PAVInterpreter@3@PAVDynamicExprInfo@123@PAVDeclContext@clang@@@Z
   )
+#      //??2@YAPAXI@Z
+#      //??3@YAXPAX@Z
+#      //??3@YAXPAXI@Z
+#      //??_U@YAPAXI@Z
+#      //??_V@YAXPAX@Z
+#      //??_V@YAXPAXI@Z
+#      //??6?$basic_ostream@DU?$char_traits@D@std@@@std@@QAEAAV01@H@Z
+#      //??6?$basic_ostream@DU?$char_traits@D@std@@@std@@QAEAAV01@M@Z
+#      //??6?$basic_ostream@DU?$char_traits@D@std@@@std@@QAEAAV01@N@Z
+#      //??$?6U?$char_traits@D@std@@@std@@YAAAV?$basic_ostream@DU?$char_traits@D@std@@@0@AAV10@D@Z
+#      //?_Facet_Register@std@@YAXPAV_Facet_base@1@@Z
+#      //??1Value@cling@@QAE@XZ
+#      //?isValid@Value@cling@@QBE_NXZ
+#      //?kEmptyCollection@valuePrinterInternal@cling@@3QBDB
+#      //?AssertOnUnsupportedTypeCast@Value@cling@@IBEXXZ
+#      //?setValueNoAlloc@internal@runtime@cling@@YAXPAX00D@Z
+#      //?setValueNoAlloc@internal@runtime@cling@@YAXPAX00DM@Z
+#      //?setValueNoAlloc@internal@runtime@cling@@YAXPAX00DN@Z
+#      //?setValueNoAlloc@internal@runtime@cling@@YAXPAX00DO@Z
+#      //?setValueNoAlloc@internal@runtime@cling@@YAXPAX00D_K@Z
+#      //?setValueNoAlloc@internal@runtime@cling@@YAXPAX00DPBX@Z
+#      //?setValueWithAlloc@internal@runtime@cling@@YAPAXPAX00D@Z
+#      //?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PBM@Z
+#      //?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PBN@Z
+#      //?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PBH@Z
+#      //?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PBX@Z
+#      //?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PB_N@Z
+#      //?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PAPBX@Z
+#      //?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PAPBD@Z
+#      //?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PBV23@@Z
+#      //??$toUTF8@D@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@QBDID@Z
+#      //?EvaluateDynamicExpression@internal@runtime@cling@@YA?AVValue@3@PAVInterpreter@3@PAVDynamicExprInfo@123@PAVDeclContext@clang@@@Z
+
+#  1>libCling.exp : error LNK2001: unresolved external symbol "class std::basic_ostream<char,struct std::char_traits<char> > & __cdecl std::operator<<<struct std::char_traits<char> >(class std::basic_ostream<char,struct std::char_traits<char> > &,char)" (??$?6U?$char_traits@D@std@@@std@@YAAAV?$basic_ostream@DU?$char_traits@D@std@@@0@AAV10@D@Z)
+#1>libCling.exp : error LNK2001: unresolved external symbol "class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > __cdecl cling::toUTF8<char>(char const * const,unsigned int,char)" (??$toUTF8@D@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@QBDID@Z)
+#1>libCling.exp : error LNK2001: unresolved external symbol "public: __thiscall cling::Value::~Value(void)" (??1Value@cling@@QAE@XZ)
+#1>libCling.exp : error LNK2001: unresolved external symbol "void * __cdecl operator new(unsigned int)" (??2@YAPAXI@Z)
+#1>libCling.exp : error LNK2001: unresolved external symbol "void __cdecl operator delete(void *)" (??3@YAXPAX@Z)
+#1>libCling.exp : error LNK2001: unresolved external symbol "void __cdecl operator delete(void *,unsigned int)" (??3@YAXPAXI@Z)
+#1>libCling.exp : error LNK2001: unresolved external symbol "public: class std::basic_ostream<char,struct std::char_traits<char> > & __thiscall std::basic_ostream<char,struct std::char_traits<char> >::operator<<(int)" (??6?$basic_ostream@DU?$char_traits@D@std@@@std@@QAEAAV01@H@Z)
+#1>libCling.exp : error LNK2001: unresolved external symbol "public: class std::basic_ostream<char,struct std::char_traits<char> > & __thiscall std::basic_ostream<char,struct std::char_traits<char> >::operator<<(float)" (??6?$basic_ostream@DU?$char_traits@D@std@@@std@@QAEAAV01@M@Z)
+#1>libCling.exp : error LNK2001: unresolved external symbol "public: class std::basic_ostream<char,struct std::char_traits<char> > & __thiscall std::basic_ostream<char,struct std::char_traits<char> >::operator<<(double)" (??6?$basic_ostream@DU?$char_traits@D@std@@@std@@QAEAAV01@N@Z)
+#1>libCling.exp : error LNK2001: unresolved external symbol "void * __cdecl operator new[](unsigned int)" (??_U@YAPAXI@Z)
+#1>libCling.exp : error LNK2001: unresolved external symbol "void __cdecl operator delete[](void *)" (??_V@YAXPAX@Z)
+#1>libCling.exp : error LNK2001: unresolved external symbol "void __cdecl operator delete[](void *,unsigned int)" (??_V@YAXPAXI@Z)
+#1>libCling.exp : error LNK2001: unresolved external symbol "protected: void __thiscall cling::Value::AssertOnUnsupportedTypeCast(void)const " (?AssertOnUnsupportedTypeCast@Value@cling@@IBEXXZ)
+#1>libCling.exp : error LNK2001: unresolved external symbol "class cling::Value __cdecl cling::runtime::internal::EvaluateDynamicExpression(class cling::Interpreter *,class cling::runtime::internal::DynamicExprInfo *,class clang::DeclContext *)" (?EvaluateDynamicExpression@internal@runtime@cling@@YA?AVValue@3@PAVInterpreter@3@PAVDynamicExprInfo@123@PAVDeclContext@clang@@@Z)
+#1>libCling.exp : error LNK2001: unresolved external symbol "void __cdecl std::_Facet_Register(class std::_Facet_base *)" (?_Facet_Register@std@@YAXPAV_Facet_base@1@@Z)
+#1>libCling.exp : error LNK2001: unresolved external symbol "public: bool __thiscall cling::Value::isValid(void)const " (?isValid@Value@cling@@QBE_NXZ)
+#1>libCling.exp : error LNK2001: unresolved external symbol "char const * const cling::valuePrinterInternal::kEmptyCollection" (?kEmptyCollection@valuePrinterInternal@cling@@3QBDB)
+#1>libCling.exp : error LNK2001: unresolved external symbol "class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > __cdecl cling::printValue(char const * *)" (?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PAPBD@Z)
+#1>libCling.exp : error LNK2001: unresolved external symbol "class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > __cdecl cling::printValue(void const * *)" (?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PAPBX@Z)
+#1>libCling.exp : error LNK2001: unresolved external symbol "class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > __cdecl cling::printValue(int const *)" (?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PBH@Z)
+#1>libCling.exp : error LNK2001: unresolved external symbol "class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > __cdecl cling::printValue(float const *)" (?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PBM@Z)
+#1>libCling.exp : error LNK2001: unresolved external symbol "class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > __cdecl cling::printValue(double const *)" (?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PBN@Z)
+#1>libCling.exp : error LNK2001: unresolved external symbol "class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > __cdecl cling::printValue(class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const *)" (?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PBV23@@Z)
+#1>libCling.exp : error LNK2001: unresolved external symbol "class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > __cdecl cling::printValue(void const *)" (?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PBX@Z)
+#1>libCling.exp : error LNK2001: unresolved external symbol "class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > __cdecl cling::printValue(bool const *)" (?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PB_N@Z)
+#1>libCling.exp : error LNK2001: unresolved external symbol "void __cdecl cling::runtime::internal::setValueNoAlloc(void *,void *,void *,char)" (?setValueNoAlloc@internal@runtime@cling@@YAXPAX00D@Z)
+#1>libCling.exp : error LNK2001: unresolved external symbol "void __cdecl cling::runtime::internal::setValueNoAlloc(void *,void *,void *,char,float)" (?setValueNoAlloc@internal@runtime@cling@@YAXPAX00DM@Z)
+#1>libCling.exp : error LNK2001: unresolved external symbol "void __cdecl cling::runtime::internal::setValueNoAlloc(void *,void *,void *,char,double)" (?setValueNoAlloc@internal@runtime@cling@@YAXPAX00DN@Z)
+#1>libCling.exp : error LNK2001: unresolved external symbol "void __cdecl cling::runtime::internal::setValueNoAlloc(void *,void *,void *,char,long double)" (?setValueNoAlloc@internal@runtime@cling@@YAXPAX00DO@Z)
+#1>libCling.exp : error LNK2001: unresolved external symbol "void __cdecl cling::runtime::internal::setValueNoAlloc(void *,void *,void *,char,void const *)" (?setValueNoAlloc@internal@runtime@cling@@YAXPAX00DPBX@Z)
+#1>libCling.exp : error LNK2001: unresolved external symbol "void __cdecl cling::runtime::internal::setValueNoAlloc(void *,void *,void *,char,unsigned __int64)" (?setValueNoAlloc@internal@runtime@cling@@YAXPAX00D_K@Z)
+#1>libCling.exp : error LNK2001: unresolved external symbol "void * __cdecl cling::runtime::internal::setValueWithAlloc(void *,void *,void *,char)" (?setValueWithAlloc@internal@runtime@cling@@YAPAXPAX00D@Z)
+#1>P:\Build\root\objects\bin\libCling.dll : fatal error LNK1120: 32 unresolved externals
+#
   if(MSVC_VERSION LESS 1914)
     set(cling_exports ${cling_exports} ??3@YAXPAX0@Z ??_V@YAXPAX0@Z)
   endif()
