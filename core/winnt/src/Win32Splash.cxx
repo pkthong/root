@@ -9,7 +9,7 @@
  * For the list of contributors see $ROOTSYS/README/CREDITS.             *
  *************************************************************************/
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #include "RVersion.h"
 #include "strlcpy.h"
 #include <wincodec.h>

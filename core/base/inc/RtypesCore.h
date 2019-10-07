@@ -23,6 +23,7 @@
 #include <ROOT/RConfig.hxx>
 
 #include <stddef.h> // size_t, NULL
+#include <stdint.h>
 
 //---- Tag used by rootcling to determine constructor used for I/O.
 
@@ -43,8 +44,14 @@ typedef unsigned int   UInt_t;      //Unsigned integer 4 bytes (unsigned int)
 #endif
 #ifdef R__B64    // Note: Long_t and ULong_t are currently not portable types
 typedef int            Seek_t;      //File pointer (int)
+
+#ifdef _WIN64
+typedef intptr_t           Long_t;      //Signed long integer 8 bytes (long)
+typedef uintptr_t  ULong_t;     //Unsigned long integer 8 bytes (unsigned long)
+#else
 typedef long           Long_t;      //Signed long integer 8 bytes (long)
 typedef unsigned long  ULong_t;     //Unsigned long integer 8 bytes (unsigned long)
+#endif
 #else
 typedef int            Seek_t;      //File pointer (int)
 typedef long           Long_t;      //Signed long integer 4 bytes (long)
