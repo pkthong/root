@@ -474,42 +474,49 @@ namespace {
     return SVR;
   }
 }
+
+#if defined(_WIN32) || defined(_WIN64)
+#define DLL_EXPORT __declspec(dllexport)
+#else
+#define DLL_EXPORT
+#endif
+
 namespace cling {
 namespace runtime {
   namespace internal {
-    void setValueNoAlloc(void* vpI, void* vpSVR, void* vpQT, char vpOn) {
+    DLL_EXPORT void setValueNoAlloc(void* vpI, void* vpSVR, void* vpQT, char vpOn) {
       // In cases of void we 'just' need to change the type of the value.
       allocateStoredRefValueAndGetGV(vpI, vpSVR, vpQT);
     }
-    void setValueNoAlloc(void* vpI, void* vpSVR, void* vpQT, char vpOn,
+    DLL_EXPORT void setValueNoAlloc(void* vpI, void* vpSVR, void* vpQT, char vpOn,
                          float value) {
       allocateStoredRefValueAndGetGV(vpI, vpSVR, vpQT).getAs<float>() = value;
       dumpIfNoStorage(vpSVR, vpOn);
     }
-    void setValueNoAlloc(void* vpI, void* vpSVR, void* vpQT, char vpOn,
+    DLL_EXPORT void setValueNoAlloc(void* vpI, void* vpSVR, void* vpQT, char vpOn,
                          double value) {
       allocateStoredRefValueAndGetGV(vpI, vpSVR, vpQT).getAs<double>() = value;
       dumpIfNoStorage(vpSVR, vpOn);
     }
-    void setValueNoAlloc(void* vpI, void* vpSVR, void* vpQT, char vpOn,
+    DLL_EXPORT void setValueNoAlloc(void* vpI, void* vpSVR, void* vpQT, char vpOn,
                          long double value) {
       allocateStoredRefValueAndGetGV(vpI, vpSVR, vpQT).getAs<long double>()
         = value;
       dumpIfNoStorage(vpSVR, vpOn);
     }
-    void setValueNoAlloc(void* vpI, void* vpSVR, void* vpQT, char vpOn,
+    DLL_EXPORT void setValueNoAlloc(void* vpI, void* vpSVR, void* vpQT, char vpOn,
                          unsigned long long value) {
       allocateStoredRefValueAndGetGV(vpI, vpSVR, vpQT)
         .getAs<unsigned long long>() = value;
       dumpIfNoStorage(vpSVR, vpOn);
     }
-    void setValueNoAlloc(void* vpI, void* vpSVR, void* vpQT, char vpOn,
+    DLL_EXPORT void setValueNoAlloc(void* vpI, void* vpSVR, void* vpQT, char vpOn,
                          const void* value){
       allocateStoredRefValueAndGetGV(vpI, vpSVR, vpQT).getAs<void*>()
         = const_cast<void*>(value);
       dumpIfNoStorage(vpSVR, vpOn);
     }
-    void* setValueWithAlloc(void* vpI, void* vpSVR, void* vpQT, char vpOn) {
+    DLL_EXPORT void* setValueWithAlloc(void* vpI, void* vpSVR, void* vpQT, char vpOn) {
       return allocateStoredRefValueAndGetGV(vpI, vpSVR, vpQT).getAs<void*>();
     }
   } // end namespace internal
