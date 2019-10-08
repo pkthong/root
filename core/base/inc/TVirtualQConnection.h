@@ -27,8 +27,10 @@ protected:
    virtual void SetArg(ULong_t) = 0;
    virtual void SetArg(Float_t) = 0;
    virtual void SetArg(Double_t) = 0;
+#if !defined(_WIN64)
    virtual void SetArg(Long64_t) = 0;
    virtual void SetArg(ULong64_t) = 0;
+#endif
 
    // Note: sets argument list (for potentially more than one arg).
    virtual void SetArg(const Long_t *, Int_t = -1) = 0;

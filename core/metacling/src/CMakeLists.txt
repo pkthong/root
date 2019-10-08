@@ -96,6 +96,7 @@ if(MSVC)
       ?__type_info_root_node@@3U__type_info_node@@A
       ?nothrow@std@@3Unothrow_t@1@B
       cling_runtime_internal_throwIfInvalidPointer
+	  ?setValueNoAlloc@internal@runtime@cling@@YAXPEAX00DPEBX@Z
   )
 #      //??2@YAPAXI@Z
 #      //??3@YAXPAX@Z

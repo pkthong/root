@@ -443,7 +443,9 @@ public:
    virtual int             Symlink(const char *from, const char *to);
    virtual int             Unlink(const char *name);
    int                     GetPathInfo(const char *path, Long_t *id, Long_t *size, Long_t *flags, Long_t *modtime);
+#if !defined(_WIN64)
    int                     GetPathInfo(const char *path, Long_t *id, Long64_t *size, Long_t *flags, Long_t *modtime);
+#endif
    virtual int             GetPathInfo(const char *path, FileStat_t &buf);
    virtual int             GetFsInfo(const char *path, Long_t *id, Long_t *bsize, Long_t *blocks, Long_t *bfree);
    virtual int             Chmod(const char *file, UInt_t mode);

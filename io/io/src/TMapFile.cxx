@@ -56,7 +56,7 @@ robust Streamer mechanism I opted for 3).
 **/
 
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #  include <windows.h>
 #  include <process.h>
 #  ifdef GetObject

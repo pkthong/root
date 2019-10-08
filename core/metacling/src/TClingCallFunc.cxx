@@ -224,7 +224,11 @@ namespace {
       }
       if (QT->isPointerType() || QT->isArrayType() || QT->isRecordType() ||
             QT->isReferenceType()) {
+#if defined(_WIN64)
+         return (returnType)(uintptr_t)val.getPtr();
+#else
          return (returnType)(long) val.getPtr();
+#endif
       }
       if (const EnumType *ET = dyn_cast<EnumType>(&*QT)) {
          if (ET->getDecl()->getIntegerType()->hasSignedIntegerRepresentation())
@@ -237,7 +241,11 @@ namespace {
          if (MPT->isMemberDataPointer()) {
             return (returnType)(ptrdiff_t)val.getPtr();
          }
+#if defined(_WIN64)
+         return (returnType)(uintptr_t)val.getPtr();
+#else
          return (returnType)(long) val.getPtr();
+#endif
       }
       ::Error("TClingCallFunc::sv_to", "Invalid Type!");
       QT->dump();
