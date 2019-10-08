@@ -284,7 +284,9 @@ protected:
    XMLNodePointer_t XmlWriteBasic(Short_t value);
    XMLNodePointer_t XmlWriteBasic(Int_t value);
    XMLNodePointer_t XmlWriteBasic(Long_t value);
+#if !defined(_WIN64)
    XMLNodePointer_t XmlWriteBasic(Long64_t value);
+#endif
    XMLNodePointer_t XmlWriteBasic(Float_t value);
    XMLNodePointer_t XmlWriteBasic(Double_t value);
    XMLNodePointer_t XmlWriteBasic(Bool_t value);
@@ -292,14 +294,18 @@ protected:
    XMLNodePointer_t XmlWriteBasic(UShort_t value);
    XMLNodePointer_t XmlWriteBasic(UInt_t value);
    XMLNodePointer_t XmlWriteBasic(ULong_t value);
+#if !defined(_WIN64)
    XMLNodePointer_t XmlWriteBasic(ULong64_t value);
+#endif
    XMLNodePointer_t XmlWriteValue(const char *value, const char *name);
 
    void XmlReadBasic(Char_t &value);
    void XmlReadBasic(Short_t &value);
    void XmlReadBasic(Int_t &value);
    void XmlReadBasic(Long_t &value);
+#if !defined(_WIN64)
    void XmlReadBasic(Long64_t &value);
+#endif
    void XmlReadBasic(Float_t &value);
    void XmlReadBasic(Double_t &value);
    void XmlReadBasic(Bool_t &value);
@@ -307,7 +313,9 @@ protected:
    void XmlReadBasic(UShort_t &value);
    void XmlReadBasic(UInt_t &value);
    void XmlReadBasic(ULong_t &value);
+#if !defined(_WIN64)
    void XmlReadBasic(ULong64_t &value);
+#endif
    const char *XmlReadValue(const char *name);
 
    template <typename T>

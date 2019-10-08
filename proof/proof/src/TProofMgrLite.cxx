@@ -17,7 +17,7 @@ Basic TProofMgr functionality implementation in the case of Lite session.
 */
 
 #include <errno.h>
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #include <io.h>
 #endif
 
@@ -38,8 +38,7 @@ ClassImp(TProofMgrLite);
 ////////////////////////////////////////////////////////////////////////////////
 /// Create a PROOF manager for the Lite environment.
 
-TProofMgrLite::TProofMgrLite(const char *url, Int_t dbg, const char *alias)
-          : TProofMgr(url, dbg, alias)
+TProofMgrLite::TProofMgrLite(const char *url, Int_t dbg, const char *alias) : TProofMgr(url, dbg, alias)
 {
    // Set the correct servert type
    fServType = kProofLite;
@@ -48,13 +47,14 @@ TProofMgrLite::TProofMgrLite(const char *url, Int_t dbg, const char *alias)
 ////////////////////////////////////////////////////////////////////////////////
 /// Create a new session
 
-TProof *TProofMgrLite::CreateSession(const char *cfg,
-                                     const char *, Int_t loglevel)
+TProof *TProofMgrLite::CreateSession(const char *cfg, const char *, Int_t loglevel)
 {
    TString c(fUrl.GetOptions());
-   if (!c.Contains("workers=") && cfg && strstr(cfg, "workers=")) c = cfg;
+   if (!c.Contains("workers=") && cfg && strstr(cfg, "workers="))
+      c = cfg;
    Int_t nwrk = TProofLite::GetNumberOfWorkers(c);
-   if (nwrk == 0) return (TProof *)0;
+   if (nwrk == 0)
+      return (TProof *)0;
 
    // Check if we have already a running session
    if (gProof && gProof->IsLite()) {
@@ -75,7 +75,8 @@ TProof *TProofMgrLite::CreateSession(const char *cfg,
 
    // Create the instance
    TString u("lite");
-   if (strlen(fUrl.GetOptions()) > 0) u.Form("lite/?%s", fUrl.GetOptions());
+   if (strlen(fUrl.GetOptions()) > 0)
+      u.Form("lite/?%s", fUrl.GetOptions());
    TProof *p = new TProofLite(u, cfg, 0, loglevel, 0, this);
 
    if (p && p->IsValid()) {
@@ -92,10 +93,8 @@ TProof *TProofMgrLite::CreateSession(const char *cfg,
       }
 
       // Create the description class
-      Int_t st = (p->IsIdle()) ? TProofDesc::kIdle : TProofDesc::kRunning ;
-      TProofDesc *d =
-         new TProofDesc(p->GetName(), p->GetTitle(), p->GetUrl(),
-                               ns, p->GetSessionID(), st, p);
+      Int_t st = (p->IsIdle()) ? TProofDesc::kIdle : TProofDesc::kRunning;
+      TProofDesc *d = new TProofDesc(p->GetName(), p->GetTitle(), p->GetUrl(), ns, p->GetSessionID(), st, p);
       fSessions->Add(d);
 
    } else {
@@ -126,8 +125,7 @@ TProof *TProofMgrLite::CreateSession(const char *cfg,
 /// Returns a TProofLog object (to be deleted by the caller) on success,
 /// 0 if something wrong happened.
 
-TProofLog *TProofMgrLite::GetSessionLogs(Int_t isess, const char *stag,
-                                         const char *pattern, Bool_t)
+TProofLog *TProofMgrLite::GetSessionLogs(Int_t isess, const char *stag, const char *pattern, Bool_t)
 {
    TProofLog *pl = 0;
 
@@ -144,9 +142,9 @@ TProofLog *TProofMgrLite::GetSessionLogs(Int_t isess, const char *stag,
 
    // The working dir
    TString sandbox(gSystem->WorkingDirectory());
-   sandbox.ReplaceAll(gSystem->HomeDirectory(),"");
-   sandbox.ReplaceAll("/","-");
-   sandbox.Replace(0,1,"/",1);
+   sandbox.ReplaceAll(gSystem->HomeDirectory(), "");
+   sandbox.ReplaceAll("/", "-");
+   sandbox.Replace(0, 1, "/", 1);
    if (strlen(gEnv->GetValue("ProofLite.Sandbox", "")) > 0) {
       sandbox.Insert(0, gEnv->GetValue("ProofLite.Sandbox", ""));
    } else if (strlen(gEnv->GetValue("Proof.Sandbox", "")) > 0) {
@@ -175,9 +173,11 @@ TProofLog *TProofMgrLite::GetSessionLogs(Int_t isess, const char *stag,
             if (!strncmp(e, "session-", 8)) {
                TString d(e);
                Int_t i = d.Last('-');
-               if (i != kNPOS) d.Remove(i);
+               if (i != kNPOS)
+                  d.Remove(i);
                i = d.Last('-');
-               if (i != kNPOS) d.Remove(0,i+1);
+               if (i != kNPOS)
+                  d.Remove(0, i + 1);
                TString path = Form("%s/%s", sandbox.Data(), e);
                olddirs->Add(new TNamed(d, path));
             }
@@ -187,22 +187,23 @@ TProofLog *TProofMgrLite::GetSessionLogs(Int_t isess, const char *stag,
 
       // Check isess
       if (isess > olddirs->GetSize() - 1) {
-         Warning("GetSessionLogs",
-                 "session index out of range (%d): take oldest available session", isess);
+         Warning("GetSessionLogs", "session index out of range (%d): take oldest available session", isess);
          isess = olddirs->GetSize() - 1;
       }
 
       // Locate the session dir
       Int_t isx = isess;
-      TNamed *n = (TNamed *) olddirs->First();
+      TNamed *n = (TNamed *)olddirs->First();
       while (isx-- > 0) {
          olddirs->Remove(n);
          delete n;
-         n = (TNamed *) olddirs->First();
+         n = (TNamed *)olddirs->First();
       }
       if (!n) {
-         Error("GetSessionLogs", "cannot locate session dir for index '%d' under '%s':"
-                                 " cannot continue!", isess, sandbox.Data());
+         Error("GetSessionLogs",
+               "cannot locate session dir for index '%d' under '%s':"
+               " cannot continue!",
+               isess, sandbox.Data());
          return (TProofLog *)0;
       }
       sessiondir = n->GetTitle();
@@ -236,12 +237,13 @@ TProofLog *TProofMgrLite::GetSessionLogs(Int_t isess, const char *stag,
                   ord.Remove(id);
                } else if (ord.Contains(".valgrind")) {
                   // Add to the list (special tag for valgrind outputs)
-                  ord.ReplaceAll(".valgrind.log","-valgrind");
+                  ord.ReplaceAll(".valgrind.log", "-valgrind");
                } else {
                   // Not a good path
                   ord = "";
                }
-               if (!ord.IsNull()) ord.ReplaceAll("0.", "");
+               if (!ord.IsNull())
+                  ord.ReplaceAll("0.", "");
             }
             if (!ord.IsNull()) {
                url = Form("%s/%s", sessiondir.Data(), e);
@@ -257,9 +259,10 @@ TProofLog *TProofMgrLite::GetSessionLogs(Int_t isess, const char *stag,
 
       TIter nxl(logs);
       TNamed *n = 0;
-      while ((n = (TNamed *) nxl())) {
+      while ((n = (TNamed *)nxl())) {
          TString ord = Form("0.%s", n->GetName());
-         if (ord == "0.-1") ord = "0";
+         if (ord == "0.-1")
+            ord = "0";
          // Add to the list
          pl->Add(ord, n->GetTitle());
       }
@@ -302,13 +305,13 @@ TObjString *TProofMgrLite::ReadBuffer(const char *fin, Long64_t ofs, Int_t len)
    }
 
    // Total size
-   off_t start = 0, end = lseek(fd, (off_t) 0, SEEK_END);
+   off_t start = 0, end = lseek(fd, (off_t)0, SEEK_END);
 
    // Set the offset
    if (ofs > 0 && ofs < end) {
-      start = lseek(fd, (off_t) ofs, SEEK_SET);
+      start = lseek(fd, (off_t)ofs, SEEK_SET);
    } else {
-      start = lseek(fd, (off_t) 0, SEEK_SET);
+      start = lseek(fd, (off_t)0, SEEK_SET);
    }
    if (len > (end - start + 1) || len <= 0)
       len = end - start + 1;
@@ -328,7 +331,7 @@ TObjString *TProofMgrLite::ReadBuffer(const char *fin, Long64_t ofs, Int_t len)
          return (TObjString *)0;
       } else if (len > 0) {
          if (len == wanted)
-            buf[len-1] = '\n';
+            buf[len - 1] = '\n';
          buf[len] = '\0';
          outbuf += buf;
       }
@@ -385,17 +388,18 @@ TObjString *TProofMgrLite::ReadBuffer(const char *fin, const char *pattern)
 
    // Read the input list of files and add them to the chain
    TString line;
-   while(in.good()) {
+   while (in.good()) {
 
       // Read next line
       line.ReadLine(in);
 
       // Keep only lines with pattern
-      if ((excl && line.Index(re) != kNPOS) ||
-          (!excl && line.Index(re) == kNPOS)) continue;
+      if ((excl && line.Index(re) != kNPOS) || (!excl && line.Index(re) == kNPOS))
+         continue;
 
       // Remove trailing '\n', if any
-      if (!line.EndsWith("\n")) line.Append('\n');
+      if (!line.EndsWith("\n"))
+         line.Append('\n');
 
       // Add to output
       outbuf += line;
