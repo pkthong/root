@@ -17,7 +17,7 @@
 #include "RConfigure.h"
 #include "TGLIncludes.h"
 
-#if defined(WIN32)
+#if defined(_WIN32) || defined(_WIN64)
 #  include <GL/wglew.h>
 #else
 #  if defined(__APPLE__) && !defined(R__HAS_COCOA)

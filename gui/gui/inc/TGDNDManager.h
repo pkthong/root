@@ -140,7 +140,7 @@ protected:
    void           SendDNDDrop(Window_t target);
    void           SendDNDFinished(Window_t src);
 
-   Bool_t         HandleDNDEnter(Window_t src, long vers, Atom_t dataTypes[3]);
+   Bool_t         HandleDNDEnter(Window_t src, Long_t vers, Atom_t dataTypes[3]);
    Bool_t         HandleDNDLeave(Window_t src);
    Bool_t         HandleDNDPosition(Window_t src, int x_root, int y_root, Atom_t action, Time_t timestamp);
    Bool_t         HandleDNDStatus(Window_t from, int accepted,

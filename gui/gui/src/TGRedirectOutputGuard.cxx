@@ -36,7 +36,7 @@
 
 #include <errno.h>
 #include <sys/types.h>
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #   include <io.h>
 #else
 #   include <unistd.h>

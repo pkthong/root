@@ -344,7 +344,7 @@ extern "C" {
       union {
          char b[20];
          short s[10];
-         long l[5];
+         Long_t l[5];
       } data;
    };
 

@@ -91,7 +91,7 @@ public:
    virtual Long_t ToScrXCoord(Long_t xCoord, Long_t line);
    virtual Long_t ToScrYCoord(Long_t yCoord);
    virtual void   AdjustWidth();
-   virtual Bool_t LoadFile(const char *fname, long startpos = 0, long length = -1);
+   virtual Bool_t LoadFile(const char *fname, Long_t startpos = 0, Long_t length = -1);
    virtual Bool_t LoadBuffer(const char *txtbuf);
    virtual void   Clear(Option_t * = "");
    virtual Bool_t Copy();

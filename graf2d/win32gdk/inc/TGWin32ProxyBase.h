@@ -32,7 +32,7 @@ protected:
    ULong_t           fId;                 ///< thread id. There is one proxy per client thread
    Bool_t            fIsVirtualX;         ///< true if actual TVirtualX implementation
    static UInt_t     fMaxResponseTime;    ///< max period for waiting response from server thread
-   static Long_t     fgLock;              ///< fgLock=1 - all client threads locked
+   static __int64     fgLock;              ///< fgLock=1 - all client threads locked
 
    virtual Bool_t ForwardCallBack(Bool_t sync);
    virtual void   SendExitMessage();

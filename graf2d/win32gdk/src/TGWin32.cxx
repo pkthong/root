@@ -2229,8 +2229,8 @@ Int_t TGWin32::InitWindow(ULong_t win)
    ::BringWindowToTop(window);
 
    if (!fUseSysPointers) {
-      ::SetClassLong(window, GCL_HCURSOR,
-                    (LONG)GDK_CURSOR_XID(fCursors[kPointer]));
+      ::SetClassLongPtr(window, GCLP_HCURSOR,
+                    (LONG_PTR)GDK_CURSOR_XID(fCursors[kPointer]));
    }
 
    // Initialise the window structure
@@ -3983,7 +3983,8 @@ void TGWin32::SetOpacity(Int_t percent)
 
    // clean up
    if (tmpc) {
-      gdk_colors_free((GdkColormap *)fColormap, tmpc, ntmpc, 0);
+      gulong tmpc2 = *tmpc;
+      gdk_colors_free((GdkColormap *)fColormap, &tmpc2, ntmpc, 0);
       delete[]tmpc;
    }
    gdk_image_unref(image);
@@ -4876,7 +4877,7 @@ Window_t TGWin32::CreateWindow(Window_t parent, Int_t x, Int_t y,
       }
    }
    if (!fUseSysPointers) {
-      ::SetClassLong((HWND)GDK_DRAWABLE_XID(newWin), GCL_HCURSOR,
+      ::SetClassLongPtr((HWND)GDK_DRAWABLE_XID(newWin), GCLP_HCURSOR,
                      (LONG)GDK_CURSOR_XID(fCursors[kPointer]));
    }
    return (Window_t) newWin;
