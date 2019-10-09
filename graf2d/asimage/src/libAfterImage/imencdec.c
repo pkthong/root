@@ -25,7 +25,7 @@
 #undef DEBUG_RECTS2
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #include "win32/config.h"
 #else
 #include "config.h"
@@ -58,7 +58,7 @@
 #include <mmintrin.h>
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 # include "win32/afterbase.h"
 #else
 # include "afterbase.h"
@@ -118,19 +118,19 @@ static int asimage_quality_level = ASIMAGE_QUALITY_GOOD;
 
 Bool create_image_xim( ASVisual *asv, ASImage *im, ASAltImFormats format )
 {
-	Bool scratch = False, do_alpha = False ; 
+	Bool scratch = False, do_alpha = False ;
 	XImage **dst ;
-	if( format == ASA_ScratchXImageAndAlpha ) 
-	{	
+	if( format == ASA_ScratchXImageAndAlpha )
+	{
 		format = ASA_ScratchXImage ;
 		do_alpha = True ;
 	}
 
-	if( format == ASA_ScratchXImage || format == ASA_ScratchMaskXImage ) 
-	{	
+	if( format == ASA_ScratchXImage || format == ASA_ScratchMaskXImage )
+	{
 		scratch = True ;
 		format = (format - ASA_ScratchXImage ) + ASA_XImage ;
-	}		
+	}
 	dst = (format == ASA_MaskXImage )? &(im->alt.mask_ximage):&(im->alt.ximage);
 	if( *dst == NULL )
 	{
@@ -163,7 +163,7 @@ asimage_dup_line (ASImage * im, ColorPart color, unsigned int y1, unsigned int y
 {
 	ASStorageID *part = im->channels[color];
 	if (part[y2] != 0)
-	{	
+	{
 		forget_data(NULL, part[y2]);
 		part[y2] = 0 ;
 	}
@@ -273,7 +273,7 @@ divide_component( register CARD32 *src, register CARD32 *dst, CARD16 ratio, int 
 					: "m"  (dsrc[i]) // %1
 	            );
 			}while( ++i < len );
-#endif		
+#endif
 		}else
 #endif
 			do{
@@ -396,7 +396,7 @@ start_image_decoding( ASVisual *asv,ASImage *im, ASFlagType filter,
 
 	imdec->decode_asscanline = decode_asscanline_native;
 	if( im != NULL )
-	{	
+	{
 		if( get_flags( im->flags, ASIM_DATA_NOT_USEFUL ) )
 		{
 			if( im->alt.ximage != NULL && !get_flags( im->flags, ASIM_XIMAGE_NOT_USEFUL) )
@@ -407,7 +407,7 @@ start_image_decoding( ASVisual *asv,ASImage *im, ASFlagType filter,
 			}else if( im->alt.argb32 != NULL )
 			{
 				imdec->decode_asscanline = decode_asscanline_argb32;
-			}	 
+			}
 		}
 	}
 
@@ -787,42 +787,42 @@ decode_asscanline_argb32( ASImageDecoder *imdec, unsigned int skip, int y )
 
 	if( get_flags( imdec->filter, SCL_DO_ALPHA ) )
 	{
-		int x = imdec->offset_x ; 
-		for( count = 0 ; count < width ; ++count) 
-		{	
-			a[count] = ARGB32_ALPHA8(row[x])<<scl->shift ;	
+		int x = imdec->offset_x ;
+		for( count = 0 ; count < width ; ++count)
+		{
+			a[count] = ARGB32_ALPHA8(row[x])<<scl->shift ;
 			if( ++x >= max_x ) 	x = 0;
-		}	 
-	}	 
-		
+		}
+	}
+
 	if( get_flags( imdec->filter, SCL_DO_RED ) )
 	{
-		int x = imdec->offset_x ; 
-		for( count = 0 ; count < width ; ++count) 
-		{	
-			r[count] = ARGB32_RED8(row[x])<<scl->shift ;	
+		int x = imdec->offset_x ;
+		for( count = 0 ; count < width ; ++count)
+		{
+			r[count] = ARGB32_RED8(row[x])<<scl->shift ;
 			if( ++x >= max_x ) 	x = 0;
-		}	 
-	}	 
-		
+		}
+	}
+
 	if( get_flags( imdec->filter, SCL_DO_GREEN ) )
 	{
-		int x = imdec->offset_x ; 
-		for( count = 0 ; count < width ; ++count) 
-		{	
-			g[count] = ARGB32_GREEN8(row[x])<<scl->shift ;	
+		int x = imdec->offset_x ;
+		for( count = 0 ; count < width ; ++count)
+		{
+			g[count] = ARGB32_GREEN8(row[x])<<scl->shift ;
 			if( ++x >= max_x ) 	x = 0;
-		}	 
-	}	 
+		}
+	}
 	if( get_flags( imdec->filter, SCL_DO_BLUE ) )
 	{
-		int x = imdec->offset_x ; 
-		for( count = 0 ; count < width ; ++count) 
-		{	
-			b[count] = ARGB32_BLUE8(row[x])<<scl->shift ;	
+		int x = imdec->offset_x ;
+		for( count = 0 ; count < width ; ++count)
+		{
+			b[count] = ARGB32_BLUE8(row[x])<<scl->shift ;
 			if( ++x >= max_x ) 	x = 0;
-		}	 
-	}	 
+		}
+	}
 
 	clear_flags( scl->flags, SCL_DO_ALL);
 	set_flags( scl->flags, imdec->filter);
@@ -1083,7 +1083,7 @@ draw_transp_bevel_line ( ASImageDecoder *imdec,
 				else
 				{
 					end_i = end_point ;
-					if( end_i >= 0 ) 
+					if( end_i >= 0 )
 						chan_img_start[end_i] = (chan_img_start[end_i]*rev_ca + ARGB32_CHAN8(right_color,channel)*(ca>>8))>>8 ;
 				}
 				while( ++i < end_i )
@@ -1206,7 +1206,7 @@ decode_image_scanline_beveled( ASImageDecoder *imdec )
 /* fprintf( stderr, __FUNCTION__ ":%d: y_out = %d, imdec->bevel_top = %d, bevel->top_inline = %d\n",
 				__LINE__,  y_out, imdec->bevel_top, bevel->top_inline);
  */
- 
+
 				if( y_out < imdec->bevel_top+bevel->top_inline)
 				{
 					register int line = y_out - imdec->bevel_top;
@@ -1218,7 +1218,7 @@ decode_image_scanline_beveled( ASImageDecoder *imdec )
 									 	 	right_delta, right_margin );
 /* fprintf( stderr, __FUNCTION__ ":%d: left_delta = %d, right_delta = %d, left_inline = %d, right_inline = %d, bevel_left = %d, bevel_right = %d\n",
 				__LINE__,  left_delta, right_delta, bevel->left_inline, bevel->right_inline, imdec->bevel_left, imdec->bevel_right);
- */ 
+ */
 
 					draw_transp_bevel_line ( imdec, left_delta-1, right_delta-1,
 						 			 	 	hda_bevel*(left_delta+1),
@@ -1313,15 +1313,15 @@ encode_image_scanline_xim( ASImageOutput *imout, ASScanline *to_store )
 			set_component( to_store->blue , ARGB32_BLUE8(to_store->back_color), 0, to_store->width );
 		if( !get_flags(to_store->flags, SCL_DO_ALPHA) && (xim->depth == 24 || xim->depth == 32 ))
 			set_component( to_store->alpha , ARGB32_ALPHA8(to_store->back_color), 0, to_store->width );
-		if( xim->depth == imout->asv->visual_info.depth ) 
+		if( xim->depth == imout->asv->visual_info.depth )
 			PUT_SCANLINE(imout->asv, xim,to_store,imout->next_line, dst );
-		else if( xim->depth == 16 ) 
+		else if( xim->depth == 16 )
 			scanline2ximage16( imout->asv, xim, to_store,imout->next_line, dst);
-		else if( xim->depth == 24 || xim->depth == 32 ) 
+		else if( xim->depth == 24 || xim->depth == 32 )
 			scanline2ximage32( imout->asv, xim, to_store,imout->next_line, dst);
-		else if( xim->depth == 15 ) 
+		else if( xim->depth == 15 )
 			scanline2ximage15( imout->asv, xim, to_store,imout->next_line, dst);
-		
+
 
 		if( imout->tiling_step > 0 )
 			tile_ximage_line( imout->im->alt.ximage, imout->next_line,
@@ -1330,7 +1330,7 @@ encode_image_scanline_xim( ASImageOutput *imout, ASScanline *to_store )
 		LOCAL_DEBUG_OUT( "flags = %lX", to_store->flags );
 #if 1
 		if( imout->out_format == ASA_ScratchXImageAndAlpha )
-		{	
+		{
 			if( get_flags(to_store->flags, SCL_DO_ALPHA) && get_flags( imout->im->flags, ASIM_DATA_NOT_USEFUL ))
 			{
 				int bytes_count, i ;
@@ -1347,7 +1347,7 @@ encode_image_scanline_xim( ASImageOutput *imout, ASScanline *to_store )
 						asimage_dup_line( imout->im, IC_ALPHA, line, i, bytes_count );
 					}
 		   		}
-			}	 
+			}
 		}
 #endif
 		imout->next_line += imout->bottom_to_top;

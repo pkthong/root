@@ -17,7 +17,7 @@
 #  include <time.h>
 # endif
 #endif
-   
+
 
 /* our own version of X Wrapper : */
 #include "xwrap.h"
@@ -91,7 +91,11 @@ typedef ASFlagType ASFlagsXref[5];
 
 typedef struct ASMagic
 { /* just so we can safely cast void* to query magic number :*/
+#ifndef _WIN32
     unsigned long magic ;
+#else
+    uintptr_t magic;
+#endif
 }ASMagic;
 
 /* from libAfterBase/selfdiag.h : */
@@ -258,9 +262,9 @@ char   *asim_load_binary_file(const char* realfilename, long *file_size_return);
 #define load_binary_file(r,s)     asim_load_binary_file(r,s)
 #ifndef _WIN32
 int asim_my_scandir_ext ( const char *dirname, int (*filter_func) (const char *),
-				 Bool (*handle_direntry_func)( const char *fname, const char *fullname, struct stat *stat_info, void *aux_data), 
+				 Bool (*handle_direntry_func)( const char *fname, const char *fullname, struct stat *stat_info, void *aux_data),
 				 void *aux_data);
-#define my_scandir_ext(d,f,h,a) asim_my_scandir_ext((d),(f),(h),(a))   
+#define my_scandir_ext(d,f,h,a) asim_my_scandir_ext((d),(f),(h),(a))
 #endif
 
 void unix_path2dos_path( char *path );
@@ -303,7 +307,7 @@ typedef union ASHashableValue
 }
 ASHashableValue;
 #else
-typedef unsigned long ASHashableValue;
+typedef uintptr_t ASHashableValue;
 #endif
 
 typedef union ASHashData
@@ -323,7 +327,11 @@ typedef union ASHashData
 	CARD8  c8 ;
 }ASHashData;
 
+#ifndef _WIN32
 #define AS_HASHABLE(v)  ((ASHashableValue)((unsigned long)(v)))
+#else
+#define AS_HASHABLE(v)  ((ASHashableValue)((uintptr_t)(v)))
+#endif
 
 typedef struct ASHashItem
 {
@@ -427,7 +435,7 @@ typedef struct xml_elem_t {
 
 typedef enum
 {
-	ASXML_Start 			= 0,			               
+	ASXML_Start 			= 0,
 	ASXML_TagOpen 			= 1,
 	ASXML_TagName 			= 2,
 	ASXML_TagAttrOrClose 	= 3,
@@ -453,11 +461,11 @@ typedef struct ASXmlBuffer
 	char *buffer ;
 	int allocated, used, current ;
 
-	int state ; 
+	int state ;
 	int level ;
 	Bool verbatim;
 	Bool quoted;
-	
+
 	enum
 	{
 		ASXML_OpeningTag = 0,

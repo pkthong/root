@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #include "win32/config.h"
 #else
 #include "config.h"
@@ -34,8 +34,8 @@
 #ifdef HAVE_STDARG_H
 #include <stdarg.h>
 #endif
- 
-#ifdef _WIN32
+
+#if defined(_WIN32) || defined(_WIN64)
 # include "win32/afterbase.h"
 #else
 # include "afterbase.h"
@@ -43,7 +43,7 @@
 #include "asvisual.h"
 #include "scanline.h"
 
-#if defined(XSHMIMAGE) && !defined(X_DISPLAY_MISSING) 
+#if defined(XSHMIMAGE) && !defined(X_DISPLAY_MISSING)
 # include <sys/ipc.h>
 # include <sys/shm.h>
 # include <X11/extensions/XShm.h>
@@ -51,7 +51,7 @@
 # undef XSHMIMAGE
 #endif
 
-#if defined(HAVE_GLX) && !defined(X_DISPLAY_MISSING) 
+#if defined(HAVE_GLX) && !defined(X_DISPLAY_MISSING)
 # include <GL/gl.h>
 # include <GL/glx.h>
 #else
@@ -79,7 +79,7 @@ debug_AllocColor( const char *file, int line, ASVisual *asv, Colormap cmap, XCol
 	Status sret ;
 	sret = XAllocColor( asv->dpy, cmap, pxcol );
 	show_progress( " XAllocColor in %s:%d has %s -> cmap = %lX, pixel = %lu(%8.8lX), color = 0x%4.4X, 0x%4.4X, 0x%4.4X",
-				   file, line, (sret==0)?"failed":"succeeded", (long)cmap, (unsigned long)(pxcol->pixel), (unsigned long)(pxcol->pixel), pxcol->red, pxcol->green, pxcol->blue );
+				   file, line, (sret==0)?"failed":"succeeded", (uintptr_t)cmap, (unsigned long)(pxcol->pixel), (uintptr_t)(pxcol->pixel), pxcol->red, pxcol->green, pxcol->blue );
 	return sret;
 }
 #define ASV_ALLOC_COLOR(asv,cmap,pxcol)  debug_AllocColor(__FILE__, __LINE__, (asv),(cmap),(pxcol))
@@ -408,7 +408,7 @@ destroy_asvisual( ASVisual *asv, Bool reusable )
 		if( asv->glx_scratch_gc_indirect )
 			glXDestroyContext(asv->dpy, asv->glx_scratch_gc_indirect );
 #endif
-		if( asv->scratch_window ) 
+		if( asv->scratch_window )
 			XDestroyWindow( asv->dpy, asv->scratch_window );
 
 #endif /*ifndef X_DISPLAY_MISSING */
@@ -546,12 +546,12 @@ setup_truecolor_visual( ASVisual *asv )
 	if( glXQueryExtension (asv->dpy, NULL, NULL))
 	{
 		int val = False;
-		glXGetConfig(asv->dpy, vi, GLX_USE_GL, &val);		
-		if( val ) 
+		glXGetConfig(asv->dpy, vi, GLX_USE_GL, &val);
+		if( val )
 		{
 			asv->glx_scratch_gc_indirect = glXCreateContext (asv->dpy, &(asv->visual_info), NULL, False);
-			if( asv->glx_scratch_gc_indirect ) 
-			{	
+			if( asv->glx_scratch_gc_indirect )
+			{
 				set_flags( asv->glx_support, ASGLX_Available );
 				if( glXGetConfig(asv->dpy, vi, GLX_RGBA, &val) == 0 )
 					if( val ) set_flags( asv->glx_support, ASGLX_RGBA );
@@ -559,10 +559,10 @@ setup_truecolor_visual( ASVisual *asv )
 					if( val ) set_flags( asv->glx_support, ASGLX_DoubleBuffer );
 				if( glXGetConfig(asv->dpy, vi, GLX_DOUBLEBUFFER, &val) == 0 )
 					if( val ) set_flags( asv->glx_support, ASGLX_DoubleBuffer );
-				
-				if( (asv->glx_scratch_gc_direct = glXCreateContext (asv->dpy, &(asv->visual_info), NULL, True)) != NULL ) 
+
+				if( (asv->glx_scratch_gc_direct = glXCreateContext (asv->dpy, &(asv->visual_info), NULL, True)) != NULL )
 					if( !glXIsDirect( asv->dpy, asv->glx_scratch_gc_direct ) )
-					{	
+					{
 						glXDestroyContext(asv->dpy, asv->glx_scratch_gc_direct );
 						asv->glx_scratch_gc_direct = NULL ;
 					}
@@ -571,8 +571,8 @@ setup_truecolor_visual( ASVisual *asv )
 				set_flags( asv->glx_support, ASGLX_UseForImageTx );
 #endif
 			}
-		}	 
-	}	 
+		}
+	}
 #endif
 
 	asv->BGR_mode = ((vi->red_mask&0x0010)!=0) ;
@@ -642,7 +642,7 @@ make_reverse_colorhash( unsigned long *cmap, size_t size, int depth, unsigned sh
 	if( hash )
 	{
 		for( i = 0 ; i < size ; i++ )
-			add_hash_item( hash, (ASHashableValue)cmap[i], (void*)((long)MAKE_ARGB32( 0xFF, (i>>(shift<<1))& mask, (i>>(shift))&mask, i&mask)) );
+			add_hash_item( hash, (ASHashableValue)cmap[i], (void*)((uintptr_t)MAKE_ARGB32( 0xFF, (i>>(shift<<1))& mask, (i>>(shift))&mask, i&mask)) );
 	}
 	return hash;
 }
@@ -985,7 +985,7 @@ create_visual_gc( ASVisual *asv, Window root, unsigned long mask, XGCValues *gcv
 	if( asv )
 	{
 		XGCValues scratch_gcv ;
-		if( asv->scratch_window == None ) 
+		if( asv->scratch_window == None )
 			asv->scratch_window = create_visual_window( asv, root, -20, -20, 10, 10, 0, InputOutput, 0, NULL );
 		if( asv->scratch_window != None )
 			gc = XCreateGC( asv->dpy, asv->scratch_window, gcvalues?mask:0, gcvalues?gcvalues:&scratch_gcv );
@@ -1000,8 +1000,8 @@ create_visual_pixmap( ASVisual *asv, Window root, unsigned int width, unsigned i
 #ifndef X_DISPLAY_MISSING
 	Pixmap p = None ;
 	if( asv != NULL )
-	{	
-		if( root == None ) 
+	{
+		if( root == None )
 			root = RootWindow(asv->dpy,DefaultScreen(asv->dpy));
 		if( depth==0 )
 			depth = asv->true_depth ;
@@ -1040,7 +1040,7 @@ get_dpy_drawable_size (Display *drawable_dpy, Drawable d, unsigned int *ret_w, u
 {
 	int result = 0 ;
 #ifndef X_DISPLAY_MISSING
-	if( d != None && drawable_dpy != NULL ) 
+	if( d != None && drawable_dpy != NULL )
 	{
 		Window        root;
 		unsigned int  ujunk;
@@ -1065,42 +1065,42 @@ get_dpy_window_position (Display *window_dpy, Window root, Window w, int *px, in
 	Bool result = False ;
 	int x = 0, y = 0, transp_x = 0, transp_y = 0 ;
 #ifndef X_DISPLAY_MISSING
-	if( window_dpy != NULL && w != None ) 
+	if( window_dpy != NULL && w != None )
 	{
 		Window wdumm;
 		int rootHeight = XDisplayHeight(window_dpy, DefaultScreen(window_dpy) );
 		int rootWidth = XDisplayWidth(window_dpy, DefaultScreen(window_dpy) );
 
-		if( root == None ) 
+		if( root == None )
 			root = RootWindow(window_dpy,DefaultScreen(window_dpy));
-			
+
 		result = XTranslateCoordinates (window_dpy, w, root, 0, 0, &x, &y, &wdumm);
-		if( result ) 
+		if( result )
 		{
 			/* taking in to consideration virtual desktopping */
 			result = (x < rootWidth && y < rootHeight );
 			if( result )
 			{
 				unsigned int width = 0, height = 0;
-				get_dpy_drawable_size (window_dpy, w, &width, &height);				
-				result = (x + width > 0 && y+height > 0) ; 
+				get_dpy_drawable_size (window_dpy, w, &width, &height);
+				result = (x + width > 0 && y+height > 0) ;
 			}
 
-			for( transp_x = x ; transp_x < 0 ; transp_x += rootWidth ); 			
-			for( transp_y = y ; transp_y < 0 ; transp_y += rootHeight ); 			
-			while( transp_x > rootWidth ) transp_x -= rootWidth ; 
-			while( transp_y > rootHeight ) transp_y -= rootHeight ; 
+			for( transp_x = x ; transp_x < 0 ; transp_x += rootWidth );
+			for( transp_y = y ; transp_y < 0 ; transp_y += rootHeight );
+			while( transp_x > rootWidth ) transp_x -= rootWidth ;
+			while( transp_y > rootHeight ) transp_y -= rootHeight ;
 		}
 	}
 #endif
-	if( px ) 
+	if( px )
 		*px = x;
-	if( py ) 
+	if( py )
 		*py = y;
-	if( transparency_x ) 
-		*transparency_x = transp_x ; 
-	if( transparency_y ) 
-		*transparency_y = transp_y ; 
+	if( transparency_x )
+		*transparency_x = transp_x ;
+	if( transparency_y )
+		*transparency_y = transp_y ;
 	return result;
 }
 
@@ -1108,10 +1108,10 @@ get_dpy_window_position (Display *window_dpy, Window root, Window w, int *px, in
 #ifndef X_DISPLAY_MISSING
 static unsigned char *scratch_ximage_data = NULL ;
 static int scratch_use_count = 0 ;
-static size_t scratch_ximage_allocated_size = 0;  
-#endif 
-static size_t scratch_ximage_max_size = ASSHM_SAVED_MAX*2;  /* maximum of 512 KBytes is default  */  
-static size_t scratch_ximage_normal_size = ASSHM_SAVED_MAX;  /* normal usage of scratch pool is 256 KBytes is default  */  
+static size_t scratch_ximage_allocated_size = 0;
+#endif
+static size_t scratch_ximage_max_size = ASSHM_SAVED_MAX*2;  /* maximum of 512 KBytes is default  */
+static size_t scratch_ximage_normal_size = ASSHM_SAVED_MAX;  /* normal usage of scratch pool is 256 KBytes is default  */
 
 int
 set_scratch_ximage_max_size( int new_max_size )
@@ -1133,16 +1133,16 @@ set_scratch_ximage_normal_size( int new_normal_size )
 static void*
 get_scratch_data(size_t size)
 {
-	if( scratch_ximage_max_size < size || scratch_use_count > 0) 
+	if( scratch_ximage_max_size < size || scratch_use_count > 0)
 		return NULL;
-	if( scratch_ximage_allocated_size < size ) 
+	if( scratch_ximage_allocated_size < size )
 	{
 		scratch_ximage_allocated_size = size ;
 		scratch_ximage_data = realloc( scratch_ximage_data, size );
 	}
-	
+
 	++scratch_use_count;
-	return scratch_ximage_data ; 
+	return scratch_ximage_data ;
 }
 
 static Bool
@@ -1154,11 +1154,11 @@ release_scratch_data( void *data )
 	if( scratch_use_count == 0 )
 	{
 		/* want to deallocate if too much is allocated ? */
-		
-	}	 
+
+	}
 	return True;
-}	 
-#endif 
+}
+#endif
 
 #ifdef XSHMIMAGE
 
@@ -1222,7 +1222,7 @@ void remove_shm_area( ASShmArea *area, Bool free_resources )
 
 void flush_shm_cache( )
 {
-	if( xshmimage_images ) 
+	if( xshmimage_images )
 		destroy_ashash( &xshmimage_images );
 	if( xshmimage_segments )
 		destroy_ashash( &xshmimage_segments );
@@ -1369,7 +1369,7 @@ void disable_shmem_images()
 	_as_use_shm_images = False ;
 }
 
-Bool 
+Bool
 check_shmem_images_enabled()
 {
 	return _as_use_shm_images ;
@@ -1393,18 +1393,18 @@ int destroy_xshm_image( XImage *ximage )
 	return 1;
 }
 
-unsigned long 
+unsigned long
 ximage2shmseg( XImage *xim )
 {
 	void *vptr = NULL ;
-	if( get_hash_item( xshmimage_images, AS_HASHABLE(xim), &vptr ) == ASH_Success )		
+	if( get_hash_item( xshmimage_images, AS_HASHABLE(xim), &vptr ) == ASH_Success )
 	{
 		ASXShmImage *data = (ASXShmImage *)vptr ;
-		if( data->segment ) 
-			return data->segment->shmseg;	
-	}	
-	return 0; 
-}	 
+		if( data->segment )
+			return data->segment->shmseg;
+	}
+	return 0;
+}
 
 void registerXShmImage( ASVisual *asv, XImage *ximage, XShmSegmentInfo* shminfo )
 {
@@ -1511,7 +1511,7 @@ XImage * ASGetXImage( ASVisual *asv, Drawable d,
 	return XGetImage( asv->dpy, d, x, y, width, height, plane_mask, ZPixmap );
 #else
 	return NULL ;
-#endif	
+#endif
 }
 
 #endif                                         /* XSHMIMAGE */
@@ -1546,7 +1546,7 @@ create_visual_ximage( ASVisual *asv, unsigned int width, unsigned int height, un
 #if 0
 	unit = asv->dpy->bitmap_unit;
 #else
-	if( depth == 0 ) 
+	if( depth == 0 )
 		unit = (asv->true_depth+7)&0x0038;
 	else
 		unit = (depth+7)&0x0038;
@@ -1612,7 +1612,7 @@ create_visual_ximage( ASVisual *asv, unsigned int width, unsigned int height, un
 	return NULL ;
 #endif /*ifndef X_DISPLAY_MISSING */
 }
-/* this is the vehicle to use static allocated buffer for temporary XImages 
+/* this is the vehicle to use static allocated buffer for temporary XImages
  * in order to reduce XImage meory allocation overhead */
 XImage*
 create_visual_scratch_ximage( ASVisual *asv, unsigned int width, unsigned int height, unsigned int depth )
@@ -1636,26 +1636,26 @@ create_visual_scratch_ximage( ASVisual *asv, unsigned int width, unsigned int he
 		unit = 32 ;
 #endif
 
-	/* for shared memory XImage we already do caching - no need for scratch ximage */	   
+	/* for shared memory XImage we already do caching - no need for scratch ximage */
 #ifdef XSHMIMAGE
 	if( _as_use_shm_images )
 		return create_visual_ximage( asv, width, height, depth );
 #endif
-		   
+
 	if( ximage == NULL )
 	{
-		ximage = XCreateImage (asv->dpy, asv->visual_info.visual, 
-			                   (depth==0)?asv->visual_info.depth/*true_depth*/:depth, ZPixmap, 
+		ximage = XCreateImage (asv->dpy, asv->visual_info.visual,
+			                   (depth==0)?asv->visual_info.depth/*true_depth*/:depth, ZPixmap,
 							   0, NULL, MAX(width,(unsigned int)1), MAX(height,(unsigned int)1),
 						   	   unit, 0);
 		if (ximage != NULL)
 		{
 			data = get_scratch_data(ximage->bytes_per_line * ximage->height);
-			if( data == NULL ) 
+			if( data == NULL )
 			{
-				XFree ((char *)ximage);	
+				XFree ((char *)ximage);
 				return create_visual_ximage( asv, width, height, depth );/* fall back */
-			}	 
+			}
 			_XInitImageFuncPtrs (ximage);
 			ximage->obdata = NULL;
 			ximage->f.destroy_image = My_XDestroyImage;
@@ -2021,7 +2021,7 @@ void scanline2ximage32( ASVisual *asv, XImage *xim, ASScanline *sl, int y,  regi
 	if( asv->msb_first )
 #endif
 		while( --i >= 0)
-		{ 
+		{
 			src[i] = (b[i]<<24)|(g[i]<<16)|(r[i]<<8)|a[i];
 /*			fprintf( stderr, "[%d->%8.8X %8.8X %8.8X %8.8X = %8.8X]", i, r[i], g[i], b[i], a[i], src[i]);  */
 		}

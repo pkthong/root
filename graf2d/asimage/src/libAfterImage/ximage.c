@@ -16,14 +16,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #include "win32/config.h"
 #else
 #include "config.h"
 #endif
 
 #undef LOCAL_DEBUG
-#define DO_CLOCKING 
+#define DO_CLOCKING
 
 #ifdef DO_CLOCKING
 #if TIME_WITH_SYS_TIME
@@ -48,7 +48,7 @@
 #endif
 
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 # include "win32/afterbase.h"
 #else
 # include "afterbase.h"
@@ -80,8 +80,8 @@ picture_ximage2asimage (ASVisual *asv, XImage *xim, XImage *alpha_xim, unsigned 
 #define PRINT_BACKGROUND_OP_TIME do{ struct timeval tv;gettimeofday (&tv,NULL); tv.tv_sec-= stv.tv_sec;\
                                      fprintf (stderr,__FILE__ "%d: elapsed  %ld usec\n",__LINE__,\
                                               tv.tv_sec*1000000+tv.tv_usec-stv.tv_usec );}while(0)
-#else                                           
-#define PRINT_BACKGROUND_OP_TIME do{}while(0)                                          
+#else
+#define PRINT_BACKGROUND_OP_TIME do{}while(0)
 #endif
 
 	if( xim && alpha_xim )
@@ -111,19 +111,19 @@ PRINT_BACKGROUND_OP_TIME;
 /* unfortunately this method does not seem to yield any better results performancewise: */
 			if (asv->true_depth == 32 || asv->true_depth == 24)
 			{
-				if( asv->msb_first ) 
+				if( asv->msb_first )
 				{
 				}else
 					asimage_add_line_bgra (im, xim_line, i);
-			}else 
-#endif			
+			}else
+#endif
 			if( xim->depth == (int)asv->true_depth )
 			{
 			    GET_SCANLINE(asv,xim,&xim_buf,i,xim_line);
     		    asimage_add_line (im, IC_RED,   xim_buf.red, i);
 			    asimage_add_line (im, IC_GREEN, xim_buf.green, i);
 			    asimage_add_line (im, IC_BLUE,  xim_buf.blue, i);
-				if( xim->depth == 32 && alpha_xim == NULL ) 
+				if( xim->depth == 32 && alpha_xim == NULL )
 				    asimage_add_line (im, IC_ALPHA,  xim_buf.alpha, i);
 #ifdef LOCAL_DEBUG
 			    if( !asimage_compare_line( im, IC_RED,  xim_buf.red, tmp, i, True ) )
@@ -228,15 +228,15 @@ subimage2ximage (ASVisual *asv, ASImage *im, int x, int y, XImage* xim)
 LOCAL_DEBUG_OUT( "Attempt to convert NULL ASImage into XImage.", "" );
 		return False;
 	}
-	if( x >= (int)im->width || y >= (int)im->height ) 
+	if( x >= (int)im->width || y >= (int)im->height )
 		return False;
 	width = xim->width ;
-	if( width > (int)im->width - x) 
-		width = (int)im->width - x;		   
+	if( width > (int)im->width - x)
+		width = (int)im->width - x;
 	width = ( x > (int)im->width - width )?im->width - width:im->width - x ;
 	height = xim->height ;
-	if( height > (int)im->height - y ) 
-		height = im->height - y ;		
+	if( height > (int)im->height - y )
+		height = im->height - y ;
 	scratch_im = create_asimage( width, height, 0);
 	scratch_im->alt.ximage = xim ;
 LOCAL_DEBUG_OUT( "target width = %d, height = %d", width, height );
@@ -261,10 +261,10 @@ LOCAL_DEBUG_OUT( "Failed to start ASImageOutput for ASImage %p and ASVisual %p",
 			xim_set_component( xim_buf.green, ARGB32_GREEN8(im->back_color), count, xim_buf.width );
 		if( (count = asimage_decode_line (im, IC_BLUE,  xim_buf.blue, i, x, xim_buf.width)) < (int)xim_buf.width )
 			xim_set_component( xim_buf.blue, ARGB32_BLUE8(im->back_color), count, xim_buf.width );
-		if( xim->depth == 32 ) 
+		if( xim->depth == 32 )
 			if( (count = asimage_decode_line (im, IC_ALPHA,  xim_buf.alpha, i, x, xim_buf.width)) < (int)xim_buf.width )
 				xim_set_component( xim_buf.alpha, ARGB32_ALPHA8(im->back_color), count, xim_buf.width );
-			
+
 		imout->output_image_scanline( imout, &xim_buf, 1 );
 /*		LOCAL_DEBUG_OUT( "line %d, count = %d", i, count ); */
 	}
@@ -309,18 +309,18 @@ LOCAL_DEBUG_OUT( "Failed to start ASImageOutput for ASImage %p and ASVisual %p",
 	started = clock ();
 #endif*/
 #if	1
-	if ((imdec = start_image_decoding(  asv, im, (xim->depth >= 24)?SCL_DO_ALL:SCL_DO_COLOR, 
+	if ((imdec = start_image_decoding(  asv, im, (xim->depth >= 24)?SCL_DO_ALL:SCL_DO_COLOR,
 										0, 0, im->width, im->height, NULL)) != NULL )
-	{	 
+	{
 		for (i = 0; i < (int)im->height; i++)
-		{	
-			imdec->decode_image_scanline( imdec ); 
+		{
+			imdec->decode_image_scanline( imdec );
 			imout->output_image_scanline( imout, &(imdec->buffer), 1);
 		}
 		stop_image_decoding( &imdec );
 	}
-#else	  
-	{	
+#else
+	{
 		ASScanline     xim_buf;
 		prepare_scanline( im->width, 0, &xim_buf, asv->BGR_mode );
 		set_flags( xim_buf.flags, SCL_DO_ALL );
@@ -333,7 +333,7 @@ LOCAL_DEBUG_OUT( "Failed to start ASImageOutput for ASImage %p and ASVisual %p",
 				xim_set_component( xim_buf.green, ARGB32_GREEN8(im->back_color), count, xim_buf.width );
 			if( (count = asimage_decode_line (im, IC_BLUE,  xim_buf.blue, i, 0, xim_buf.width)) < (int)xim_buf.width )
 				xim_set_component( xim_buf.blue, ARGB32_BLUE8(im->back_color), count, xim_buf.width );
-			if( xim->depth == 32 ) 
+			if( xim->depth == 32 )
 				if( (count = asimage_decode_line (im, IC_ALPHA,  xim_buf.alpha, i, 0, xim_buf.width)) < (int)xim_buf.width )
 					xim_set_component( xim_buf.alpha, ARGB32_ALPHA8(im->back_color), count, xim_buf.width );
 			imout->output_image_scanline( imout, &xim_buf, 1 );
@@ -355,7 +355,7 @@ LOCAL_DEBUG_OUT( "Failed to start ASImageOutput for ASImage %p and ASVisual %p",
 XImage*
 asimage2ximage (ASVisual *asv, ASImage *im)
 {
-	return asimage2ximage_ext (asv, im, False);	
+	return asimage2ximage_ext (asv, im, False);
 }
 
 XImage*
@@ -509,7 +509,7 @@ put_ximage( ASVisual *asv, XImage *xim, Drawable d, GC gc,
 Bool
 asimage2drawable_gl(	ASVisual *asv, Drawable d, ASImage *im,
                   		int src_x, int src_y, int dest_x, int dest_y,
-        		  		int width, int height, int d_width, int d_height, 
+        		  		int width, int height, int d_width, int d_height,
 						Bool force_direct )
 {
 	if( im != NULL && get_flags( asv->glx_support, ASGLX_Available ) && d != None )
@@ -519,48 +519,48 @@ asimage2drawable_gl(	ASVisual *asv, Drawable d, ASImage *im,
 		CARD8 *glbuf = NULL;
 		ASImageDecoder *imdec  = NULL ;
 		GLXPixmap glxp = None;
-		
-		if ((imdec = start_image_decoding( asv, im, 
-									   	get_flags( asv->glx_support, ASGLX_RGBA )?SCL_DO_ALL:SCL_DO_COLOR, 
+
+		if ((imdec = start_image_decoding( asv, im,
+									   	get_flags( asv->glx_support, ASGLX_RGBA )?SCL_DO_ALL:SCL_DO_COLOR,
 									   	src_x, src_y, width, height, NULL)) != NULL )
-		{	 
+		{
 			int i, l = glbuf_size;
 			glbuf = safemalloc( glbuf_size );
 			for (i = 0; i < (int)height; i++)
-			{	
+			{
 				int k = width;
-				imdec->decode_image_scanline( imdec ); 
-				if( get_flags( asv->glx_support, ASGLX_RGBA ) ) 
-				{	  
-					while( --k >= 0 ) 
+				imdec->decode_image_scanline( imdec );
+				if( get_flags( asv->glx_support, ASGLX_RGBA ) )
+				{
+					while( --k >= 0 )
 					{
 						glbuf[--l] = imdec->buffer.alpha[k] ;
 						glbuf[--l] = imdec->buffer.blue[k] ;
 						glbuf[--l] = imdec->buffer.green[k] ;
 						glbuf[--l] = imdec->buffer.red[k] ;
-					}	 
+					}
 				}else
-				{	
-					while( --k >= 0 ) 
+				{
+					while( --k >= 0 )
 					{
 						glbuf[--l] = imdec->buffer.blue[k] ;
 						glbuf[--l] = imdec->buffer.green[k] ;
 						glbuf[--l] = imdec->buffer.red[k] ;
-					}	 
+					}
 				}
 			}
 			stop_image_decoding( &imdec );
 		}else
 			return False;
 
-		if( !force_direct ) 
-		{	
+		if( !force_direct )
+		{
 			glxp = glXCreateGLXPixmap( asv->dpy, &(asv->visual_info), d);
 			/* d is either invalid drawable or is a window */
-			if( glxp == None ) 
-				force_direct = True ; 
-		}                      
-		if( glxp == None ) 
+			if( glxp == None )
+				force_direct = True ;
+		}
+		if( glxp == None )
 		{
 			if( asv->glx_scratch_gc_direct	!= NULL )
 				glXMakeCurrent (asv->dpy, d, asv->glx_scratch_gc_direct);
@@ -568,11 +568,11 @@ asimage2drawable_gl(	ASVisual *asv, Drawable d, ASImage *im,
 				glXMakeCurrent (asv->dpy, d, asv->glx_scratch_gc_indirect);
 		}else
 			glXMakeCurrent (asv->dpy, glxp, asv->glx_scratch_gc_indirect);
-		
-		if( glGetError() != 0 ) 
+
+		if( glGetError() != 0 )
 			return False;
 
-  		if ( get_flags( asv->glx_support, ASGLX_DoubleBuffer ) ) 
+  		if ( get_flags( asv->glx_support, ASGLX_DoubleBuffer ) )
    			glDrawBuffer (GL_FRONT);
 
 		glDisable(GL_BLEND);		/* optimize pixel transfer rates */
@@ -595,11 +595,11 @@ asimage2drawable_gl(	ASVisual *asv, Drawable d, ASImage *im,
 		{
 			/* now put pixels on */
 			glRasterPos2i( dest_x, d_height - (dest_y+height) );
-			glDrawPixels(   width, height, 
-							get_flags( asv->glx_support, ASGLX_RGBA )?GL_RGBA:GL_RGB, 
+			glDrawPixels(   width, height,
+							get_flags( asv->glx_support, ASGLX_RGBA )?GL_RGBA:GL_RGB,
 							GL_UNSIGNED_BYTE, glbuf );
 		}else
-#endif		
+#endif
 		{ /* this stuff might be faster : */
 			GLuint texture ;
 
@@ -607,16 +607,16 @@ asimage2drawable_gl(	ASVisual *asv, Drawable d, ASImage *im,
 
 #if TARGET_TEXTURE_ID!=GL_TEXTURE_2D
 			glEnable(GL_TEXTURE_2D);
-#endif			
+#endif
 			glEnable(TARGET_TEXTURE_ID);
 			glGenTextures(1, &texture);
 
 			glBindTexture(TARGET_TEXTURE_ID, texture);
 	    	glTexParameteri(TARGET_TEXTURE_ID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	     	glTexParameteri(TARGET_TEXTURE_ID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexImage2D(TARGET_TEXTURE_ID, 0, get_flags( asv->glx_support, ASGLX_RGBA )?GL_RGBA:GL_RGB, 
+			glTexImage2D(TARGET_TEXTURE_ID, 0, get_flags( asv->glx_support, ASGLX_RGBA )?GL_RGBA:GL_RGB,
 					      /* width and height must be the power of 2 !!! */
-						  width, height, 
+						  width, height,
 						  0, GL_RGBA, GL_UNSIGNED_BYTE, glbuf);
 
 		 	glBegin(GL_QUADS);
@@ -625,26 +625,26 @@ asimage2drawable_gl(	ASVisual *asv, Drawable d, ASImage *im,
 			/* bottom-right */
 		   	glTexCoord2d(1.0, 0.0); glVertex2i(dest_x+width, d_height - (dest_y+height));
 			/* top-right */
-		   	glTexCoord2d(1.0, 1.0); glVertex2i(dest_x+width, d_height - dest_y);    
-			/* top-left */ 
+		   	glTexCoord2d(1.0, 1.0); glVertex2i(dest_x+width, d_height - dest_y);
+			/* top-left */
 		   	glTexCoord2d(0.0, 1.0); glVertex2i(dest_x, d_height - dest_y);
 		   	glEnd();
 
 			glBindTexture(TARGET_TEXTURE_ID, 0);
 			glFinish();
-		}							
+		}
 
 		free( glbuf );
-		glXMakeCurrent (asv->dpy, None, NULL);	  
-		if( glxp ) 
+		glXMakeCurrent (asv->dpy, None, NULL);
+		if( glxp )
 			glXDestroyGLXPixmap( asv->dpy, glxp);
-		glFinish(); 				   
+		glFinish();
 		return True;
 #endif /* #ifdef HAVE_GLX */
 	}
 	{
-		static Bool warning_shown = False ; 
-		if( !warning_shown ) 
+		static Bool warning_shown = False ;
+		if( !warning_shown )
 		{
 			warning_shown = True ;
 			show_warning( "Support for GLX is unavailable.");
@@ -678,7 +678,7 @@ asimage2drawable( ASVisual *asv, Drawable d, ASImage *im, GC gc,
 		if (xim != NULL )
 		{
             res = put_ximage( asv, xim, d, gc,  src_x, src_y, dest_x, dest_y, width, height );
-			if( my_xim && xim == im->alt.ximage ) 
+			if( my_xim && xim == im->alt.ximage )
 				im->alt.ximage = NULL ;
 			if( xim != im->alt.ximage )
 				XDestroyImage (xim);

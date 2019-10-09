@@ -21,7 +21,7 @@
 #undef LOCAL_DEBUG
 #undef DO_CLOCKING
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #include "win32/config.h"
 #include <io.h>
 #define read _read
@@ -66,7 +66,7 @@
 #endif
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 # include "win32/afterbase.h"
 #else
 # include "afterbase.h"
@@ -346,7 +346,7 @@ get_xpm_char( ASXpmFile *xpm_file )
 			for( i = 0 ; i < AS_XPM_BUFFER_UNDO ; i++ )
 				dst[i] = src[i];
 /*			xpm_file->bytes_in = AS_XPM_BUFFER_UNDO+fread( &(xpm_file->buffer[AS_XPM_BUFFER_UNDO]), 1, AS_XPM_BUFFER_SIZE, xpm_file->fp );*/
-			xpm_file->bytes_in = xpm_file->data ?  AS_XPM_BUFFER_UNDO + strlen(*xpm_file->data) : 
+			xpm_file->bytes_in = xpm_file->data ?  AS_XPM_BUFFER_UNDO + strlen(*xpm_file->data) :
                                  AS_XPM_BUFFER_UNDO+read( xpm_file->fd, &(xpm_file->buffer[AS_XPM_BUFFER_UNDO]), AS_XPM_BUFFER_SIZE );
 			xpm_file->curr_byte = AS_XPM_BUFFER_UNDO ;
 		}
@@ -822,7 +822,7 @@ build_xpm_colormap( ASXpmFile *xpm_file )
 	{
 		xpm_color_names = create_ashash( 0, casestring_hash_value, casestring_compare, NULL );
 		for( i = 0 ; XpmRGB_Colors[i].name != NULL ; i++ )
-			add_hash_item( xpm_color_names, (ASHashableValue)XpmRGB_Colors[i].name, (void*)((long)XpmRGB_Colors[i].argb) );
+			add_hash_item( xpm_color_names, (ASHashableValue)XpmRGB_Colors[i].name, (void*)((uintptr_t)XpmRGB_Colors[i].argb) );
 	}
 
 	for( i = 0 ; i < xpm_file->cmap_size ; ++i )
@@ -835,8 +835,8 @@ build_xpm_colormap( ASXpmFile *xpm_file )
  LOCAL_DEBUG_OUT( "cmap[%d]: 0x%X\n",  i, color );
 			xpm_file->cmap[i] = color;
 			if( ARGB32_ALPHA8(color) != 0x00FF )
-			{	
-				if( ARGB32_ALPHA8(color) != 0 ) 
+			{
+				if( ARGB32_ALPHA8(color) != 0 )
 					xpm_file->full_alpha = True ;
 				xpm_file->do_alpha = True ;
 			}
@@ -865,7 +865,7 @@ LOCAL_DEBUG_OUT( "\t\tcolor = 0x%8.8lX\n",  color );
 		{
 			char *name = mystrndup(xpm_file->str_buf, xpm_file->bpp);
 LOCAL_DEBUG_OUT( "\t\tname = \"%s\"\n", name );
-			add_hash_item( xpm_file->cmap_name_xref, (ASHashableValue)name, (void*)((long)color) );
+			add_hash_item( xpm_file->cmap_name_xref, (ASHashableValue)name, (void*)((uintptr_t)color) );
 		}
 #endif
 	}

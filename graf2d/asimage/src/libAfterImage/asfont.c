@@ -18,7 +18,7 @@
 #undef LOCAL_DEBUG
 #undef DO_CLOCKING
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #include "win32/config.h"
 #else
 #include "config.h"
@@ -75,7 +75,7 @@
 
 #define INCLUDE_ASFONT_PRIVATE
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 # include "win32/afterbase.h"
 #else
 # include "afterbase.h"
@@ -217,7 +217,7 @@ LOCAL_DEBUG_OUT( "face found : %p", face );
 					font->flags = flags ;
 					font->ft_face = face ;
 					if( FT_HAS_KERNING( face ) )
-					{	
+					{
 						set_flags( font->flags, ASF_HasKerning );
 						/* fprintf( stderr, "@@@@@@@font %s has kerning!!!\n", realfilename );*/
 					}/*else
@@ -242,7 +242,7 @@ LOCAL_DEBUG_OUT( "face found : %p", face );
 ASFont*
 open_freetype_font( ASFontManager *fontman, const char *font_string, int face_no, int size, Bool verbose)
 {
-	return open_freetype_font_int( fontman, font_string, face_no, size, verbose, 0);	
+	return open_freetype_font_int( fontman, font_string, face_no, size, verbose, 0);
 }
 
 static ASFont*
@@ -250,15 +250,15 @@ open_X11_font_int( ASFontManager *fontman, const char *font_string, ASFlagType f
 {
 	ASFont *font = NULL ;
 #ifndef X_DISPLAY_MISSING
-/* 
+/*
     #ifdef I18N
      TODO: we have to use FontSet and loop through fonts instead filling
-           up 2 bytes per character table with glyphs 
-    #else 
+           up 2 bytes per character table with glyphs
+    #else
 */
     /* for now assume ISO Latin 1 encoding */
 	XFontStruct *xfs ;
-	if( fontman->dpy == NULL ) 
+	if( fontman->dpy == NULL )
 		return NULL;
 	if( (xfs = XLoadQueryFont( fontman->dpy, font_string )) == NULL )
 	{
@@ -646,7 +646,7 @@ antialias_glyph( unsigned char *buffer, unsigned int width, unsigned int height 
 }
 #endif
 
-static void 
+static void
 scale_down_glyph_width( unsigned char *buffer, int from_width, int to_width, int height )
 {
     int smaller = to_width;
@@ -660,18 +660,18 @@ scale_down_glyph_width( unsigned char *buffer, int from_width, int to_width, int
 	for( l = 0 ; l < height ; ++l )
 	{
 		unsigned char *ptr = &(buffer[l*from_width]) ;
-		CARD32 sum = 0;	  
+		CARD32 sum = 0;
 		int count = 0 ;
 		int eps = -bigger/2;
-		
+
 		k = 0 ;
 		for ( i = 0 ; i < bigger ; i++ )
 		{
 			/* add next elem here */
 			sum += (unsigned int)ptr[i] ;
-			++count ;			   
+			++count ;
 			eps += smaller;
-	        
+
 			if( eps+eps >= bigger )
 			{
 				/* divide here */
@@ -681,18 +681,18 @@ scale_down_glyph_width( unsigned char *buffer, int from_width, int to_width, int
 				count = 0 ;
 				++k ;
 				eps -= bigger ;
-			}		
-		}	  
+			}
+		}
 	}
 	/* now we need to compress the pixmap */
-	
+
 	l = to_width ;
 	k = from_width ;
 	do
 	{
 		for( i = 0 ; i < to_width; ++i )
-			buffer[l+i] = buffer[k+i];			
-		l += to_width ; 
+			buffer[l+i] = buffer[k+i];
+		l += to_width ;
 		k += from_width ;
 	}while( l < to_width*height );
 }
@@ -828,10 +828,10 @@ LOCAL_DEBUG_OUT( "loading glyph range of %lu-%lu", r->min_char, r->max_char );
 			if( get_flags( font->flags, ASF_Monospaced ) )
 			{
 				if( r->glyphs[i].lead > 0 && (int)width + (int)r->glyphs[i].lead > (int)font->space_size )
-					if( r->glyphs[i].lead > (int)font->space_size/8 ) 
+					if( r->glyphs[i].lead > (int)font->space_size/8 )
 						r->glyphs[i].lead = (int)font->space_size/8 ;
 				if( (int)width + r->glyphs[i].lead > (int)font->space_size )
-				{	
+				{
 					r->glyphs[i].width = (int)font->space_size - r->glyphs[i].lead ;
 /*					fprintf(stderr, "lead = %d, space_size = %d, width = %d, to_width = %d\n",
 							r->glyphs[i].lead, font->space_size, width, r->glyphs[i].width ); */
@@ -843,7 +843,7 @@ LOCAL_DEBUG_OUT( "loading glyph range of %lu-%lu", r->min_char, r->max_char );
 							r->glyphs[i].lead, font->space_size, width );
 				}	 */
 				r->glyphs[i].step = font->space_size ;
-			}	 
+			}
 			r->glyphs[i].pixmap = compress_glyph_pixmap( buffer, compressed_buf, r->glyphs[i].width, height, r->glyphs[i].width );
 			r->glyphs[i].height = height ;
 			r->glyphs[i].ascend = xfs->ascent ;
@@ -1010,15 +1010,15 @@ load_glyph_freetype( ASFont *font, ASGlyph *asg, int glyph, UNICODE_CHAR uc )
 	static CARD8 *glyph_compress_buf = NULL, *glyph_scaling_buf = NULL ;
 	static int glyph_compress_buf_size = 0, glyph_scaling_buf_size = 0;
 
-	if( font == NULL ) 
-	{	
+	if( font == NULL )
+	{
 		if( glyph_compress_buf )
-		{	
+		{
 			free( glyph_compress_buf );
-			glyph_compress_buf = NULL ; 
+			glyph_compress_buf = NULL ;
 		}
-		if( glyph_scaling_buf ) 
-		{	
+		if( glyph_scaling_buf )
+		{
 			free( glyph_scaling_buf );
 			glyph_scaling_buf = NULL ;
 		}
@@ -1041,21 +1041,21 @@ load_glyph_freetype( ASFont *font, ASGlyph *asg, int glyph, UNICODE_CHAR uc )
 		int src_step ;
 /* 		int hpad = (face->glyph->bitmap_left<0)? -face->glyph->bitmap_left: face->glyph->bitmap_left ;
 */
-		asg->font_gid = glyph ; 
+		asg->font_gid = glyph ;
 		asg->width   = bmap->width ;
 		asg->height  = bmap->rows ;
 		/* Combining Diacritical Marks : */
-		if( uc >= 0x0300 && uc <= 0x0362 ) 
-			asg->step = 0 ; 
+		if( uc >= 0x0300 && uc <= 0x0362 )
+			asg->step = 0 ;
 		else
-#if 0			
+#if 0
 			asg->step = bmap->width+face->glyph->bitmap_left ;
 #else
 			asg->step = (short)face->glyph->advance.x>>6 ;
 #endif
-				
+
 		/* we only want to keep lead if it was negative */
-		if( uc >= 0x0300 && uc <= 0x0362 && face->glyph->bitmap_left >= 0 ) 
+		if( uc >= 0x0300 && uc <= 0x0362 && face->glyph->bitmap_left >= 0 )
 			asg->lead    = -((int)font->space_size - (int)face->glyph->bitmap_left) ;
 		else
 			asg->lead    = face->glyph->bitmap_left;
@@ -1067,27 +1067,27 @@ load_glyph_freetype( ASFont *font, ASGlyph *asg, int glyph, UNICODE_CHAR uc )
 		/* TODO: insert monospaced adjastments here */
 		if( get_flags( font->flags, ASF_Monospaced ) && ( uc < 0x0300 || uc > 0x0362 ) )
 		{
-			if( asg->lead < 0 ) 
-			{		
-				if( asg->lead < -(int)font->space_size/8 ) 
+			if( asg->lead < 0 )
+			{
+				if( asg->lead < -(int)font->space_size/8 )
 					asg->lead = -(int)font->space_size/8 ;
 				if( (int)asg->width + asg->lead <= (int)font->space_size )
-				{	
+				{
 					asg->lead = (int)font->space_size - (int)asg->width ;
-					if( asg->lead > 0 ) 
+					if( asg->lead > 0 )
 						asg->lead /= 2 ;
 				}
 			}else
-			{	
+			{
 			 	if( (int)asg->width + (int)asg->lead > (int)font->space_size )
-				{	
-					if( asg->lead > (int)font->space_size/8 ) 
+				{
+					if( asg->lead > (int)font->space_size/8 )
 						asg->lead = (int)font->space_size/8 ;
 				}else                          /* centering the glyph : */
 					asg->lead += ((int)font->space_size - ((int)asg->width+asg->lead))/2 ;
-			}	
+			}
 			if( (int)asg->width + asg->lead > (int)font->space_size )
-			{	
+			{
 				register CARD8 *buf ;
 				int i ;
 				asg->width = (int)font->space_size - asg->lead ;
@@ -1095,16 +1095,16 @@ load_glyph_freetype( ASFont *font, ASGlyph *asg, int glyph, UNICODE_CHAR uc )
 				{
 					glyph_scaling_buf_size = bmap->width*bmap->rows*2;
 					glyph_scaling_buf = realloc( glyph_scaling_buf, glyph_scaling_buf_size );
-				}	 
+				}
 				buf = &(glyph_scaling_buf[0]);
-				for( i = 0 ; i < bmap->rows ; ++i ) 
+				for( i = 0 ; i < bmap->rows ; ++i )
 				{
 					int k = bmap->width;
-					while( --k >= 0 ) 
+					while( --k >= 0 )
 						buf[k] = src[k] ;
 					buf += bmap->width ;
-					src += src_step ;					   
-				}						
+					src += src_step ;
+				}
 				src = &(glyph_scaling_buf[0]);
 				scale_down_glyph_width( src, bmap->width, asg->width, asg->height );
 				src_step = asg->width ;
@@ -1117,21 +1117,21 @@ load_glyph_freetype( ASFont *font, ASGlyph *asg, int glyph, UNICODE_CHAR uc )
 						r->glyphs[i].lead, font->space_size, width );
 			}	 */
 			asg->step = font->space_size ;
-		}	 
+		}
 
-		
+
 		if( glyph_compress_buf_size  < asg->width*asg->height*3 )
 		{
 			glyph_compress_buf_size = asg->width*asg->height*3;
 			glyph_compress_buf = realloc( glyph_compress_buf, glyph_compress_buf_size );
-		}	 
-	
+		}
+
 		/* we better do some RLE encoding in attempt to preserv memory */
 		asg->pixmap  = compress_glyph_pixmap( src, glyph_compress_buf, asg->width, asg->height, src_step );
 		asg->ascend  = face->glyph->bitmap_top;
 		asg->descend = bmap->rows - asg->ascend;
-		LOCAL_DEBUG_OUT( "glyph %p with FT index %u is %dx%d ascend = %d, lead = %d, bmap_top = %d", 
-							asg, glyph, asg->width, asg->height, asg->ascend, asg->lead, 
+		LOCAL_DEBUG_OUT( "glyph %p with FT index %u is %dx%d ascend = %d, lead = %d, bmap_top = %d",
+							asg, glyph, asg->width, asg->height, asg->ascend, asg->lead,
 							face->glyph->bitmap_top );
 	}
 }
@@ -1231,12 +1231,12 @@ load_freetype_glyphs( ASFont *font )
 			long min_char = r->min_char ;
 			long max_char = r->max_char ;
 			long i ;
-			if( max_char < min_char ) 
+			if( max_char < min_char )
 			{
-				i = max_char ; 
-				max_char = min_char ; 
-				min_char = i ;	 
-			}	 
+				i = max_char ;
+				max_char = min_char ;
+				min_char = i ;
+			}
             r->glyphs = safecalloc( (max_char - min_char) + 1, sizeof(ASGlyph));
 			for( i = min_char ; i < max_char ; ++i )
 			{
@@ -1423,19 +1423,19 @@ goto_tab_stop( ASTextAttributes *attr, unsigned int space_size, unsigned int lin
 {
 	unsigned int tab_size = attr->tab_size*space_size ;
 	unsigned int tab_stop = (((attr->origin + line_width)/tab_size)+1)*tab_size ;
-	if( attr->tab_stops != NULL && attr->tab_stops_num > 0 ) 	
+	if( attr->tab_stops != NULL && attr->tab_stops_num > 0 )
 	{
 		unsigned int i ;
-		for( i = 0 ; i < attr->tab_stops_num ; ++i ) 
-		{	
+		for( i = 0 ; i < attr->tab_stops_num ; ++i )
+		{
 			if( attr->tab_stops[i] < line_width )
 				continue;
-			if( attr->tab_stops[i] < tab_stop ) 
+			if( attr->tab_stops[i] < tab_stop )
 				tab_stop = attr->tab_stops[i] ;
 			break;
 		}
 	}
-	return tab_stop;		
+	return tab_stop;
 }
 
 #ifdef HAVE_FREETYPE
@@ -1446,7 +1446,7 @@ goto_tab_stop( ASTextAttributes *attr, unsigned int space_size, unsigned int lin
 		(var) = (short)(delta.x >> 6); \
 	}}while(0)
 #else
-#define GET_KERNING(var,prev_gid,this_gid)	do{(var)=0;}while(0)	  
+#define GET_KERNING(var,prev_gid,this_gid)	do{(var)=0;}while(0)
 #endif
 /*		fprintf( stderr, "####### pair %d ,%d 	has kerning = %d\n", prev_gid,this_gid, var ); */
 
@@ -1551,13 +1551,13 @@ get_text_glyph_list (const char *text, ASFont *font, ASCharType char_type, int l
 {
 	ASGlyph** glyphs = NULL;
 	int i = 0;
-	
+
 	if (text == NULL || font == NULL)
 		return NULL;
 	if (length <= 0)
 		if ((length = get_text_length (char_type, text)) <= 0)
 			return NULL;
-	
+
 	glyphs = safecalloc( length+1, sizeof(ASGlyph*));
 	if (char_type == ASCT_Char)
 	{
@@ -1571,15 +1571,15 @@ get_text_glyph_list (const char *text, ASFont *font, ASCharType char_type, int l
 		{
 			glyphs[i] = get_utf8_glyph (ptr, font);
 			ptr += UTF8_CHAR_SIZE(*ptr);
-		}		
+		}
 	}else if( char_type == ASCT_Unicode )
 	{
 		register UNICODE_CHAR *uc_ptr = (UNICODE_CHAR*)text ;
 		for (i = 0 ; i < length ; ++i)
 			glyphs[i] = get_unicode_glyph (uc_ptr[i], font);
 	}
-	
-	return glyphs;			
+
+	return glyphs;
 }
 
 static Bool
@@ -1593,17 +1593,17 @@ get_text_glyph_map (const char *text, ASFont *font, ASGlyphMap *map, ASTextAttri
 
 	if( text == NULL || font == NULL || map == NULL)
 		return False;
-	
+
 	offset_3d_x += font->spacing_x ;
 	offset_3d_y += font->spacing_y ;
-	
+
 	space_size  = font->space_size ;
 	if( !get_flags( font->flags, ASF_Monospaced) )
 		space_size  = (space_size>>1)+1 ;
 	space_size += offset_3d_x;
 
 	map->glyphs_num = 1;
-	if( length <= 0 ) 
+	if( length <= 0 )
 		length = get_text_length (attr->char_type, text);
 
 	map->glyphs_num = 1 + length ;
@@ -1617,7 +1617,7 @@ get_text_glyph_map (const char *text, ASFont *font, ASGlyphMap *map, ASTextAttri
 		line_count = fill_text_glyph_map_Unicode( (UNICODE_CHAR*)text, font, map, attr, space_size, offset_3d_x );
 	else /* assuming attr->char_type == ASCT_Char by default */
 		line_count = fill_text_glyph_map_Char( text, font, map, attr, space_size, offset_3d_x );
-	
+
     map->height = line_count * (font->max_height+offset_3d_y) - font->spacing_y;
 
 	if( map->height <= 0 )
@@ -1673,7 +1673,7 @@ get_text_size_internal( const char *src_text, ASFont *font, ASTextAttributes *at
 	apply_text_3D_type( attr->type, &offset_3d_x, &offset_3d_y );
 	if( src_text == NULL || font == NULL )
 		return False;
-	
+
 	offset_3d_x += font->spacing_x ;
 	offset_3d_y += font->spacing_y ;
 
@@ -1688,7 +1688,7 @@ get_text_size_internal( const char *src_text, ASFont *font, ASTextAttributes *at
 		char *text = (char*)&src_text[0] ;
 #ifdef _MSC_VER
 		GET_TEXT_SIZE_LOOP(get_character_glyph(text[i],font),1,length);
-#else		
+#else
 		GET_TEXT_SIZE_LOOP(get_character_glyph(text[i],font),/* */,length);
 #endif
 	}else if( attr->char_type == ASCT_UTF8 )
@@ -1697,21 +1697,21 @@ get_text_size_internal( const char *src_text, ASFont *font, ASTextAttributes *at
 		int byte_length = 0 ;
 		if( length > 0 )
 		{
-			int k ; 
+			int k ;
 			for( k = 0 ; k < length ; ++k )
 			{
-				if( text[byte_length] == '\0' ) 
+				if( text[byte_length] == '\0' )
 					break;
-				byte_length += UTF8_CHAR_SIZE(text[byte_length]);		   
-			}	 
-		}	 
+				byte_length += UTF8_CHAR_SIZE(text[byte_length]);
+			}
+		}
 		GET_TEXT_SIZE_LOOP(get_utf8_glyph(&text[i],font),i+=UTF8_CHAR_SIZE(text[i])-1,byte_length);
 	}else if( attr->char_type == ASCT_Unicode )
 	{
 		UNICODE_CHAR *text = (UNICODE_CHAR*)&src_text[0] ;
 #ifdef _MSC_VER
 		GET_TEXT_SIZE_LOOP(get_unicode_glyph(text[i],font),1,length);
-#else		   
+#else
 		GET_TEXT_SIZE_LOOP(get_unicode_glyph(text[i],font),/* */,length);
 #endif
 	}
@@ -1732,9 +1732,9 @@ get_text_size_internal( const char *src_text, ASFont *font, ASTextAttributes *at
 Bool
 get_text_size( const char *src_text, ASFont *font, ASText3DType type, unsigned int *width, unsigned int *height )
 {
-	ASTextAttributes attr = {ASTA_VERSION_INTERNAL, 0, 0, ASCT_Char, 8, 0, NULL, 0 }; 
+	ASTextAttributes attr = {ASTA_VERSION_INTERNAL, 0, 0, ASCT_Char, 8, 0, NULL, 0 };
 	attr.type = type ;
-	if( IsUTF8Locale() ) 
+	if( IsUTF8Locale() )
 		attr.char_type = ASCT_UTF8 ;
 	return get_text_size_internal( (char*)src_text, font, &attr, width, height, 0/*autodetect length*/, NULL );
 }
@@ -1742,7 +1742,7 @@ get_text_size( const char *src_text, ASFont *font, ASText3DType type, unsigned i
 Bool
 get_unicode_text_size( const UNICODE_CHAR *src_text, ASFont *font, ASText3DType type, unsigned int *width, unsigned int *height )
 {
-	ASTextAttributes attr = {ASTA_VERSION_INTERNAL, 0, 0, ASCT_Unicode, 8, 0, NULL, 0 }; 
+	ASTextAttributes attr = {ASTA_VERSION_INTERNAL, 0, 0, ASCT_Unicode, 8, 0, NULL, 0 };
 	attr.type = type ;
 	return get_text_size_internal( (char*)src_text, font, &attr, width, height, 0/*autodetect length*/, NULL );
 }
@@ -1750,7 +1750,7 @@ get_unicode_text_size( const UNICODE_CHAR *src_text, ASFont *font, ASText3DType 
 Bool
 get_utf8_text_size( const char *src_text, ASFont *font, ASText3DType type, unsigned int *width, unsigned int *height )
 {
-	ASTextAttributes attr = {ASTA_VERSION_INTERNAL, 0, 0, ASCT_UTF8, 8, 0, NULL, 0 }; 
+	ASTextAttributes attr = {ASTA_VERSION_INTERNAL, 0, 0, ASCT_UTF8, 8, 0, NULL, 0 };
 	attr.type = type ;
 	return get_text_size_internal( (char*)src_text, font, &attr, width, height, 0/*autodetect length*/, NULL );
 }
@@ -1758,18 +1758,18 @@ get_utf8_text_size( const char *src_text, ASFont *font, ASText3DType type, unsig
 Bool
 get_fancy_text_size( const void *src_text, ASFont *font, ASTextAttributes *attr, unsigned int *width, unsigned int *height, int length, int *x_positions )
 {
-	ASTextAttributes internal_attr = {ASTA_VERSION_INTERNAL, 0, 0, ASCT_Char, 8, 0, NULL, 0 }; 
-	if( attr != NULL ) 
-	{	
+	ASTextAttributes internal_attr = {ASTA_VERSION_INTERNAL, 0, 0, ASCT_Char, 8, 0, NULL, 0 };
+	if( attr != NULL )
+	{
 		internal_attr = *attr;
-		if( internal_attr.tab_size == 0 ) 
+		if( internal_attr.tab_size == 0 )
 			internal_attr.tab_size = 8 ;
 		internal_attr.version = ASTA_VERSION_INTERNAL ;
 	}else
 	{
-		if( IsUTF8Locale() ) 
+		if( IsUTF8Locale() )
 			internal_attr.char_type = ASCT_UTF8 ;
-	}	 
+	}
 	return get_text_size_internal( src_text, font, &internal_attr, width, height, length, x_positions );
 }
 
@@ -1804,7 +1804,7 @@ render_asglyph( CARD8 **scanlines, CARD8 *row,
 				if( ratio != 0xFF && data != 0 )
 					data = ((data*ratio)>>8)+1 ;
 			}
-			if( data > dst[x] ) 
+			if( data > dst[x] )
 				dst[x] = (data > 255)? 0xFF:data ;
 			--count;
 		}
@@ -1843,7 +1843,7 @@ render_asglyph_over( CARD8 **scanlines, CARD8 *row,
 				}
 				anti_data = 256 - data ;
 			}
-			if( data >= 254 ) 
+			if( data >= 254 )
 				dst[x] = value ;
 			else
 				dst[x] = ((CARD32)dst[x]*anti_data + value*data)>>8 ;
@@ -1867,39 +1867,39 @@ draw_text_internal( const char *text, ASFont *font, ASTextAttributes *attr, int 
 	int offset_3d_x = 0, offset_3d_y = 0  ;
 	CARD32 back_color = 0 ;
 	CARD32 alpha_7 = 0x007F, alpha_9 = 0x009F, alpha_A = 0x00AF, alpha_C = 0x00CF, alpha_F = 0x00FF, alpha_E = 0x00EF;
-	START_TIME(started);	   
+	START_TIME(started);
 
 	// Perform line breaks if a fixed width is specified
-	// TODO: this is a quick and dirty fix and should work for now, but we really should fix it 
+	// TODO: this is a quick and dirty fix and should work for now, but we really should fix it
 	// so we don't have to calculate text size so many times as well as make it UNICODE friendly
-	// and remove mangling of the source text (Sasha): 
+	// and remove mangling of the source text (Sasha):
 	if (attr->width)
 	{
         unsigned int width, height; // SMA
-        get_text_size(  text , font, attr->type, &width, &height ); 
+        get_text_size(  text , font, attr->type, &width, &height );
         if ( (width > attr->width)  &&  (strchr(text, ' ')) )
         {
           char *tryPtr = strchr(text,' ');
           char *oldTryPtr = tryPtr;
           while (tryPtr)
-            {        
+            {
                *tryPtr = 0;
-               get_text_size(  text , font, attr->type, &width, &height ); 
+               get_text_size(  text , font, attr->type, &width, &height );
                if (width > attr->width)
                    *oldTryPtr = '\n';
-               
+
                *tryPtr = ' ';
                oldTryPtr = tryPtr;
                tryPtr = strchr(tryPtr + 1,' ');
             }
         }
-	}	    
+	}
 
 LOCAL_DEBUG_CALLER_OUT( "text = \"%s\", font = %p, compression = %d", text, font, compression );
 	if( !get_text_glyph_map( text, font, &map, attr, length) )
 		return NULL;
-	
-	if( map.width <= 0 ) 
+
+	if( map.width <= 0 )
 		return NULL;
 
 	apply_text_3D_type( attr->type, &offset_3d_x, &offset_3d_y );
@@ -1920,29 +1920,29 @@ LOCAL_DEBUG_OUT( "text size = %dx%d pixels", map.width, map.height );
 LOCAL_DEBUG_OUT( "line_height is %d, space_size is %d, base_line is %d", line_height, space_size, base_line );
 	scanlines = safemalloc( line_height*sizeof(CARD8*));
 	memory = safecalloc( 1, line_height*map.width);
-	for( i = 0 ; i < line_height ; ++i ) 
+	for( i = 0 ; i < line_height ; ++i )
 	{
 		scanlines[i] = memory + offset;
 		offset += map.width;
 	}
-	if( attr->type >= AST_OutlineAbove ) 
+	if( attr->type >= AST_OutlineAbove )
 	{
 		CARD32 fc = attr->fore_color ;
 		offset = 0 ;
 		rgb_scanlines = safemalloc( line_height*3*sizeof(CARD8*));
 		rgb_memory = safecalloc( 1, line_height*map.width*3);
-		for( i = 0 ; i < line_height*3 ; ++i ) 
+		for( i = 0 ; i < line_height*3 ; ++i )
 		{
 			rgb_scanlines[i] = rgb_memory + offset;
 			offset += map.width;
 		}
-		if( (ARGB32_RED16(fc)*222+ARGB32_GREEN16(fc)*707+ARGB32_BLUE16(fc) *71)/1000 < 0x07FFF ) 
-		{	
+		if( (ARGB32_RED16(fc)*222+ARGB32_GREEN16(fc)*707+ARGB32_BLUE16(fc) *71)/1000 < 0x07FFF )
+		{
 			back_color = 0xFF ;
 			memset( rgb_memory, back_color, line_height*map.width*3 );
 		}
-	}	 
-	if( ARGB32_ALPHA8(attr->fore_color) > 0 ) 
+	}
+	if( ARGB32_ALPHA8(attr->fore_color) > 0 )
 	{
 		CARD32 a = ARGB32_ALPHA8(attr->fore_color);
 		alpha_7 = (0x007F*a)>>8 ;
@@ -1951,7 +1951,7 @@ LOCAL_DEBUG_OUT( "line_height is %d, space_size is %d, base_line is %d", line_he
 		alpha_C = (0x00CF*a)>>8 ;
 		alpha_E	= (0x00EF*a)>>8 ;
 		alpha_F = (0x00FF*a)>>8 ;
-	}	 
+	}
 
 	i = -1 ;
 	if(get_flags(font->flags, ASF_RightToLeft))
@@ -1968,7 +1968,7 @@ LOCAL_DEBUG_OUT( "line_height is %d, space_size is %d, base_line is %d", line_he
 			{
 #if 1
 #if defined(LOCAL_DEBUG) && !defined(NO_DEBUG_OUTPUT)
-				{				
+				{
 					int x = 0;
 					while( x < map.width )
 						fprintf( stderr, "%2.2X ", scanlines[y][x++] );
@@ -1977,18 +1977,18 @@ LOCAL_DEBUG_OUT( "line_height is %d, space_size is %d, base_line is %d", line_he
 #endif
 #endif
  				im->channels[IC_ALPHA][pen_y+y] = store_data( NULL, scanlines[y], map.width, ASStorage_RLEDiffCompress, 0);
-				if( attr->type >= AST_OutlineAbove ) 
+				if( attr->type >= AST_OutlineAbove )
 				{
 	 				im->channels[IC_RED][pen_y+y] 	= store_data( NULL, rgb_scanlines[y], map.width, ASStorage_RLEDiffCompress, 0);
 	 				im->channels[IC_GREEN][pen_y+y] = store_data( NULL, rgb_scanlines[y+line_height], map.width, ASStorage_RLEDiffCompress, 0);
 	 				im->channels[IC_BLUE][pen_y+y]  = store_data( NULL, rgb_scanlines[y+line_height+line_height], map.width, ASStorage_RLEDiffCompress, 0);
-				}	 
+				}
 			}
-			
+
 			memset( memory, 0x00, line_height*map.width );
-			if( attr->type >= AST_OutlineAbove ) 
+			if( attr->type >= AST_OutlineAbove )
 				memset( rgb_memory, back_color, line_height*map.width*3 );
-			
+
 			pen_x = get_flags(font->flags, ASF_RightToLeft)? map.width : 0;
 			pen_y += line_height;
 			if( pen_y <0 )
@@ -2025,7 +2025,7 @@ LOCAL_DEBUG_OUT( "line_height is %d, space_size is %d, base_line is %d", line_he
 					start_x = pen_x + asg->lead ;
 				if( start_x < 0 )
 				{
-					offset_x = -start_x ; 
+					offset_x = -start_x ;
 					start_x = 0 ;
 				}
 				if( y < 0 )
@@ -2100,9 +2100,9 @@ LOCAL_DEBUG_OUT( "line_height is %d, space_size is %d, base_line is %d", line_he
     free_glyph_map( &map, True );
 	free( memory );
 	free( scanlines );
-	if( rgb_memory ) 
+	if( rgb_memory )
 		free( rgb_memory );
-	if( rgb_scanlines ) 
+	if( rgb_scanlines )
 		free( rgb_scanlines );
 	SHOW_TIME("", started);
 	return im;
@@ -2111,9 +2111,9 @@ LOCAL_DEBUG_OUT( "line_height is %d, space_size is %d, base_line is %d", line_he
 ASImage *
 draw_text( const char *text, ASFont *font, ASText3DType type, int compression )
 {
-	ASTextAttributes attr = {ASTA_VERSION_INTERNAL, 0, 0, ASCT_Char, 8, 0, NULL, 0, ARGB32_White }; 
+	ASTextAttributes attr = {ASTA_VERSION_INTERNAL, 0, 0, ASCT_Char, 8, 0, NULL, 0, ARGB32_White };
 	attr.type = type ;
-	if( IsUTF8Locale() ) 
+	if( IsUTF8Locale() )
 		attr.char_type = ASCT_UTF8 ;
 	return draw_text_internal( text, font, &attr, compression, 0/*autodetect length*/ );
 }
@@ -2121,7 +2121,7 @@ draw_text( const char *text, ASFont *font, ASText3DType type, int compression )
 ASImage *
 draw_unicode_text( const UNICODE_CHAR *text, ASFont *font, ASText3DType type, int compression )
 {
-	ASTextAttributes attr = {ASTA_VERSION_INTERNAL, 0, 0, ASCT_Unicode, 8, 0, NULL, 0, ARGB32_White }; 
+	ASTextAttributes attr = {ASTA_VERSION_INTERNAL, 0, 0, ASCT_Unicode, 8, 0, NULL, 0, ARGB32_White };
 	attr.type = type ;
 	return draw_text_internal( (const char*)text, font, &attr, compression, 0/*autodetect length*/ );
 }
@@ -2129,7 +2129,7 @@ draw_unicode_text( const UNICODE_CHAR *text, ASFont *font, ASText3DType type, in
 ASImage *
 draw_utf8_text( const char *text, ASFont *font, ASText3DType type, int compression )
 {
-	ASTextAttributes attr = {ASTA_VERSION_INTERNAL, 0, 0, ASCT_UTF8, 8, 0, NULL, 0, ARGB32_White }; 
+	ASTextAttributes attr = {ASTA_VERSION_INTERNAL, 0, 0, ASCT_UTF8, 8, 0, NULL, 0, ARGB32_White };
 	attr.type = type ;
 	return draw_text_internal( text, font, &attr, compression, 0/*autodetect length*/ );
 }
@@ -2137,18 +2137,18 @@ draw_utf8_text( const char *text, ASFont *font, ASText3DType type, int compressi
 ASImage *
 draw_fancy_text( const void *text, ASFont *font, ASTextAttributes *attr, int compression, int length )
 {
-	ASTextAttributes internal_attr = {ASTA_VERSION_INTERNAL, 0, 0, ASCT_Char, 8, 0, NULL, 0, ARGB32_White }; 
-	if( attr != NULL ) 
-	{	
+	ASTextAttributes internal_attr = {ASTA_VERSION_INTERNAL, 0, 0, ASCT_Char, 8, 0, NULL, 0, ARGB32_White };
+	if( attr != NULL )
+	{
 		internal_attr = *attr;
-		if( internal_attr.tab_size == 0 ) 
+		if( internal_attr.tab_size == 0 )
 			internal_attr.tab_size = 8 ;
 		internal_attr.version = ASTA_VERSION_INTERNAL ;
 	}else
 	{
-		if( IsUTF8Locale() ) 
+		if( IsUTF8Locale() )
 			internal_attr.char_type = ASCT_UTF8 ;
-	}  
+	}
 	return draw_text_internal( text, font, &internal_attr, compression, length );
 }
 
@@ -2237,7 +2237,7 @@ void print_asglyph( FILE* stream, ASFont* font, unsigned long c)
 
 #ifndef HAVE_XRENDER
 Bool afterimage_uses_xrender(){ return False;}
-	
+
 void
 draw_text_xrender(  ASVisual *asv, const void *text, ASFont *font, ASTextAttributes *attr, int length,
 					int xrender_op, unsigned long	xrender_src, unsigned long xrender_dst,
@@ -2259,24 +2259,24 @@ draw_text_xrender(  ASVisual *asv, const void *text, ASFont *font, ASTextAttribu
 
 	if( !get_text_glyph_map( text, font, &map, attr, length) )
 		return;
-	
-	if( map.width == 0 ) 
+
+	if( map.width == 0 )
 		return;
 	/* xrender code starts here : */
 	/* Step 1: we have to make sure we have a valid GlyphSet */
-	if( font->xrender_glyphset == 0 ) 
+	if( font->xrender_glyphset == 0 )
 		font->xrender_glyphset = XRenderCreateGlyphSet (asv->dpy, asv->xrender_mask_format);
 	/* Step 2: we have to make sure all the glyphs are in GlyphSet */
-	for( i = 0 ; map.glyphs[i] != GLYPH_EOT ; ++i ) 
-		if( map.glyphs[i] > MAX_SPECIAL_GLYPH && map.glyphs[i]->xrender_gid == 0 ) 
+	for( i = 0 ; map.glyphs[i] != GLYPH_EOT ; ++i )
+		if( map.glyphs[i] > MAX_SPECIAL_GLYPH && map.glyphs[i]->xrender_gid == 0 )
 		{
 			glyphs_bmap_size += map.glyphs[i]->width * map.glyphs[i]->height ;
-			if( map.glyphs[i]->height > max_height ) 
+			if( map.glyphs[i]->height > max_height )
 				max_height = map.glyphs[i]->height ;
 			++missing_glyphs;
 		}
-	
-	if( missing_glyphs > 0 ) 
+
+	if( missing_glyphs > 0 )
 	{
 		Glyph		*gids;
 		XGlyphInfo	*glyphs;
@@ -2289,20 +2289,20 @@ draw_text_xrender(  ASVisual *asv, const void *text, ASFont *font, ASTextAttribu
 		bmap_ptr = bitmap = safemalloc( glyphs_bmap_size );
 		glyphs = safecalloc( missing_glyphs, sizeof(XGlyphInfo));
 		gids = safecalloc( missing_glyphs, sizeof(Glyph));
-		for( i = 0 ; map.glyphs[i] != GLYPH_EOT ; ++i ) 
-			if( map.glyphs[i] > MAX_SPECIAL_GLYPH && map.glyphs[i]->xrender_gid == 0 ) 
-			{	
+		for( i = 0 ; map.glyphs[i] != GLYPH_EOT ; ++i )
+			if( map.glyphs[i] > MAX_SPECIAL_GLYPH && map.glyphs[i]->xrender_gid == 0 )
+			{
 				ASGlyph *asg = map.glyphs[i];
-				int k = asg->height ;  
+				int k = asg->height ;
 				char *ptr = bmap_ptr + asg->width*asg->height ;
-				bmap_ptr = ptr ; 				   
+				bmap_ptr = ptr ;
 				while ( --k >= 0 )
 				{
-					ptr -= asg->width ;	  
+					ptr -= asg->width ;
 					scanlines[k] = ptr ;
-				}		
+				}
 				render_asglyph( scanlines, asg->pixmap,	0, 0, asg->width, asg->height, 0xFF );
-				gids[i] = 
+				gids[i] =
 			}
 		XRenderAddGlyphs( asv->dpy, font->xrender_glyphset, gids, glyphs, missing_glyphs, bitmap, nbytes_bitmap );
 		free( gids );
@@ -2311,43 +2311,43 @@ draw_text_xrender(  ASVisual *asv, const void *text, ASFont *font, ASTextAttribu
 		free( scanlines );
 	}
 	/* Step 3: actually rendering text  : */
-	if( max_gid <= 255 ) 
+	if( max_gid <= 255 )
 	{
 		char *string = safemalloc( map->glyphs_num-1 );
-		for( i = 0 ; map.glyphs[i] != GLYPH_EOT ; ++i ) 
+		for( i = 0 ; map.glyphs[i] != GLYPH_EOT ; ++i )
 			string[i] = map.glyphs[i]->xrender_gid ;
-		XRenderCompositeString8 ( asv->dpy, PictOpOver, xrender_src, xrender_dst, 
+		XRenderCompositeString8 ( asv->dpy, PictOpOver, xrender_src, xrender_dst,
 								  asv->xrender_mask_format,
-			  					  font->xrender_glyphset, 
+			  					  font->xrender_glyphset,
 								  xrender_xSrc,xrender_ySrc,xrender_xDst,xrender_yDst,
 								  string, i);
 		free( string );
-	}else if( max_gid <= 65000 ) 	
+	}else if( max_gid <= 65000 )
 	{
 		unsigned short *string = safemalloc( sizeof(unsigned short)*(map->glyphs_num-1) );
-		for( i = 0 ; map.glyphs[i] != GLYPH_EOT ; ++i ) 
+		for( i = 0 ; map.glyphs[i] != GLYPH_EOT ; ++i )
 			string[i] = map.glyphs[i]->xrender_gid ;
-		XRenderCompositeString16 (asv->dpy, PictOpOver, xrender_src, xrender_dst, 
+		XRenderCompositeString16 (asv->dpy, PictOpOver, xrender_src, xrender_dst,
 								  asv->xrender_mask_format,
-			  					  font->xrender_glyphset, 
+			  					  font->xrender_glyphset,
 								  xrender_xSrc,xrender_ySrc,xrender_xDst,xrender_yDst,
 								  string, i);
 		free( string );
 	}else
 	{
-		unsigned int *string = safemalloc( sizeof(int)*(map->glyphs_num-1) );	
-		for( i = 0 ; map.glyphs[i] != GLYPH_EOT ; ++i ) 
+		unsigned int *string = safemalloc( sizeof(int)*(map->glyphs_num-1) );
+		for( i = 0 ; map.glyphs[i] != GLYPH_EOT ; ++i )
 			string[i] = map.glyphs[i]->xrender_gid ;
-		XRenderCompositeString32 (asv->dpy, PictOpOver, xrender_src, xrender_dst, 
+		XRenderCompositeString32 (asv->dpy, PictOpOver, xrender_src, xrender_dst,
 								  asv->xrender_mask_format,
-			  					  font->xrender_glyphset, 
+			  					  font->xrender_glyphset,
 								  xrender_xSrc,xrender_ySrc,xrender_xDst,xrender_yDst,
 								  string, i);
 		free( string );
-	}	 
-	
+	}
+
 	/* xrender code ends here : */
-	free_glyph_map( &map, True );	  
+	free_glyph_map( &map, True );
 }
 
 #endif

@@ -18,7 +18,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #include "win32/config.h"
 #else
 #include "config.h"
@@ -42,7 +42,7 @@
 # endif
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 # include "win32/afterbase.h"
 #else
 # include "afterbase.h"
@@ -619,11 +619,11 @@ read_xcf_hierarchy( XcfImage *xcf_im, FILE *fp, CARD8 opacity, ARGB32 colormask 
 
 			if (XCF_TILE_WIDTH < h->width)
 				tile_buf = safemalloc (h->width*XCF_TILE_HEIGHT*6);
-				
+
 			if (xcf_im->width < h->width)
 				for( i = 0 ; i < XCF_TILE_HEIGHT ; i++ )
 				{
-					free_scanline (&(xcf_im->scanline_buf[i]), True); 
+					free_scanline (&(xcf_im->scanline_buf[i]), True);
 					prepare_scanline (h->width,0,&(xcf_im->scanline_buf[i]), False );
 				}
 
@@ -736,7 +736,7 @@ store_colors( CARD8 *data, ASScanline *curr_buf, int bpp, int comp, int offset_x
 	}else
 		out = &(curr_buf->alpha[offset_x]);
 
-	if( out ) 
+	if( out )
   		for( i = 0 ; i < width ; i++ )
 			out[i] = data[i] ;
 }

@@ -11,7 +11,7 @@
 * 26 Jun 96 - Version 3.0 by Eric S. Raymond (Full GIF89 support)
 ******************************************************************************/
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #include "../win32/config.h"
 #else
 #include "../config.h"
@@ -111,10 +111,10 @@ GifFileType *EGifOpenFileHandle(int FileHandle)
     Private->FileHandle = FileHandle;
     Private->File = f;
     Private->FileState = FILE_STATE_WRITE;
-    
+
     Private->Write = (OutputFunc)0; /* No user write routine (MRB) */
     GifFile->UserData = (VoidPtr)0; /* No user write handle (MRB) */
-    
+
     _GifError = 0;
 
     return GifFile;
@@ -155,10 +155,10 @@ GifFileType* EGifOpen(void* userData, OutputFunc writeFunc)
     Private->FileHandle = 0;
     Private->File = (FILE *)0;
     Private->FileState = FILE_STATE_WRITE;
-    
+
     Private->Write = writeFunc; /* User write routine (MRB) */
     GifFile->UserData = userData; /* User write handle (MRB) */
-    
+
     _GifError = 0;
 
     return GifFile;
@@ -214,7 +214,7 @@ int EGifPutScreenDesc(GifFileType *GifFile,
 	{
 		GifFile->SColorMap=MakeMapObject(ColorMap->ColorCount,ColorMap->Colors);
 
-        if (GifFile->SColorMap == NULL) 
+        if (GifFile->SColorMap == NULL)
 		{
             _GifError = E_GIF_ERR_NOT_ENOUGH_MEM;
             return GIF_ERROR;
@@ -225,7 +225,7 @@ int EGifPutScreenDesc(GifFileType *GifFile,
     /* Put the screen descriptor into the file: */
     EGifPutWord(Width, GifFile);
     EGifPutWord(Height, GifFile);
-	if( ColorMap ) 
+	if( ColorMap )
     	Buf[0] = 0x80 | ((ColorRes - 1) << 4) |	(ColorMap->BitsPerPixel - 1);
 	else
     	Buf[0] = 0x00 | ((ColorRes - 1) << 4) ;
@@ -291,7 +291,7 @@ int EGifPutImageDesc(GifFileType *GifFile,
     if(ColorMap)
 	{
       GifFile->Image.ColorMap =MakeMapObject(ColorMap->ColorCount,ColorMap->Colors);
-        if (GifFile->Image.ColorMap == NULL) 
+        if (GifFile->Image.ColorMap == NULL)
 		{
             _GifError = E_GIF_ERR_NOT_ENOUGH_MEM;
             return GIF_ERROR;
@@ -487,7 +487,7 @@ int EGifPutExtensionLast(GifFileType *GifFile, int ExtCode, int ExtLen,
     }
 
     /* If we are given an extension sub-block output it now. */
-    if (ExtLen > 0) 
+    if (ExtLen > 0)
 	{
     	Buf = ExtLen;
 	    fwrite(&Buf, 1, 1, Private->File);
@@ -569,7 +569,7 @@ int EGifCloseFile(GifFileType *GifFile)
     }
     free(GifFile);
 
-    if (File && fclose(File) != 0) 
+    if (File && fclose(File) != 0)
 	{
 		_GifError = E_GIF_ERR_CLOSE_FAILED;
 		return GIF_ERROR;
@@ -633,7 +633,7 @@ static int EGifSetupCompress(GifFileType *GifFile)
     _ClearHashTable(Private->HashTable);
 
 	/* Send Clear to make sure the encoder is initialized. */
-    if (EGifCompressOutput(GifFile, Private->ClearCode) == GIF_ERROR) 
+    if (EGifCompressOutput(GifFile, Private->ClearCode) == GIF_ERROR)
 	{
 		_GifError = E_GIF_ERR_DISK_IS_FULL;
 		return GIF_ERROR;
@@ -665,7 +665,7 @@ static int EGifCompressLine(GifFileType *GifFile, GifPixelType *Line,
 
     while (i < LineLen) {   /* Decode LineLen items. */
         Pixel = Line[i++];  /* Get next pixel from stream. */
-        /* Form a new unique key to search hash table for the code combines 
+        /* Form a new unique key to search hash table for the code combines
          * CrntCode as Prefix string with Pixel as postfix char.
          */
         NewKey = (((UINT32) CrntCode) << 8) + Pixel;

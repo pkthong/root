@@ -24,7 +24,7 @@
 #undef DEBUG_RECTS2
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #include "win32/config.h"
 #else
 #include "config.h"
@@ -56,7 +56,7 @@
 #include <stdarg.h>
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 # include "win32/afterbase.h"
 #else
 # include "afterbase.h"
@@ -75,8 +75,8 @@ ASVisual *_set_default_asvisual( ASVisual *new_v )
 {
 	ASVisual *old_v = __as_default_asvisual ;
 	__as_default_asvisual = new_v?new_v:&__as_dummy_asvisual ;
-/* This should be done in application - we should not meddle with other lib's stuff! 
-#if HAVE_AFTERBASE_FLAG	
+/* This should be done in application - we should not meddle with other lib's stuff!
+#if HAVE_AFTERBASE_FLAG
 	if (new_v && new_v->dpy && !get_current_X_display (new_v->dpy))
 		set_current_X_display (new_v->dpy);
 #endif
@@ -142,7 +142,7 @@ asimage_init (ASImage * im, Bool free_resources)
 				free( im->alt.argb32 );
 			if( im->alt.vector )
 				free( im->alt.vector );
-			if( im->name ) 
+			if( im->name )
 				free( im->name );
 		}
 		memset (im, 0x00, sizeof (ASImage));
@@ -197,10 +197,10 @@ asimage_start (ASImage * im, unsigned int width, unsigned int height, unsigned i
 		asimage_init (im, True);
 		im->height = height;
 		im->width = width;
-		
+
 		alloc_asimage_channels( im );
 
-		if( compression == 0 ) 
+		if( compression == 0 )
 			set_flags( im->flags, ASIM_NO_COMPRESSION );
 	}
 }
@@ -216,14 +216,14 @@ asimage_replace (ASImage *im, ASImage *from)
 			char *name = im->name ;
 			ASFlagType  saved_flags = im->flags & (ASIM_NAME_IS_FILENAME|ASIM_NO_COMPRESSION) ;
 
-			im->name = NULL ; 
+			im->name = NULL ;
 			asimage_init (im, True);
 
 			memcpy( im, from, sizeof(ASImage) );
 			/* Assume : from->name == NULL as from->imageman == NULL (see above ) */
-			memset( from, 0x00, sizeof(ASImage) );		
+			memset( from, 0x00, sizeof(ASImage) );
 
-			im->ref_count = ref_count ; 
+			im->ref_count = ref_count ;
 			im->imageman = imageman ;
 			im->name = name ;
 			set_flags( im->flags, saved_flags );
@@ -234,7 +234,7 @@ asimage_replace (ASImage *im, ASImage *from)
 }
 
 
-static ASImage* 
+static ASImage*
 check_created_asimage( ASImage *im, unsigned int width, unsigned int height )
 {
 	if( im->width == 0 || im->height == 0 )
@@ -247,7 +247,7 @@ check_created_asimage( ASImage *im, unsigned int width, unsigned int height )
     }else
     {
 #ifdef TRACK_ASIMAGES
-        show_progress( "created ASImage %p of size %dx%d (%s compressed )", im,  
+        show_progress( "created ASImage %p of size %dx%d (%s compressed )", im,
 						width, height, (get_flags(im->flags, ASIM_NO_COMPRESSION)?" no":"") );
         if( __as_image_registry == NULL )
             __as_image_registry = create_ashash( 0, pointer_hash_value, NULL, NULL );
@@ -323,28 +323,28 @@ void print_asimage_func (ASHashableValue value)
 
         for( k = 0 ; k < im->height ; k++ )
     	{
-			if( im->red[k] ) 
+			if( im->red[k] )
 				if( query_storage_slot(NULL, im->red[k], &slot ) )
-				{	
-			 		++red_count;	
+				{
+			 		++red_count;
 					red_mem += slot.size ;
 				}
-			if( im->green[k] ) 
+			if( im->green[k] )
 				if( query_storage_slot(NULL, im->green[k], &slot ) )
-				{	
-			 		++green_count;	
+				{
+			 		++green_count;
 					green_mem += slot.size ;
 				}
-			if( im->blue[k] ) 
+			if( im->blue[k] )
 				if( query_storage_slot(NULL, im->blue[k], &slot ) )
-				{	
-			 		++blue_count;	
+				{
+			 		++blue_count;
 					blue_mem += slot.size ;
 				}
-			if( im->alpha[k] ) 
+			if( im->alpha[k] )
 				if( query_storage_slot(NULL, im->alpha[k], &slot ) )
-				{	
-			 		++alpha_count;	
+				{
+			 		++alpha_count;
 					alpha_mem += slot.size ;
 				}
         }
@@ -396,7 +396,7 @@ asimage_destroy (ASHashableValue value, void *data)
 			else
 				im->imageman = NULL ;
 		}
-		if( im == NULL || (char*)value != im->name ) 
+		if( im == NULL || (char*)value != im->name )
 			free( (char*)value );/* name */
 		destroy_asimage( &im );
 	}
@@ -462,7 +462,7 @@ store_asimage( ASImageManager* imageman, ASImage *im, const char *name )
 		{
 			int hash_res ;
 			char *stored_name = mystrdup( name );
-			if( im->name ) 
+			if( im->name )
 				free( im->name );
 			im->name = stored_name ;
 			hash_res = add_hash_item( imageman->image_hash, AS_HASHABLE(im->name), im);
@@ -525,7 +525,7 @@ dup_asimage( ASImage* im )
 /*		fprintf( stderr, __FUNCTION__" on image %p ref_count = %d\n", im, im->ref_count ); */
 		im->ref_count++ ;
 		return im;
-	}else if( im ) 
+	}else if( im )
 	{
 		show_debug( __FILE__, "dup_asimage", __LINE__, "Attempt to duplicate ASImage %p that is not tracked by any image manager!", im );
 	}
@@ -577,19 +577,19 @@ relocate_asimage( ASImageManager* to_imageman, ASImage *im )
 		if( im->magic == MAGIC_ASIMAGE )
 		{
 			ASImageManager *imman = im->imageman ;
-			int ref_count = im->ref_count ; 
+			int ref_count = im->ref_count ;
 			if( imman != NULL )
 			{
 				remove_hash_item(imman->image_hash, (ASHashableValue)(char*)im->name, NULL, False);
 	            im->ref_count = 0;
     	        im->imageman = NULL;
 			}
-			if( to_imageman != NULL ) 
+			if( to_imageman != NULL )
 			{
-				if( add_hash_item( to_imageman->image_hash, AS_HASHABLE(im->name), im) == ASH_Success ) 
+				if( add_hash_item( to_imageman->image_hash, AS_HASHABLE(im->name), im) == ASH_Success )
 				{
 		            im->ref_count = ref_count < 1 ? 1: ref_count;
-    		        im->imageman = to_imageman ; 
+    		        im->imageman = to_imageman ;
 				}
 			}
 		}
@@ -651,7 +651,7 @@ print_asimage_manager(ASImageManager *imageman)
 {
 #ifdef TRACK_ASIMAGES
     print_ashash( imageman->image_hash, string_print );
-#endif    
+#endif
 }
 
 /* ******************** ASGradient ****************************/
@@ -806,9 +806,9 @@ asimage_add_line_mono (ASImage * im, ColorPart color, CARD8 value, unsigned int 
 		return 0;
 	if (y >= im->height)
 		return 0;
-	
-	if( im->channels[color][y] ) 
-		forget_data( NULL, im->channels[color][y] ); 
+
+	if( im->channels[color][y] )
+		forget_data( NULL, im->channels[color][y] );
 	im->channels[color][y] = store_data( NULL, &value, 1, 0, 0);
 	return im->width;
 }
@@ -821,8 +821,8 @@ asimage_add_line (ASImage * im, ColorPart color, register CARD32 * data, unsigne
 		return 0;
 	if (y >= im->height)
 		return 0;
-	if( im->channels[color][y] ) 
-		forget_data( NULL, im->channels[color][y] ); 
+	if( im->channels[color][y] )
+		forget_data( NULL, im->channels[color][y] );
 	im->channels[color][y] = store_data( NULL, (CARD8*)data, im->width*4, ASStorage_RLEDiffCompress|ASStorage_32Bit, 0);
 	return im->width;
 }
@@ -834,24 +834,24 @@ asimage_add_line_bgra (ASImage * im, register CARD32 * data, unsigned int y)
 		return 0;
 	if (y >= im->height)
 		return 0;
-	if( im->channels[IC_ALPHA][y] ) 
-		forget_data( NULL, im->channels[IC_ALPHA][y] ); 
-	im->channels[IC_ALPHA][y] = store_data( NULL, (CARD8*)data, im->width*4, 
+	if( im->channels[IC_ALPHA][y] )
+		forget_data( NULL, im->channels[IC_ALPHA][y] );
+	im->channels[IC_ALPHA][y] = store_data( NULL, (CARD8*)data, im->width*4,
 	                                        ASStorage_24BitShift|ASStorage_Masked|
 											ASStorage_RLEDiffCompress|ASStorage_32Bit, 0);
-	if( im->channels[IC_RED][y] ) 
-		forget_data( NULL, im->channels[IC_RED][y] ); 
-	im->channels[IC_RED][y] = store_data( NULL, (CARD8*)data, im->width*4, 
+	if( im->channels[IC_RED][y] )
+		forget_data( NULL, im->channels[IC_RED][y] );
+	im->channels[IC_RED][y] = store_data( NULL, (CARD8*)data, im->width*4,
 	                                        ASStorage_16BitShift|ASStorage_Masked|
 											ASStorage_RLEDiffCompress|ASStorage_32Bit, 0);
-	if( im->channels[IC_GREEN][y] ) 
-		forget_data( NULL, im->channels[IC_GREEN][y] ); 
-	im->channels[IC_GREEN][y] = store_data( NULL, (CARD8*)data, im->width*4, 
+	if( im->channels[IC_GREEN][y] )
+		forget_data( NULL, im->channels[IC_GREEN][y] );
+	im->channels[IC_GREEN][y] = store_data( NULL, (CARD8*)data, im->width*4,
 	                                        ASStorage_8BitShift|ASStorage_Masked|
 											ASStorage_RLEDiffCompress|ASStorage_32Bit, 0);
-	if( im->channels[IC_BLUE][y] ) 
-		forget_data( NULL, im->channels[IC_BLUE][y] ); 
-	im->channels[IC_BLUE][y] = store_data( NULL, (CARD8*)data, im->width*4, 
+	if( im->channels[IC_BLUE][y] )
+		forget_data( NULL, im->channels[IC_BLUE][y] );
+	im->channels[IC_BLUE][y] = store_data( NULL, (CARD8*)data, im->width*4,
 	                                        ASStorage_Masked|
 											ASStorage_RLEDiffCompress|ASStorage_32Bit, 0);
 	return im->width;
@@ -865,7 +865,7 @@ asimage_print_line (ASImage * im, ColorPart color, unsigned int y, unsigned long
 		return 0;
 	if (y >= im->height)
 		return 0;
-	
+
 	return print_storage_slot(NULL, im->channels[color][y]);
 }
 
@@ -1117,15 +1117,15 @@ vectorize_asimage( ASImage *im, unsigned int max_colors, unsigned int dither,
 		im->alt.vector = safemalloc( im->width*im->height*sizeof(double));
 	vec = im->alt.vector ;
 
-	/* contributed by Valeriy Onuchin from Root project at cern.ch */   
+	/* contributed by Valeriy Onuchin from Root project at cern.ch */
 
  	dither = dither > 7 ? 7 : dither;
 	{
  		int *res = colormap_asimage(im, &cmap, max_colors, dither, opaque_threshold);
- 
-    	for ( y = 0; y < im->height; y++) 
+
+    	for ( y = 0; y < im->height; y++)
 		{
-       		for ( x = 0; x < im->width; x++) 
+       		for ( x = 0; x < im->width; x++)
 			{
           		int i = y*im->width + x;
           		g = INDEX_SHIFT_GREEN(cmap.entries[res[i]].green);
@@ -1136,24 +1136,24 @@ vectorize_asimage( ASImage *im, unsigned int max_colors, unsigned int dither,
           		vec[(im->height - y - 1)*im->width + x] = ((double)v)/0x0FFF;
        		}
     	}
-	
+
 		free (res);
 	}
     pal = safecalloc( 1, sizeof(ASVectorPalette));
 
-	pal->npoints = cmap.count ;	
+	pal->npoints = cmap.count ;
 	pal->points = safemalloc( sizeof(double)*cmap.count);
 	pal->channels[IC_RED] = safemalloc( sizeof(CARD16)*cmap.count);
 	pal->channels[IC_GREEN] = safemalloc( sizeof(CARD16)*cmap.count);
 	pal->channels[IC_BLUE] = safemalloc( sizeof(CARD16)*cmap.count);
 	pal->channels[IC_ALPHA] = safemalloc( sizeof(CARD16)*cmap.count);
- 
+
     for ( j = 0; j < cmap.count; j++) {
        g = INDEX_SHIFT_GREEN(cmap.entries[j].green);
        b = INDEX_SHIFT_BLUE(cmap.entries[j].blue);
        r = INDEX_SHIFT_RED(cmap.entries[j].red);
        v = MAKE_INDEXED_COLOR24(r,g,b);
- 
+
        v = (v>>12)&0x0FFF;
        pal->points[j] = ((double)v)/0x0FFF;
  		/* palette uses 16 bit color values for greater precision */
@@ -1162,7 +1162,7 @@ vectorize_asimage( ASImage *im, unsigned int max_colors, unsigned int dither,
        pal->channels[IC_BLUE][j] = cmap.entries[j].blue<<QUANT_ERR_BITS;
        pal->channels[IC_ALPHA][j] = 0xFFFF;
     }
- 
+
     destroy_colormap(&cmap, True);
 
 	return pal;
@@ -1335,10 +1335,10 @@ get_asimage_channel_rects( ASImage *src, int channel, unsigned int threshold, un
 							if( end < (int)runs[k+1] )
 							{
 								runs[k] = end+1 ;
-							}else 
-							{   
+							}else
+							{
 								if( end > (int)runs[k+1] )
-								{	
+								{
 									/* add rectangle runs[k+1]+1, , end - runs[k+1], height[l] */
 									if( rects_count >= rects_allocated )
 									{
@@ -1354,8 +1354,8 @@ get_asimage_channel_rects( ASImage *src, int channel, unsigned int threshold, un
 #endif
 									++rects_count ;
 									end = runs[k+1] ;
-								
-								} 
+
+								}
 								/* eliminating new run - it was all used up :) */
 								runs[k] = src->width ;
 								runs[k+1] = src->width ;
@@ -1376,7 +1376,7 @@ get_asimage_channel_rects( ASImage *src, int channel, unsigned int threshold, un
 							break;
 						}
 					}
-					if( matching_runs == 0 ) 
+					if( matching_runs == 0 )
 					{  /* no new runs for this prev run - add rectangle */
 #ifdef DEBUG_RECTS
 						fprintf( stderr, "%d: NO MATCHING NEW RUNS : start = %d, end = %d, height = %d\n", __LINE__, start, end, height[l] );
@@ -1394,14 +1394,14 @@ get_asimage_channel_rects( ASImage *src, int channel, unsigned int threshold, un
 						fprintf( stderr, "*%d: added rectangle at y = %d\n", __LINE__, rects[rects_count].y );
 #endif
 						++rects_count ;
-					}	 
+					}
 				}
 				/* second pass: we need to pick up remaining new runs */
 				/* I think these should be inserted in oredrly manner so that we have runs list arranged in ascending order */
 				for( k = 0 ; k < runs_count ; ++k, ++k )
 					if( runs[k] < src->width )
 					{
-						int ii = tmp_count ; 
+						int ii = tmp_count ;
 						while( ii > 0 && tmp_runs[ii-1] > runs[k] )
 						{
 							tmp_runs[ii] = tmp_runs[ii-2] ;

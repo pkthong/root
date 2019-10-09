@@ -10,7 +10,7 @@
 *  3 Sep 90 - Version 1.1 by Gershon Elber (Support for Gif89, Unique names). *
 ******************************************************************************/
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #include "../win32/config.h"
 #else
 #include "../config.h"
@@ -421,7 +421,7 @@ int DGifCloseFile(GifFileType *GifFile)
 
     free(GifFile);
 
-    if ( File && (fclose(File) != 0)) 
+    if ( File && (fclose(File) != 0))
 	{
 	  	_GifError = D_GIF_ERR_CLOSE_FAILED;
 		ret = GIF_ERROR;
@@ -481,18 +481,18 @@ int DGifGetCodeNext(GifFileType *GifFile, GifByteType **CodeBlock)
 	return GIF_ERROR;
     }
     if (Buf > 0) {
-		int ret ; 
+		int ret ;
 	*CodeBlock = Private->Buf;	       /* Use private unused buffer. */
 	(*CodeBlock)[0] = Buf;  /* Pascal strings notation (pos. 0 is len.). */
 	ret = READ(GifFile,&((*CodeBlock)[1]), Buf);
-	if ( ret != Buf) 
+	if ( ret != Buf)
 	{
-		if( Buf == 59 ) 
+		if( Buf == 59 )
 		{
-			fseek( GifFile->UserData, -1, SEEK_END );	
-			*CodeBlock = NULL ; 
+			fseek( GifFile->UserData, -1, SEEK_END );
+			*CodeBlock = NULL ;
 			return GIF_OK;
-		}	 
+		}
 	    _GifError = D_GIF_ERR_READ_FAILED;
 	    return GIF_ERROR;
 	}

@@ -24,7 +24,7 @@
 #undef DEBUG_RECTS2
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #include "win32/config.h"
 #else
 #include "config.h"
@@ -59,7 +59,7 @@
 #include <xmmintrin.h>
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 # include "win32/afterbase.h"
 #else
 # include "afterbase.h"
@@ -96,65 +96,65 @@ static CARD32 rnd32_seed = 345824357;
 
 int main()
 {
-	int test_len ; 
+	int test_len ;
 	CARD32 *test_set1 ;
-	CARD32 *test_set2 ;	
-	CARD32 *control_data ;	
-	int i, reps ; 
+	CARD32 *test_set2 ;
+	CARD32 *control_data ;
+	int i, reps ;
 
-	for( test_len = MIN_TEST_LEN ; test_len < MAX_TEST_LEN ; ++test_len ) 
+	for( test_len = MIN_TEST_LEN ; test_len < MAX_TEST_LEN ; ++test_len )
 	{
-		test_set1 = safemalloc( (test_len + (test_len&0x01))* sizeof(CARD32) );	
+		test_set1 = safemalloc( (test_len + (test_len&0x01))* sizeof(CARD32) );
 		test_set2 = safemalloc( (test_len + (test_len&0x01))* sizeof(CARD32) );
-		control_data = safemalloc( (test_len + (test_len&0x01))* sizeof(CARD32) );			
-		for( i = 0 ; i < test_len ; ++i ) 
+		control_data = safemalloc( (test_len + (test_len&0x01))* sizeof(CARD32) );
+		for( i = 0 ; i < test_len ; ++i )
 		{
 			test_set1[i] = MY_RND32()& 0x00FFFFFF ;
 			test_set2[i] = MY_RND32()& 0x00FFFFFF ;
 		}
 		{
 			START_TIME(int_math);
-			for( reps = 0 ; reps < MAX_REPS ; ++reps ) 
+			for( reps = 0 ; reps < MAX_REPS ; ++reps )
 			{
-				for( i = 0 ; i < test_len ; ++i ) 
+				for( i = 0 ; i < test_len ; ++i )
 				{
-#ifdef TEST_PADDD				
-					control_data[i] = test_set1[i] + test_set2[i] ; 
+#ifdef TEST_PADDD
+					control_data[i] = test_set1[i] + test_set2[i] ;
 #else
-					control_data[i] = test_set2[i] >> 1 ; 
+					control_data[i] = test_set2[i] >> 1 ;
 #endif
-				}		
+				}
 			}
 			SHOW_TIME("Standard int math : ", int_math);
 		}
 		{
 			START_TIME(mmx_math);
-			for( reps = 0 ; reps < MAX_REPS ; ++reps ) 
+			for( reps = 0 ; reps < MAX_REPS ; ++reps )
 			{
-				int len = test_len + (test_len&0x00000001); 
+				int len = test_len + (test_len&0x00000001);
 				__m64  *vdst = (__m64*)&(test_set1[0]);
 				__m64  *vinc = (__m64*)&(test_set2[0]);
 				__m64  *vsrc = (__m64*)&(test_set2[0]);
 				len = len>>1;
-				i = 0 ; 
+				i = 0 ;
 				do{
-#ifdef TEST_PADDD				
+#ifdef TEST_PADDD
 					vdst[i] = _mm_add_pi32(vdst[i],vinc[i]);  /* paddd */
 #ifdef USE_PREFETCH
 					_mm_prefetch( &vinc[i+16], _MM_HINT_NTA );
 #endif
 #else
 					vdst[i] = _mm_srli_pi32(vsrc[i],1);  /* psrld */
-#endif 
+#endif
 				}while( ++i < len );
 			}
 			SHOW_TIME("MMX int math : ", mmx_math);
 		}
-		for( i = 0 ; i < test_len ; ++i ) 
-			if( control_data[i] != test_set1[i] ) 
+		for( i = 0 ; i < test_len ; ++i )
+			if( control_data[i] != test_set1[i] )
 				fprintf( stderr, "test %d: position %d differs - %8.8lX	and %8.8lX, set2 = %8.8lX\n", test_len, i, control_data[i], test_set1[i], test_set2[i] );
 //			else	fprintf( stderr, "test %d: position %d same    - %8.8lX	and %8.8lX\n", test_len, i, control_data[i], test_set1[i] );
-		
+
 		free( control_data );
 		free( test_set2 );
 		free( test_set1 );

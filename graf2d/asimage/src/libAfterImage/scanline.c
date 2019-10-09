@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifdef _WIN32
+#if defined (_WIN32) || defined(_WIN64)
 #include "win32/config.h"
 #else
 #include "config.h"
@@ -33,8 +33,8 @@
 #ifdef HAVE_STDARG_H
 #include <stdarg.h>
 #endif
- 
-#ifdef _WIN32
+
+#if defined(_WIN32) || defined(_WIN64)
 # include "win32/afterbase.h"
 #else
 # include "afterbase.h"
@@ -69,7 +69,7 @@ prepare_scanline( unsigned int width, unsigned int shift, ASScanline *reusable_m
 		return NULL;
 	}
 
-	sl->xc1 = sl->red 	= (CARD32*)((((long)ptr+7)>>3)*8);
+	sl->xc1 = sl->red 	= (CARD32*)((((uintptr_t)ptr+7)>>3)*8);
 	sl->xc2 = sl->green = sl->red   + aligned_width;
 	sl->xc3 = sl->blue 	= sl->green + aligned_width;
 	sl->alpha 	= sl->blue  + aligned_width;
@@ -93,7 +93,7 @@ prepare_scanline( unsigned int width, unsigned int shift, ASScanline *reusable_m
 	sl->green[aligned_width-1] = 0;
 	sl->blue[aligned_width-1]  = 0;
 	sl->alpha[aligned_width-1] = 0;
-#endif	
+#endif
 	sl->back_color = ARGB32_DEFAULT_BACK_COLOR;
 
 	return sl;
@@ -132,7 +132,7 @@ destroy_asim_strip (ASIMStrip **pstrip)
 				for (i = 0; i < strip->size; ++i )
 					if (strip->aux_data[i])
 						free(strip->aux_data[i]);
-				free (strip->aux_data); 
+				free (strip->aux_data);
 			}
 			free (strip);
 			*pstrip = NULL;
@@ -145,13 +145,13 @@ create_asim_strip(unsigned int size, unsigned int width, int shift, int bgr)
 {
 	ASIMStrip *strip;
 	int i;
-	
+
 	if (width == 0 || size == 0)
 		return NULL;
-	
+
 	strip = safecalloc( 1, sizeof(ASIMStrip));
 	strip->size = size;
-	
+
 	if ((strip->lines = safecalloc (size, sizeof(ASScanline*))) == NULL)
 	{
 		free (strip);
@@ -163,7 +163,7 @@ create_asim_strip(unsigned int size, unsigned int width, int shift, int bgr)
 		destroy_asim_strip (&strip);
 		return NULL;
 	}
-	
+
 	for (i = 0 ; i < (int)size; ++i)
 		if ((strip->lines[i] = prepare_scanline (width, shift, NULL, bgr)) == NULL)
 		{
@@ -174,7 +174,7 @@ create_asim_strip(unsigned int size, unsigned int width, int shift, int bgr)
 
 	strip->width = width;
 	strip->start_line = 0;
-	
+
 	return strip;
 }
 
@@ -184,7 +184,7 @@ advance_asim_strip (ASIMStrip *strip)
 	ASScanline *tmp = strip->lines[0];
 	void *aux_tmp = strip->aux_data[0];
 	int i;
-	
+
 	/* move all scanlines up, shuffling first scanline to the back */
 	for (i = 0 ; i < strip->size-1; ++i )
 	{
@@ -195,19 +195,19 @@ advance_asim_strip (ASIMStrip *strip)
 	strip->aux_data[strip->size-1] = aux_tmp;
 
 	/* clear the state of the scanline : */
-	tmp->flags = 0;	
+	tmp->flags = 0;
 
 	strip->start_line++;
-} 
+}
 
 /* returns number of lines processed from the data */
 int
-load_asim_strip (ASIMStrip *strip, CARD8 *data, int data_size, int data_start_line, int data_row_size, 
+load_asim_strip (ASIMStrip *strip, CARD8 *data, int data_size, int data_start_line, int data_row_size,
 				 ASIMStripLoader *line_loaders, int line_loaders_num)
 {
 	int line = 0;
 	int loaded = 0;
-	
+
 	if (strip == NULL || data == NULL || data_size <= 0 || data_row_size <= 0 || line_loaders == NULL)
 		return 0;
 	line = data_start_line - strip->start_line;
@@ -217,7 +217,7 @@ load_asim_strip (ASIMStrip *strip, CARD8 *data, int data_size, int data_start_li
 		data_size -= data_row_size*(-line);
 		line = 0;
 	}
-		
+
 	while (line < strip->size && data_size > 0)
 	{
 		int loader = (strip->start_line+line)%line_loaders_num;
@@ -237,29 +237,29 @@ decode_12_be (CARD32 *c1, CARD32 *c2, CARD8 *data, int width, int data_size)
 {
 	int x;
 	int max_x = (data_size*2)/3;
-	
+
 	if (max_x > width)
 		max_x = width;
-	
+
 	if (max_x > 0)
 	{
 #if defined(LOCAL_DEBUG) && !defined(NO_DEBUG_OUTPUT)
-		fprintf (stderr, "decode_12_be CFA data : ");		
+		fprintf (stderr, "decode_12_be CFA data : ");
 		for (x = 0 ; x < (max_x*3)/2; x += 3)
-			fprintf (stderr, " |%2.2X %2.2X %2.2X", data[x], data[x+1], data[x+2]);				
-		fprintf (stderr, "\n");		
+			fprintf (stderr, " |%2.2X %2.2X %2.2X", data[x], data[x+1], data[x+2]);
+		fprintf (stderr, "\n");
 #endif
 		for (x = 0 ; x+1 < max_x; ++x)
 		{
 			CARD32 tail = ((CARD32)data[1])&0x00F0;
 			c1[x] = (((CARD32)data[0]) << 8)|tail|(tail>>4);
 			c2[x] = ASIM_SCL_MissingValue;
-			
+
 			++x;
 			tail = data[2]&0x0F;
 			c1[x] = ASIM_SCL_MissingValue;
 			c2[x] = (((CARD32)data[1]&0x0f) << 12)| ((CARD32)data[2]<<4) |tail;
-			
+
 			data += 3;
 		}
 
@@ -271,19 +271,19 @@ decode_12_be (CARD32 *c1, CARD32 *c2, CARD8 *data, int width, int data_size)
 		}
 
 #if 0
-#if defined(LOCAL_DEBUG) && !defined(NO_DEBUG_OUTPUT)	
-fprintf (stderr, "decode_12_be  C1 data : ");		
+#if defined(LOCAL_DEBUG) && !defined(NO_DEBUG_OUTPUT)
+fprintf (stderr, "decode_12_be  C1 data : ");
 	for (x = 0 ; x < max_x; ++x)
-		fprintf (stderr, " %4.4X", c1[x]);						
-fprintf (stderr, "\ndecode_12_be  C2 data : ");		
+		fprintf (stderr, " %4.4X", c1[x]);
+fprintf (stderr, "\ndecode_12_be  C2 data : ");
 	for (x = 0 ; x < max_x; ++x)
-		fprintf (stderr, " %4.4X", c2[x]);						
-fprintf (stderr, "\n");				
+		fprintf (stderr, " %4.4X", c2[x]);
+fprintf (stderr, "\n");
 #endif
 #endif
 	}
 	return max_x;
-} 
+}
 
 void decode_BG_12_be (ASScanline *scl, CARD8 *data, int data_size)
 {
@@ -293,7 +293,7 @@ void decode_BG_12_be (ASScanline *scl, CARD8 *data, int data_size)
 
 void decode_GR_12_be (ASScanline *scl, CARD8 *data, int data_size)
 {
-	if (decode_12_be (scl->green, scl->red, data, scl->width, data_size))	
+	if (decode_12_be (scl->green, scl->red, data, scl->width, data_size))
 		set_flags (scl->flags, SCL_DO_GREEN|SCL_DO_RED);
 }
 
@@ -358,7 +358,7 @@ interpolate_channel_h_105x501 (CARD32 *chan, int width)
 	int v;
 	int chan0 = chan[0];
 	int x = 1;
-	
+
 	/* interpolating every other pixel from its 5 neighbours */
 	/* Assumptions :  width > 4 and width%2 == 0 */
 	if (ASIM_IsMissingValue(chan0))
@@ -366,7 +366,7 @@ interpolate_channel_h_105x501 (CARD32 *chan, int width)
 		x = 0;
 		chan0 = chan[1];
 	}
-	
+
 	v = (int)chan0*4 + (int)chan[x+1]*5 - (int)chan[x+3];
 
 	chan[x] = v < 0 ? 0: v>>3 ;
@@ -375,7 +375,7 @@ interpolate_channel_h_105x501 (CARD32 *chan, int width)
 
 	if (x == 0)
 	{
-		x += 2;	
+		x += 2;
 		v += (int)chan[x+1]*6 - (int)chan[x+3];
 		chan[x] = v < 0 ? 0: v>>3 ;
 		v -= (int)chan[x-1]*6 - (int)chan0;
@@ -403,18 +403,18 @@ interpolate_channel_h_grad3 (CARD32 *c1, CARD32 *c2, int width)
 
 	if (ASIM_IsMissingValue(chan0))
 	{
-		x = 0;	
+		x = 0;
 	}
 
 	v = (int)c2[x] + (int)c1[x+1] - (int)c2[x+2];
 	c1[x] = v <= 0 ? 0 : v;
-	
+
 	for( x += 2; x+2 < width ; x += 2)
 	{
 		v = (int)(c2[x]<<1) + (int)c1[x-1] + (int)c1[x+1] - (int)c2[x+2] - (int)c2[x-2];
 		c1[x] = v <= 0 ? 0 : v>>1;
 	}
-	
+
 	if (x < width)
 	{
 		v = (int)c2[x] + (int)c1[x-1] - (int)c2[x-2];
@@ -425,9 +425,9 @@ interpolate_channel_h_grad3 (CARD32 *c1, CARD32 *c2, int width)
 void print_16bit_chan (CARD32 *chan, int width)
 {
 	int x;
-	for (x = 0 ; x < width ; ++x ) 
-	{ 
-		int v = chan[x]; 
+	for (x = 0 ; x < width ; ++x )
+	{
+		int v = chan[x];
 		fprintf(stderr, " %5.5d", (v < 0)?99999:v );
 	}
 	fprintf( stderr, "\n");
@@ -467,26 +467,26 @@ interpolate_asim_strip_gradients (ASIMStrip *strip, int line, int chan_from, int
 		return False;
 
 #if 0
-print_16bit_chan (chan_lines[0], strip->lines[line]->width); 
-print_16bit_chan (chan_lines[1], strip->lines[line]->width); 
-print_16bit_chan (chan_lines[2], strip->lines[line]->width); 
-print_16bit_chan (chan_lines[3], strip->lines[line]->width); 
-print_16bit_chan (chan_lines[4], strip->lines[line]->width); 
+print_16bit_chan (chan_lines[0], strip->lines[line]->width);
+print_16bit_chan (chan_lines[1], strip->lines[line]->width);
+print_16bit_chan (chan_lines[2], strip->lines[line]->width);
+print_16bit_chan (chan_lines[3], strip->lines[line]->width);
+print_16bit_chan (chan_lines[4], strip->lines[line]->width);
 #endif
 
 fprintf( stderr, "Line %d, start_line = %d, offset = %d, chan_to = %d, chan_from = %d\n", line, strip->start_line, offset, chan_to, chan_from);
 	func (strip->lines[line]->channels[chan_to], chan_lines, strip->lines[line]->width, offset);
 
 #if 0
-print_16bit_chan (strip->lines[line]->channels[chan_to], strip->lines[line]->width); 
+print_16bit_chan (strip->lines[line]->channels[chan_to], strip->lines[line]->width);
 fprintf( stderr, "\n");
 #endif
-	
+
 	return True;
 }
 
 static inline int*
-checkalloc_diff_aux_data (ASIMStrip *strip, int line) 
+checkalloc_diff_aux_data (ASIMStrip *strip, int line)
 {
 	if (strip->aux_data[line] == NULL)
 		strip->aux_data[line] = safemalloc(strip->lines[line]->width*2*sizeof(int));
@@ -497,13 +497,13 @@ void
 interpolate_channel_hv_adaptive_1x1(CARD32 *above, CARD32 *dst, CARD32 *below, int width, int offset)
 {
 	int x = offset;
-	
+
 	if (offset == 0)
 	{
 		dst[0] = (above[0] + below[0] + dst[1])/3;
 		x += 2;
 	}
-	
+
 	for (; x < width-1; ++x, ++x)
 	{
 		int v;
@@ -524,7 +524,7 @@ interpolate_channel_hv_adaptive_1x1(CARD32 *above, CARD32 *dst, CARD32 *below, i
 				v  = ((v << 1) + l + r) >> 2 ;
 		}
 		dst[x] = v;
-		
+
 	}
 	if (offset == 1)
 		dst[x] = (above[x] + below[x] + dst[x-1])/3;
@@ -538,7 +538,7 @@ Bool calculate_green_diff(ASIMStrip *strip, int line, int chan, int offset)
 	int *diff = checkalloc_diff_aux_data (strip, line);
 	int x = offset;
 	int v_last, v;
-	
+
 	if (diff == NULL)
 		return False;
 
@@ -547,13 +547,13 @@ Bool calculate_green_diff(ASIMStrip *strip, int line, int chan, int offset)
 
 	v_last = (int)src[x] - (int)green[x];
 	diff[x] = v_last;
-	/* some loop unrolling for optimization purposes - 
+	/* some loop unrolling for optimization purposes -
 	   we don't want to store diff[x] untill the second pass */
 	x +=2;
 	v = (int)src[x] - (int)green[x];
 	diff[x-1] = (v + v_last)/2;
 	diff[x] = v_last = v;
-	
+
 	while ((x += 2) < width-2)
 	{
 		v = (int)src[x] - (int)green[x];
@@ -565,22 +565,22 @@ Bool calculate_green_diff(ASIMStrip *strip, int line, int chan, int offset)
 	v = (int)src[x] - (int)green[x];
 	diff[x-1] = (v + v_last)/2;
 	diff[x] = v;
-	
+
 	/* border condition handling : */
 	if (offset)
 		diff[0] = diff[1];
 	else
 		diff[width-1] = diff[width-2];
 
-	/* second pass - further smoothing of the difference at the points 
+	/* second pass - further smoothing of the difference at the points
 	   where we are most likely to see artifacts */
 	for (x = offset + 2; x < width-2 ; ++x,++x)
 		diff[x] = (diff[x-1]+diff[x+1])/2;
-	
-	return True;	
+
+	return True;
 }
 
-Bool 
+Bool
 interpolate_green_diff(ASIMStrip *strip, int line, int chan, int offset)
 {
 	if (line > 0 && line < strip->size-1)
@@ -612,7 +612,7 @@ interpolate_green_diff(ASIMStrip *strip, int line, int chan, int offset)
 	return False;
 }
 
-Bool 
+Bool
 interpolate_from_green_diff(ASIMStrip *strip, int line, int chan, int offset)
 {
 	int width = strip->lines[line]->width;
@@ -620,13 +620,13 @@ interpolate_from_green_diff(ASIMStrip *strip, int line, int chan, int offset)
 	CARD32 *dst = strip->lines[line]->channels[chan];
 	int *diff = strip->aux_data[line];
 	int x;
-	
+
 	if (diff == NULL)
 		return False;
 
 	if (chan == ARGB32_BLUE_CHAN)
 		diff += width;
-	
+
 	for (x = 0 ; x < width; ++x)
 	{
 		int v = (int)green[x];
@@ -634,7 +634,7 @@ interpolate_from_green_diff(ASIMStrip *strip, int line, int chan, int offset)
 		dst[x] = (v<0)? 0 : v;
 	}
 
-	return True;	
+	return True;
 }
 
 
@@ -659,7 +659,7 @@ interpolate_asim_strip_custom_rggb2 (ASIMStrip *strip, ASFlagType filter, Bool f
 					interpolate_channel_h_105x501 (strip->lines[line]->channels[chan], strip->lines[line]->width);
 					set_flags(strip->lines[line]->flags, ASIM_SCL_InterpolatedH<<chan);
 				}
-#endif				
+#endif
 			}
 
 	if (force_all)
@@ -693,8 +693,8 @@ interpolate_asim_strip_custom_rggb2 (ASIMStrip *strip, ASFlagType filter, Bool f
 				if (get_flags(strip->lines[line-1]->flags, SCL_DO_GREEN)
 					&& get_flags(strip->lines[line+1]->flags, SCL_DO_GREEN))
 				{
-					interpolate_channel_hv_adaptive_1x1 (strip->lines[line-1]->green, 
-														 strip->lines[line]->green, 
+					interpolate_channel_hv_adaptive_1x1 (strip->lines[line-1]->green,
+														 strip->lines[line]->green,
 														 strip->lines[line+1]->green,
 														 strip->lines[line]->width,
 														 ASIM_IsMissingValue(strip->lines[line]->green[0])?0:1);
@@ -705,7 +705,7 @@ interpolate_asim_strip_custom_rggb2 (ASIMStrip *strip, ASFlagType filter, Bool f
 	}
 #endif
 
-/* now that we have smooth subtrate of green - we can build red/blue channels : 
+/* now that we have smooth subtrate of green - we can build red/blue channels :
  *   1) Calculate R-G difference for all RG lines, averaging missing values from 2 neightbours
  *   2) Calculate R-G difference for all GB lines, averaging values from lines above and below it.
  *   3) Calculate ALL RED values by adding calulated difference to Green channel.

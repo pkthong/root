@@ -27,7 +27,7 @@
  * Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #include "win32/config.h"
 #else
 #include "config.h"
@@ -37,7 +37,7 @@
 /*#define DO_CLOCKING*/
 
 #include <string.h>
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 # include "win32/afterbase.h"
 #else
 # include "afterbase.h"

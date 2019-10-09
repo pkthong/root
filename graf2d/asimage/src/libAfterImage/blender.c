@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #include "win32/config.h"
 #else
 #include "config.h"
@@ -30,7 +30,7 @@
 #endif
 
 #include <ctype.h>
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 # include "win32/afterbase.h"
 #else
 # include "afterbase.h"
@@ -398,9 +398,9 @@ alphablend_scanlines( ASScanline *bottom, ASScanline *top, int offset )
 			a = (a>>8) ;
 			ca = 255-a;
 #if 0 /*ndef HAVE_MMX*/
-/* MMX implementaion of alpha-blending below turns out to be 
-   30% slower then the original integer math implementation under it 
-   I'm probably stupid or something.  
+/* MMX implementaion of alpha-blending below turns out to be
+   30% slower then the original integer math implementation under it
+   I'm probably stupid or something.
  */
 			__m64	va  = _mm_set_pi16 (ca, a, ca, a);
 			__m64	vd  = _mm_set_pi16 (br[i],tr[i],ba[i],ta[i]);
@@ -411,7 +411,7 @@ alphablend_scanlines( ASScanline *bottom, ASScanline *top, int offset )
 			ba[i] = _mm_cvtsi64_si32( vd );
 			vd = _mm_srli_si64( vd, 32 );
 			br[i] = _mm_cvtsi64_si32( vd );
-			
+
 			vd = _mm_set_pi16 (bb[i],tb[i],bg[i],tg[i]);
 			vd = _mm_srli_pi16( vd, 8 );
 			vd = _mm_madd_pi16( va, vd );
@@ -424,10 +424,10 @@ alphablend_scanlines( ASScanline *bottom, ASScanline *top, int offset )
 			br[i] = (br[i]*ca+tr[i]*a)>>8 ;
 			bg[i] = (bg[i]*ca+tg[i]*a)>>8 ;
 			bb[i] = (bb[i]*ca+tb[i]*a)>>8 ;
-#endif	
+#endif
 		}
 	}
-	
+
 /*	fputc( '\n', stderr );*/
 }
 

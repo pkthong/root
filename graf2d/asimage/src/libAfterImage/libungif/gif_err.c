@@ -9,7 +9,7 @@
 * 17 Jun 89 - Version 1.0 by Gershon Elber.				     *
 *****************************************************************************/
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #include "../win32/config.h"
 #else
 #include "../config.h"
@@ -38,8 +38,8 @@ static char *VersionStr =
 
 const char *GetGifVersionStr()
 {
-	return VersionStr;	
-}	 
+	return VersionStr;
+}
 
 /*****************************************************************************
 * Return the last GIF error (0 if none) and reset the error.		     *

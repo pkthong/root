@@ -19,7 +19,7 @@
  */
 
 #undef LOCAL_DEBUG
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #include "win32/config.h"
 #else
 #include "config.h"
@@ -78,7 +78,7 @@
 #include <ctype.h>
 /* <setjmp.h> is used for the optional error recovery mechanism */
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 # include "win32/afterbase.h"
 #else
 # include "afterbase.h"
@@ -163,7 +163,7 @@ ASImage2file( ASImage *im, const char *dir, const char *file,
 			realfilename[dirname_len-1] = '/' ;
 		}
 		strcpy( realfilename+dirname_len, file );
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 		unix_path2dos_path( realfilename );
 #endif
 	}
@@ -388,7 +388,7 @@ LOCAL_DEBUG_OUT("building charmap%s","");
    *buffer = 0;
 
    /* crazy check against buffer overflow */
-   if ((im->width > 100000) || (im->height > 1000000) || 
+   if ((im->width > 100000) || (im->height > 1000000) ||
        (xpm_cmap.count > 100000) || (xpm_cmap.cpp > 100000)) {
 		destroy_xpm_charmap( &xpm_cmap, True );
 		free( mapped_im );
@@ -540,13 +540,13 @@ ASImage2png_int ( ASImage *im, void *data, png_rw_ptr write_fn, png_flush_ptr fl
     	return False;
     }
 
-	if( write_fn == NULL && flush_fn == NULL ) 
-	{	
+	if( write_fn == NULL && flush_fn == NULL )
+	{
 		png_init_io(png_ptr, (FILE*)data);
 	}else
 	{
-	    png_set_write_fn(png_ptr,data,(png_rw_ptr) write_fn, flush_fn );	
-	}	 
+	    png_set_write_fn(png_ptr,data,(png_rw_ptr) write_fn, flush_fn );
+	}
 
 	if( compression > 0 )
 		png_set_compression_level(png_ptr,MIN(compression,99)/10);
@@ -644,15 +644,15 @@ ASImage2png ( ASImage *im, const char *path, register ASImageExportParams *param
 {
 	FILE *outfile;
 	Bool res ;
-	
+
 	if( im == NULL )
 		return False;
-	
+
 	if ((outfile = open_writable_image_file( path )) == NULL)
 		return False;
 
 	res = ASImage2png_int ( im, outfile, NULL, NULL, params );
-	
+
 	if (outfile != stdout)
 		fclose(outfile);
 	return res;
@@ -660,30 +660,30 @@ ASImage2png ( ASImage *im, const char *path, register ASImageExportParams *param
 
 typedef struct ASImPNGBuffer
 {
-	CARD8 *buffer ; 
+	CARD8 *buffer ;
 	int used_size, allocated_size ;
-		 
+
 }ASImPNGBuffer;
 
 void asim_png_write_data(png_structp png_ptr, png_bytep data, png_size_t length)
 {
-	ASImPNGBuffer *buff = (ASImPNGBuffer*) png_get_io_ptr(png_ptr); 
+	ASImPNGBuffer *buff = (ASImPNGBuffer*) png_get_io_ptr(png_ptr);
 	if( buff && length > 0 )
 	{
-		if( buff->used_size + length > (unsigned int)buff->allocated_size ) 
+		if( buff->used_size + length > (unsigned int)buff->allocated_size )
 		{                      /* allocating in 2048 byte increements : */
-			buff->allocated_size = (buff->used_size + length + 2048)&0xFFFFF800 ; 
+			buff->allocated_size = (buff->used_size + length + 2048)&0xFFFFF800 ;
 			buff->buffer = realloc( buff->buffer, buff->allocated_size );
-		}	 
+		}
 		memcpy( &(buff->buffer[buff->used_size]), data, length );
 		buff->used_size += length ;
-	}	 
+	}
 }
-	 
+
 void asim_png_flush_data(png_structp png_ptr)
 {
- 	/* nothing to do really, but PNG requires it */	
-}	 
+ 	/* nothing to do really, but PNG requires it */
+}
 
 
 Bool
@@ -691,22 +691,22 @@ ASImage2PNGBuff( ASImage *im, CARD8 **buffer, int *size, ASImageExportParams *pa
 {
 	ASImPNGBuffer int_buff  ;
 
-	if( im == NULL || buffer == NULL || size == NULL ) 
+	if( im == NULL || buffer == NULL || size == NULL )
 		return False;
-	
+
 	memset( &int_buff, 0x00, sizeof(ASImPNGBuffer) );
 
  	if( ASImage2png_int ( im, &int_buff, (png_rw_ptr)asim_png_write_data, (png_flush_ptr)asim_png_flush_data, params ) )
 	{
-		*buffer	= int_buff.buffer ; 
-		*size = int_buff.used_size ; 		   
+		*buffer	= int_buff.buffer ;
+		*size = int_buff.used_size ;
 		return True;
 	}
 
-	if( int_buff.buffer ) 
+	if( int_buff.buffer )
 		free( int_buff.buffer );
-	
-	*buffer = NULL ; 
+
+	*buffer = NULL ;
 	*size = 0 ;
 	return False;
 }
@@ -723,9 +723,9 @@ ASImage2png ( ASImage *im, const char *path,  ASImageExportParams *params )
 Bool
 ASImage2PNGBuff( ASImage *im, CARD8 **buffer, int *size, ASImageExportParams *params )
 {
-	if( buffer ) 
-		*buffer = NULL ; 
-	if( size ) 
+	if( buffer )
+		*buffer = NULL ;
+	if( size )
 		*size = 0 ;
 	return False;
 }
@@ -868,7 +868,7 @@ LOCAL_DEBUG_OUT( "done writing image%s","" );
 	jpeg_destroy_compress(&cinfo);
 
 	free( row_pointer[0] );
-	
+
 	stop_image_decoding( &imdec );
 	if (outfile != stdout)
 		fclose(outfile);
@@ -961,7 +961,7 @@ Bool ASImage2gif( ASImage *im, const char *path,  ASImageExportParams *params )
 #endif
 #define GIF_NETSCAPE_EXT_BYTES 3
 	unsigned char netscape_ext_bytes[GIF_NETSCAPE_EXT_BYTES] = { 0x1, 0x0, 0x0};
-#define GIF_GCE_BYTES 4	
+#define GIF_GCE_BYTES 4
 	unsigned char gce_bytes[GIF_GCE_BYTES] = {0x01, 0x0, 0x0, 0x0 }; /* Graphic Control Extension bytes :
 	                                                           		* first byte - flags (0x01 for transparency )
 															   		* second and third bytes - animation delay
@@ -993,7 +993,7 @@ Bool ASImage2gif( ASImage *im, const char *path,  ASImageExportParams *params )
 	{
 		netscape_ext_bytes[GIF_NETSCAPE_REPEAT_BYTE_HIGH] = (params->gif.animate_repeats>>8)&0x00FF;
 		netscape_ext_bytes[GIF_NETSCAPE_REPEAT_BYTE_LOW] = params->gif.animate_repeats&0x00FF;
-	}		
+	}
 
 	while( cmap_size < 256 && cmap_size < (int)cmap.count+(gce_bytes[0]&0x01) )
 		cmap_size = cmap_size<<1 ;
@@ -1070,7 +1070,7 @@ Bool ASImage2gif( ASImage *im, const char *path,  ASImageExportParams *params )
 #else
 				gif = EGifOpenFileHandle(fileno(outfile));
 #endif
-				
+
 			if (gif)
 			{
 				int status;
@@ -1112,7 +1112,7 @@ Bool ASImage2gif( ASImage *im, const char *path,  ASImageExportParams *params )
 					EGifPutExtensionLast(gif, 0, GIF_NETSCAPE_EXT_BYTES, &(netscape_ext_bytes[0]));
 #endif
 				}
-				
+
 #if (GIFLIB_MAJOR>=5)
 				if( (errcode = EGifPutImageDesc(gif, 0, 0, im->width, im->height, false, (dont_save_cmap)?NULL:gif_cmap )) == GIF_ERROR )
 					ASIM_PrintGifError(errcode);
@@ -1129,7 +1129,7 @@ Bool ASImage2gif( ASImage *im, const char *path,  ASImageExportParams *params )
 	{
 		if (outfile == NULL)
 			outfile = open_writable_image_file(path);
-			
+
 		if (outfile)
         {
 #if (GIFLIB_MAJOR>=5)
@@ -1152,9 +1152,9 @@ Bool ASImage2gif( ASImage *im, const char *path,  ASImageExportParams *params )
 		if( EGifPutScreenDesc(gif, im->width, im->height, cmap_size, 0, gif_cmap ) == GIF_ERROR )
 			ASIM_PrintGifError();
 #endif
-	
+
 		EGifPutExtension(gif, 0xf9, GIF_GCE_BYTES, &(gce_bytes[0]));
-	
+
 #if (GIFLIB_MAJOR>=5)
 		if( (errcode = EGifPutImageDesc(gif, 0, 0, im->width, im->height, false, NULL )) == GIF_ERROR )
 			ASIM_PrintGifError(errcode);
@@ -1205,8 +1205,8 @@ Bool ASImage2gif( ASImage *im, const char *path,  ASImageExportParams *params )
 	}
 	free( mapped_im );
 	destroy_colormap( &cmap, True );
-	
-	if (outfile 
+
+	if (outfile
 #ifdef NO_DOUBLE_FCLOSE_AFTER_FDOPEN
 		&& gif  /* can't do double fclose in MS CRT after VC2005 */
 #endif

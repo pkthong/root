@@ -2,33 +2,40 @@
 !IF "$(CFG)" == ""
 CFG=libAfterImage - Win32 Debug
 !MESSAGE No configuration specified. Defaulting to libAfterImage - Win32 Debug.
-!ENDIF 
+!ENDIF
 
-!IF "$(CFG)" != "libAfterImage - Win32 Release" && "$(CFG)" != "libAfterImage - Win32 Debug"
+!IF "$(CFG)" != "libAfterImage - Win32 Release" && "$(CFG)" != "libAfterImage - Win32 Debug" && "$(CFG)" != "libAfterImage - Win64 Release" && "$(CFG)" != "libAfterImage - Win64 Debug"
 !MESSAGE Invalid configuration "$(CFG)" specified.
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
-!MESSAGE 
+!MESSAGE
 !MESSAGE NMAKE /f "libAfterImage.mak" CFG="libAfterImage - Win32 Debug"
-!MESSAGE 
+!MESSAGE
 !MESSAGE Possible choices for configuration are:
-!MESSAGE 
+!MESSAGE
 !MESSAGE "libAfterImage - Win32 Release" (based on "Win32 (x86) Static Library")
 !MESSAGE "libAfterImage - Win32 Debug" (based on "Win32 (x86) Static Library")
-!MESSAGE 
+!MESSAGE "libAfterImage - Win64 Release" (based on "Win64 (x64) Static Library")
+!MESSAGE "libAfterImage - Win64 Debug" (based on "Win64 (x64) Static Library")
+!MESSAGE
 !ERROR An invalid configuration is specified.
-!ENDIF 
+!ENDIF
 
 !IF "$(OS)" == "Windows_NT"
 NULL=
-!ELSE 
+!ELSE
 NULL=nul
-!ENDIF 
+!ENDIF
 
 CPP=cl.exe
 RSC=rc.exe
 
-!IF  "$(CFG)" == "libAfterImage - Win32 Release"
+!IF  "$(CFG)" == "libAfterImage - Win32 Release" || "$(CFG)" == "libAfterImage - Win32 Debug"
+HOST_ARCH = "_WIN32"
+!ELSE
+HOST_ARCH = "_WIN64"
+!ENDIF
+!IF  "$(CFG)" == "libAfterImage - Win32 Release" || "$(CFG)" == "libAfterImage - Win64 Release"
 
 OUTDIR=.\Release
 INTDIR=.\Release
@@ -45,13 +52,13 @@ DISTCLEAN: CLEAN
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-CPP_PROJ=$(FREETYPEDIRI) /nologo /W3 /O2 /D "WIN32" /D "NDEBUG" /D "NO_DEBUG_OUTPUT" /D "_MBCS" /D "_LIB" /Fp"$(INTDIR)\libAfterImage.pch" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c  $(NMAKECXXFLAGS)
+CPP_PROJ=$(FREETYPEDIRI) /nologo /W3 /O2 /D "WIN32" /D "NDEBUG" /D "NO_DEBUG_OUTPUT" /D "_MBCS" /D "_LIB" /D "_WIN64" /Fp"$(INTDIR)\libAfterImage.pch" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c  $(NMAKECXXFLAGS) /Z7
 BSC32=bscmake.exe
-BSC32_FLAGS=/nologo /o"$(OUTDIR)\libAfterImage.bsc" 
+BSC32_FLAGS=/nologo /o"$(OUTDIR)\libAfterImage.bsc"
 BSC32_SBRS= \
-	
+
 LIB32=link.exe -lib
-LIB32_FLAGS=/nologo /out:"libAfterImage.lib" 
+LIB32_FLAGS=/nologo /out:"libAfterImage.lib"
 LIB32_OBJS= \
 	"$(INTDIR)\png.obj" \
 	"$(INTDIR)\pngerror.obj" \
@@ -148,8 +155,7 @@ LIB32_OBJS= \
   $(LIB32_FLAGS) $(DEF_FLAGS) $(LIB32_OBJS)
 <<
 
-!ELSEIF  "$(CFG)" == "libAfterImage - Win32 Debug"
-
+!ELSEIF  "$(CFG)" == "libAfterImage - Win32 Debug" || "$(CFG)" == "libAfterImage - Win64 Debug"
 OUTDIR=.
 INTDIR=.\win32\Debug
 # Begin Custom Macros
@@ -168,13 +174,13 @@ DISTCLEAN: CLEAN
 "$(INTDIR)" :
     if not exist "$(INTDIR)/$(NULL)" mkdir "$(INTDIR)"
 
-CPP_PROJ=$(FREETYPEDIRI) /nologo /W3 /Gm /ZI /Od /D "WIN32" /D "_DEBUG" /D "NO_DEBUG_OUTPUT" /D "_MBCS" /D "_LIB" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c $(NMAKECXXFLAGS)
+CPP_PROJ=$(FREETYPEDIRI) /nologo /W3 /Gm /ZI /Od /D "WIN32" /D "_DEBUG" /D "NO_DEBUG_OUTPUT" /D "_MBCS" /D "_LIB" /D "$(HOST_ARCH)" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c $(NMAKECXXFLAGS) /Z7
 BSC32=bscmake.exe
-BSC32_FLAGS=/nologo /o"$(OUTDIR)\libAfterImage.bsc" 
+BSC32_FLAGS=/nologo /o"$(OUTDIR)\libAfterImage.bsc"
 BSC32_SBRS= \
-	
+
 LIB32=link.exe -lib
-LIB32_FLAGS=/nologo /out:"$(OUTDIR)\libAfterImage.lib" 
+LIB32_FLAGS=/nologo /out:"$(OUTDIR)\libAfterImage.lib"
 LIB32_OBJS= \
 	"$(INTDIR)\png.obj" \
 	"$(INTDIR)\pngerror.obj" \
@@ -271,49 +277,49 @@ LIB32_OBJS= \
   $(LIB32_FLAGS) $(DEF_FLAGS) $(LIB32_OBJS)
 <<
 
-!ENDIF 
+!ENDIF
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
-   $(CPP_PROJ) $< 
+   $(CPP_PROJ) $<
 <<
 
 .cpp{$(INTDIR)}.obj::
    $(CPP) @<<
-   $(CPP_PROJ) $< 
+   $(CPP_PROJ) $<
 <<
 
 .cxx{$(INTDIR)}.obj::
    $(CPP) @<<
-   $(CPP_PROJ) $< 
+   $(CPP_PROJ) $<
 <<
 
 .c{$(INTDIR)}.sbr::
    $(CPP) @<<
-   $(CPP_PROJ) $< 
+   $(CPP_PROJ) $<
 <<
 
 .cpp{$(INTDIR)}.sbr::
    $(CPP) @<<
-   $(CPP_PROJ) $< 
+   $(CPP_PROJ) $<
 <<
 
 .cxx{$(INTDIR)}.sbr::
    $(CPP) @<<
-   $(CPP_PROJ) $< 
+   $(CPP_PROJ) $<
 <<
 
 
 !IF "$(NO_EXTERNAL_DEPS)" != "1"
 !IF EXISTS("libAfterImage.dep")
 !INCLUDE "libAfterImage.dep"
-!ELSE 
+!ELSE
 !MESSAGE Cannot find "libAfterImage.dep"
-!ENDIF 
-!ENDIF 
+!ENDIF
+!ENDIF
 
 
-!IF "$(CFG)" == "libAfterImage - Win32 Release" || "$(CFG)" == "libAfterImage - Win32 Debug"
+!IF "$(CFG)" == "libAfterImage - Win32 Release" || "$(CFG)" == "libAfterImage - Win32 Debug" || "$(CFG)" == "libAfterImage - Win64 Release" || "$(CFG)" == "libAfterImage - Win64 Debug"
 SOURCE=.\libpng\png.c
 
 "$(INTDIR)\png.obj" : $(SOURCE) "$(INTDIR)"
@@ -823,5 +829,5 @@ SOURCE=.\scanline.c
 "$(INTDIR)\scanline.obj" : $(SOURCE) "$(INTDIR)"
 
 
-!ENDIF 
+!ENDIF
 

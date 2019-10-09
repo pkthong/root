@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #include "win32/config.h"
 #else
 #include "config.h"
@@ -50,7 +50,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 # include "win32/afterbase.h"
 #else
 # include "afterbase.h"
@@ -172,7 +172,7 @@ get_gif_image_desc( GifFileType *gif, SavedImage *im )
 #else
 			im->ImageDesc.ColorMap = MakeMapObject(gif->Image.ColorMap->ColorCount, NULL);
 #endif
-			fseek( gif->UserData, start_pos+9, SEEK_SET ); 
+			fseek( gif->UserData, start_pos+9, SEEK_SET );
 			if(fread( im->ImageDesc.ColorMap->Colors, 1, gif->Image.ColorMap->ColorCount*3, gif->UserData)){;};
 			fseek( gif->UserData, end_pos, SEEK_SET );
 			gif->Image.ColorMap = NULL ;
