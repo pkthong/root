@@ -10,6 +10,12 @@
 #ifndef CLING_VALUE_H
 #define CLING_VALUE_H
 
+#if defined(_WIN32) || defined(_WIN64)
+#define DLL_EXPORT __declspec(dllexport)
+#else
+#define DLL_EXPORT
+#endif
+
 #include <stddef.h>
 #include <stdint.h>
 #include <type_traits>
@@ -116,7 +122,7 @@ namespace cling {
 
     /// \brief Assert in case of an unsupported type. Outlined to reduce include
     ///   dependencies.
-    void AssertOnUnsupportedTypeCast() const;
+    DLL_EXPORT void AssertOnUnsupportedTypeCast() const;
 
     size_t GetNumberOfElements() const;
 
@@ -185,7 +191,7 @@ namespace cling {
     Value(clang::QualType Ty, Interpreter& Interp);
 
     /// \brief Destruct the value; calls ManagedFree() if needed.
-    ~Value();
+    DLL_EXPORT ~Value();
 
     /// \brief Create a valid but ininitialized Value. After this call the
     ///   value's storage can be accessed; i.e. calls ManagedAllocate() if
@@ -217,7 +223,7 @@ namespace cling {
     //
     /// Determine whether the Value has been set by checking
     /// whether the type is valid.
-    bool isValid() const;
+    DLL_EXPORT bool isValid() const;
 
     /// \brief Determine whether the Value is set but void.
     bool isVoid() const;

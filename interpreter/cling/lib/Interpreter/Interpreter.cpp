@@ -63,6 +63,12 @@
 #include <string>
 #include <vector>
 
+#if defined(_WIN32) || defined(_WIN64)
+#define DLL_EXPORT __declspec(dllexport)
+#else
+#define DLL_EXPORT
+#endif
+
 using namespace clang;
 
 namespace {
@@ -1730,7 +1736,8 @@ namespace cling {
 
   namespace runtime {
     namespace internal {
-      Value EvaluateDynamicExpression(Interpreter* interp, DynamicExprInfo* DEI,
+      DLL_EXPORT Value EvaluateDynamicExpression(Interpreter* interp,
+                                                 DynamicExprInfo* DEI,
                                       clang::DeclContext* DC) {
         Value ret = [&]
         {

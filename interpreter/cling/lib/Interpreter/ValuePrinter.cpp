@@ -53,7 +53,7 @@
 using namespace cling;
 
 // Implements the CValuePrinter interface.
-extern "C" void cling_PrintValue(void * /*cling::Value**/ V) {
+extern "C" DLL_EXPORT void cling_PrintValue(void* /*cling::Value**/ V) {
   //Value* value = (Value*)V;
 
   //std::string typeStr = printTypeInternal(*value);
@@ -63,11 +63,12 @@ extern "C" void cling_PrintValue(void * /*cling::Value**/ V) {
 // Exported for RuntimePrintValue.h
 namespace cling {
   namespace valuePrinterInternal {
-    extern const char* const kEmptyCollection = "{}";
+    extern DLL_EXPORT const char* const kEmptyCollection = "{}";
 
     struct OpaqueString{};
     /// Assign a string to a string*.
-    void AssignToStringFromStringPtr(OpaqueString* to, const OpaqueString& from) {
+    DLL_EXPORT void AssignToStringFromStringPtr(OpaqueString* to,
+                                               const OpaqueString& from) {
       std::string* sTo = reinterpret_cast<std::string*>(to);
       const std::string& sFrom = reinterpret_cast<const std::string&>(from);
       *sTo = sFrom;
@@ -165,17 +166,17 @@ static std::string printAddress(const void* Ptr, const char Prfx = 0) {
 namespace cling {
 
   // General fallback - prints the address
-  std::string printValue(const void *ptr) {
+  DLL_EXPORT std::string printValue(const void* ptr) {
     return printAddress(ptr, '@');
   }
 
   // void pointer
-  std::string printValue(const void **ptr) {
+  DLL_EXPORT std::string printValue(const void** ptr) {
     return printAddress(*ptr);
   }
 
   // Bool
-  std::string printValue(const bool *val) {
+  DLL_EXPORT std::string printValue(const bool* val) {
     return *val ? kTrueStr : kFalseStr;
   }
 
@@ -202,81 +203,81 @@ namespace cling {
     return Strm.str();
   }
 
-  std::string printValue(const char *val) {
+  DLL_EXPORT std::string printValue(const char* val) {
     return printOneChar(*val);
   }
 
-  std::string printValue(const signed char *val) {
+  DLL_EXPORT std::string printValue(const signed char* val) {
     return printOneChar(*val);
   }
 
-  std::string printValue(const unsigned char *val) {
+  DLL_EXPORT std::string printValue(const unsigned char* val) {
     return printOneChar(*val);
   }
 
   // Ints
-  std::string printValue(const short *val) {
+  DLL_EXPORT std::string printValue(const short* val) {
     cling::smallstream strm;
     strm << *val;
     return strm.str();
   }
 
-  std::string printValue(const unsigned short *val) {
+  DLL_EXPORT std::string printValue(const unsigned short* val) {
     cling::smallstream strm;
     strm << *val;
     return strm.str();
   }
 
-  std::string printValue(const int *val) {
+  DLL_EXPORT std::string printValue(const int* val) {
     cling::smallstream strm;
     strm << *val;
     return strm.str();
   }
 
-  std::string printValue(const unsigned int *val) {
+  DLL_EXPORT std::string printValue(const unsigned int* val) {
     cling::smallstream strm;
     strm << *val;
     return strm.str();
   }
 
-  std::string printValue(const long *val) {
+  DLL_EXPORT std::string printValue(const long* val) {
     cling::smallstream strm;
     strm << *val;
     return strm.str();
   }
 
-  std::string printValue(const unsigned long *val) {
+  DLL_EXPORT std::string printValue(const unsigned long* val) {
     cling::smallstream strm;
     strm << *val;
     return strm.str();
   }
 
-  std::string printValue(const long long *val) {
+  DLL_EXPORT std::string printValue(const long long* val) {
     cling::smallstream strm;
     strm << *val;
     return strm.str();
   }
 
-  std::string printValue(const unsigned long long *val) {
+  DLL_EXPORT std::string printValue(const unsigned long long* val) {
     cling::smallstream strm;
     strm << *val;
     return strm.str();
   }
 
   // Reals
-  std::string printValue(const float *val) {
+  DLL_EXPORT std::string printValue(const float* val) {
     cling::smallstream strm;
     strm << llvm::format("%#.6g", *val) << 'f';
     return strm.str();
   }
 
-  std::string printValue(const double *val) {
+  DLL_EXPORT std::string printValue(const double* val) {
     cling::smallstream strm;
     strm << llvm::format("%#.8g", *val);
     return strm.str();
   }
 
-  std::string printValue(const long double *val) {
+  DLL_EXPORT std::string printValue(const long double* val) {
     cling::smallstream strm;
     strm << llvm::format("%#.8Lg", *val) << 'L';
     //strm << llvm::format("%Le", *val) << 'L';
@@ -325,16 +326,16 @@ namespace cling {
     return Strm.str();
   }
 
-  std::string printValue(const char *const *val) {
+  DLL_EXPORT std::string printValue(const char* const* val) {
     return printString(val);
   }
 
-  std::string printValue(const char **val) {
+  DLL_EXPORT std::string printValue(const char** val) {
     return printString(val);
   }
 
   // std::string
-  std::string printValue(const std::string *val) {
+  DLL_EXPORT std::string printValue(const std::string* val) {
     return "\"" + *val + "\"";
   }
 
@@ -474,7 +475,8 @@ namespace cling {
   }
 
   template <>
-  std::string toUTF8<char>(const char* const Str, size_t N, const char Prefix) {
+  DLL_EXPORT std::string toUTF8<char>(const char* const Str, size_t N,
+                                      const char Prefix) {
     return utf8Value(Str, N, Prefix, quoteString);
   }
 

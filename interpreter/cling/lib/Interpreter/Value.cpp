@@ -31,6 +31,7 @@
 #include "llvm/IR/Module.h"
 #include "llvm/Support/raw_os_ostream.h"
 
+
 namespace {
 
   ///\brief The allocation starts with this layout; it is followed by the
@@ -148,7 +149,7 @@ namespace cling {
     return *this;
   }
 
-  Value::~Value() {
+  DLL_EXPORT Value::~Value() {
     if (needsManagedAllocation())
       AllocatedValue::getFromPayload(m_Storage.m_Ptr)->Release();
   }
@@ -161,7 +162,7 @@ namespace cling {
     return m_Interpreter->getCI()->getASTContext();
   }
 
-  bool Value::isValid() const { return !getType().isNull(); }
+  DLL_EXPORT bool Value::isValid() const { return !getType().isNull(); }
 
   bool Value::isVoid() const {
     const clang::ASTContext& Ctx = getASTContext();
@@ -228,7 +229,7 @@ namespace cling {
     m_Storage.m_Ptr = allocVal->getPayload();
   }
 
-  void Value::AssertOnUnsupportedTypeCast() const {
+  DLL_EXPORT void Value::AssertOnUnsupportedTypeCast() const {
     assert("unsupported type in Value, cannot cast simplistically!" && 0);
   }
 

@@ -7,11 +7,18 @@
 // LICENSE.TXT for details.
 //------------------------------------------------------------------------------
 
+#if defined(_WIN32) || defined(_WIN64)
+#define DLL_EXPORT __declspec(dllexport)
+#else
+#define DLL_EXPORT
+#endif
+
 #ifndef CLING_VALUEPRINTERC_H
 #define CLING_VALUEPRINTERC_H
 #ifdef __cplusplus
 extern "C"
 #endif
-void cling_PrintValue(void* /*cling::Value**/ V);
+    DLL_EXPORT void
+    cling_PrintValue(void* /*cling::Value**/ V);
 
 #endif // CLING_VALUEPRINTERC_H
