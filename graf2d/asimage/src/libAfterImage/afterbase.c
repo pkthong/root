@@ -1038,7 +1038,7 @@ asim_string_compare (ASHashableValue value1, ASHashableValue value2)
 	do
 	{
 		if (str1[i] != str2[i])
-			return (long)(str1[i]) - (long)(str2[i]);
+			return (uintptr_t)(str1[i]) - (uintptr_t)(str2[i]);
 
 	}while( str1[i++] );
 	return 0;
@@ -1098,7 +1098,7 @@ asim_casestring_compare (ASHashableValue value1, ASHashableValue value2)
 		if (islower (u2))
 			u2 = toupper (u2);
 		if (u1 != u2)
-			return (long)u1 - (long)u2;
+			return (uintptr_t)u1 - (uintptr_t)u2;
 	}while( str1[i++] );
 	return 0;
 }

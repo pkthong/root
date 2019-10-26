@@ -301,7 +301,7 @@ void print_asimage_func (ASHashableValue value)
 		ASStorageSlot slot ;
 
         fprintf( stderr,"\n\tASImage[%p].size = %dx%d;\n",  im, im->width, im->height );
-        fprintf( stderr,"\tASImage[%p].back_color = 0x%lX;\n", im, (long)im->back_color );
+        fprintf( stderr,"\tASImage[%p].back_color = 0x%lX;\n", im, (uintptr_t)im->back_color );
         fprintf( stderr,"\t\tASImage[%p].alt.ximage = %p;\n", im, im->alt.ximage );
         if( im->alt.ximage )
         {
