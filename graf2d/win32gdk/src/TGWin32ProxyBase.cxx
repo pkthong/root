@@ -126,7 +126,7 @@ ULong_t TGWin32ProxyBase::fgPostMessageId = 0;
 ULong_t TGWin32ProxyBase::fgPingMessageId = 0;
 ULong_t TGWin32ProxyBase::fgMainThreadId = 0;
 ULong_t TGWin32ProxyBase::fgUserThreadId = 0;
-long  TGWin32ProxyBase::fgLock = 0;
+size_t  TGWin32ProxyBase::fgLock = 0;
 UInt_t  TGWin32ProxyBase::fMaxResponseTime = 0;
 
 ////////////////////////////////////////////////////////////////////////////////
