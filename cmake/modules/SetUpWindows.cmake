@@ -1,4 +1,8 @@
-set(ROOT_PLATFORM WIN64)
+if(NOT CMAKE_VS_PLATFORM_TOOLSET_HOST_ARCHITECTURE MATCHES x64)
+   set(ROOT_PLATFORM WIN32)
+else()
+   set(ROOT_PLATFORM WIN64)
+endif()
 
 #----Check the compiler that is used-----------------------------------------------------
 if(CMAKE_COMPILER_IS_GNUCXX)
@@ -29,7 +33,11 @@ if(CMAKE_COMPILER_IS_GNUCXX)
   set(CMAKE_SHARED_LIBRARY_CREATE_C_FLAGS "${CMAKE_SHARED_LIBRARY_CREATE_C_FLAGS}")
   set(CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS}")
 elseif(MSVC)
-  set(ROOT_ARCHITECTURE win64)
+   if(NOT CMAKE_VS_PLATFORM_TOOLSET_HOST_ARCHITECTURE MATCHES x64)
+      set(ROOT_ARCHITECTURE win32)
+   else()
+      set(ROOT_ARCHITECTURE win64)
+   endif()
 
   math(EXPR VC_MAJOR "${MSVC_VERSION} / 100")
   math(EXPR VC_MINOR "${MSVC_VERSION} % 100")
@@ -48,8 +56,8 @@ elseif(MSVC)
     install(FILES ${CMAKE_SOURCE_DIR}/build/win/w32pragma.h  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT headers)
     install(FILES ${CMAKE_SOURCE_DIR}/build/win/sehmap.h  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT headers)
   else()
-    set(CMAKE_CXX_FLAGS "-nologo -FIw32pragma.h -FIsehmap.h ${BLDCXXFLAGS} -EHsc- -W3 -wd4244 -D_WIN64")
-    set(CMAKE_C_FLAGS   "-nologo -FIw32pragma.h -FIsehmap.h ${BLDCFLAGS} -EHsc- -W3 -D_WIN64")
+    set(CMAKE_CXX_FLAGS "-nologo -FIw32pragma.h -FIsehmap.h ${BLDCXXFLAGS} -EHsc- -W3 -wd4244")
+    set(CMAKE_C_FLAGS   "-nologo -FIw32pragma.h -FIsehmap.h ${BLDCFLAGS} -EHsc- -W3")
   endif()
 
   #---Select compiler flags----------------------------------------------------------------
