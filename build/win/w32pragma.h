@@ -19,6 +19,10 @@
  *                                                                       *
  *************************************************************************/
 
+#if !defined(_WIN64)
+#define _WIN32 1
+#endif
+
 #ifdef _WIN32
 
 /* Disable warning about truncated symboles (usually coming from stl) */
@@ -62,10 +66,10 @@
 //#define WIN32 1
 //#define _WINDOWS 1
 #define WINVER 0x0500
-#define CRTAPI1 _cdecl 
+#define CRTAPI1 _cdecl
 #define CRTAPI2 _cdecl
-//#define _X86_ 1 
-// #define _DLL  - used to be explicitly defined, 
+//#define _X86_ 1
+// #define _DLL  - used to be explicitly defined,
 // but it's implicitely defined via /MD(d)
 #define G__REDIRECTIO 1
 #define G__SHAREDLIB 1

@@ -26,7 +26,7 @@ class hierarchies (watch out for overlaps).
 */
 
 #include <string.h>
-#if (!defined(_WIN32) ||!defined(_WIN64)) && !defined(__MWERKS__) && !defined(R__SOLARIS)
+#if (!defined(_WIN32) && !defined(_WIN64)) && !defined(__MWERKS__) && !defined(R__SOLARIS)
 #include <strings.h>
 #endif
 #include <stdlib.h>

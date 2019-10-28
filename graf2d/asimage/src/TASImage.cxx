@@ -87,14 +87,14 @@ ROOT tutorials: `$ROOTSYS/tutorials/image/`
 #include "RConfigure.h"
 #include "TVirtualPadPainter.h"
 
-#if !defined(_WIN32) || !defined(_WIN64)
+#if !defined(_WIN32) && !defined(_WIN64)
 #ifndef R__HAS_COCOA
 #include <X11/Xlib.h>
 #endif
 #else
 #include "Windows4root.h"
 #endif
-#if !defined(_WIN32) || !defined(_WIN64)
+#if !defined(_WIN32) && !defined(_WIN64)
 #ifdef R__HAS_COCOA
 #define X_DISPLAY_MISSING 1
 #endif
