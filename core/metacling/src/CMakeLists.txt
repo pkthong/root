@@ -96,7 +96,6 @@ if(MSVC)
       ?__type_info_root_node@@3U__type_info_node@@A
       ?nothrow@std@@3Unothrow_t@1@B
       cling_runtime_internal_throwIfInvalidPointer
-	  ?setValueNoAlloc@internal@runtime@cling@@YAXPEAX00DPEBX@Z
   )
 #      //??2@YAPAXI@Z
 #      //??3@YAXPAX@Z
@@ -120,6 +119,7 @@ if(MSVC)
 #      //?setValueNoAlloc@internal@runtime@cling@@YAXPAX00D_K@Z
 #      //?setValueNoAlloc@internal@runtime@cling@@YAXPAX00DPBX@Z
 #      //?setValueWithAlloc@internal@runtime@cling@@YAPAXPAX00D@Z
+#	    //?setValueNoAlloc@internal@runtime@cling@@YAXPEAX00DPEBX@Z
 #      //?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PBM@Z
 #      //?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PBN@Z
 #      //?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PBH@Z
