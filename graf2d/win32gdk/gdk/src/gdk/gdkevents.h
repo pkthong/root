@@ -344,7 +344,11 @@ extern "C" {
       union {
          char b[20];
          short s[10];
-         Long_t l[5];
+#if defined(_WIN64)
+         __int64 l[5];
+#else
+         long l[5];
+#endif
       } data;
    };
 

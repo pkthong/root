@@ -48,7 +48,7 @@
 #  include <time.h>
 # endif
 #endif
-#if !defined(_WIN32) || !defined(_WIN64)
+#if !defined(_WIN32) && !defined(_WIN64)
 #include <sys/times.h>
 #endif
 
