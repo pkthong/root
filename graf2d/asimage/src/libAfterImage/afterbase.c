@@ -1152,7 +1152,7 @@ int XQueryColors(void* a,Colormap c,void* x,int m){return 0;}
 #  include <time.h>
 # endif
 #endif
-#if !defined(_WIN32) || !defined(_WIN64)
+#if !defined(_WIN32) && !defined(_WIN64)
 # include <sys/times.h>
 #endif
 static clock_t _as_ticker_last_tick = 0;
@@ -1165,7 +1165,7 @@ static clock_t _as_ticker_tick_time = 0;
 void
 sleep_a_little (int n)
 {
-#if !defined(_WIN32) || !defined(_WIN64)
+#if !defined(_WIN32) && !defined(_WIN64)
 	struct timeval value;
 
 	if (n <= 0)
@@ -1190,7 +1190,7 @@ sleep_a_little (int n)
 void
 asim_start_ticker (unsigned int size)
 {
-#if !defined(_WIN32) || !defined(_WIN64)
+#if !defined(_WIN32) && !defined(_WIN64)
 	struct tms    t;
 
 	_as_ticker_last_tick = times (&t);		   /* in system ticks */
@@ -1217,7 +1217,7 @@ asim_start_ticker (unsigned int size)
 void
 asim_wait_tick ()
 {
-#if !defined(_WIN32) || !defined(_WIN64)
+#if !defined(_WIN32) && !defined(_WIN64)
 	struct tms    t;
 	register clock_t curr = (times (&t) - _as_ticker_last_tick) * _as_ticker_tick_time;
 #else
@@ -1227,14 +1227,14 @@ asim_wait_tick ()
 	if (curr < _as_ticker_tick_size)
 		sleep_a_little (_as_ticker_tick_size - curr);
 
-#if !defined(_WIN32) || !defined(_WIN64)
+#if !defined(_WIN32) && !defined(_WIN64)
 	_as_ticker_last_tick = times (&t);
 #else
 	_as_ticker_last_tick = time(NULL) ;
 #endif
 }
 
-#if !defined(_WIN32) || !defined(_WIN64)
+#if !defined(_WIN32) && !defined(_WIN64)
 /*
  * Non-NULL select and dcomp pointers are *NOT* tested, but should be OK.
  * They are not used by afterstep however, so this implementation should
@@ -1296,7 +1296,7 @@ asim_my_scandir_ext ( const char *dirname, int (*filter_func) (const char *),
 	return n;
 }
 
-#endif /* #if !defined(_WIN32) || !defined(_WIN64) */
+#endif /* #if !defined(_WIN32) && !defined(_WIN64) */
 
 /***************************************/
 /* from xml.c                          */

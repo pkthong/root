@@ -704,7 +704,7 @@ struct ASImageListAuxData
 	ASVisual *asv;
 };
 
-#if !defined(_WIN32) || !defined(_WIN64)
+#if !defined(_WIN32) && !defined(_WIN64)
 Bool
 direntry2ASImageListEntry( const char *fname, const char *fullname,
 						   struct stat *stat_info, void *aux_data)
@@ -795,7 +795,7 @@ get_asimage_list( ASVisual *asv, const char *dir,
 				  int (*select) (const char *) )
 {
 	ASImageListEntry *im_list = NULL ;
-#if !defined(_WIN32) || !defined(_WIN64)
+#if !defined(_WIN32) && !defined(_WIN64)
 	struct ASImageListAuxData aux_data ;
 	int count ;
 

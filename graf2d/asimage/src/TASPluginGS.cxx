@@ -30,7 +30,7 @@ Allows to read PS/EPS/PDF files via GhostScript
 #   define popen_flags "r"
 #endif
 
-#if !defined(_WIN32) || !defined(_WIN64)
+#if !defined(_WIN32) && !defined(_WIN64)
 #   include <afterbase.h>
 #else
 #   include <win32/config.h>
