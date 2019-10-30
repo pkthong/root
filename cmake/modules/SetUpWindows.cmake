@@ -64,7 +64,11 @@ elseif(MSVC)
   set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -Z7")
   set(CMAKE_CXX_FLAGS_RELEASE        "-O2")
   set(CMAKE_CXX_FLAGS_OPTIMIZED      "-O2")
+<<<<<<< HEAD
   set(CMAKE_CXX_FLAGS_DEBUG          "-Od -Z7 -Ob3")
+=======
+  set(CMAKE_CXX_FLAGS_DEBUG          "-Od -Z7 -Ob2")
+>>>>>>> <hack> fixed Win32 build for TThread
   set(CMAKE_C_FLAGS_RELWITHDEBINFO   "-O2 -Z7")
   set(CMAKE_C_FLAGS_RELEASE          "-O2")
   set(CMAKE_C_FLAGS_OPTIMIZED        "-O2")
