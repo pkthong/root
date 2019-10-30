@@ -14,7 +14,7 @@
 
 // GL includes - include this if you are calling OpenGL functions.
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #include "Windows4Root.h"
 #endif
 

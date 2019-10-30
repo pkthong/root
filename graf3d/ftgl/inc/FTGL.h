@@ -20,7 +20,7 @@ typedef float    FTGL_FLOAT;
 
 #include "TGLIncludes.h"
 
-#ifndef WIN32
+#if !defined(_WIN32) && !defined(_WIN64)
     // Required for compatibility with glext.h style function definitions of
     // OpenGL extensions, such as in src/osg/Point.cpp.
     #ifndef APIENTRY

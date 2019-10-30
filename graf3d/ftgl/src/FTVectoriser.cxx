@@ -9,7 +9,7 @@
     typedef GLvoid (*GLUTesselatorFunction)(...);
 #elif defined( __mips ) || defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __OpenBSD__ ) || defined( __sun ) || defined (__CYGWIN__) || defined (__APPLE__)
     typedef GLvoid (*GLUTesselatorFunction)();
-#elif defined(WIN32) || defined(_WIN64)
+#elif defined(_WIN32) || defined(_WIN64)
     typedef GLvoid (CALLBACK *GLUTesselatorFunction)( );
 #else
     #error "Error - need to define type GLUTesselatorFunction for this platform/compiler"
