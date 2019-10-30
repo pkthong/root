@@ -336,16 +336,16 @@ if(builtin_afterimage)
   set(AFTERIMAGE_LIBRARIES ${CMAKE_BINARY_DIR}/lib/libAfterImage${CMAKE_STATIC_LIBRARY_SUFFIX})
   if(WIN32)
      if(winrtdebug)
-        if(NOT CMAKE_VS_PLATFORM_TOOLSET_HOST_ARCHITECTURE MATCHES x64)
-           set(astepbld "libAfterImage - Win32 Debug")
-        else()
+        if(CMAKE_GENERATOR_PLATFORM MATCHES x64)
            set(astepbld "libAfterImage - Win64 Debug")
+        else()
+           set(astepbld "libAfterImage - Win32 Debug")
         endif()
      else()
-        if(NOT CMAKE_VS_PLATFORM_TOOLSET_HOST_ARCHITECTURE MATCHES x64)
-           set(astepbld "libAfterImage - Win32 Release")
-        else()
+        if(CMAKE_GENERATOR_PLATFORM MATCHES x64)
            set(astepbld "libAfterImage - Win64 Release")
+        else()
+           set(astepbld "libAfterImage - Win32 Release")
         endif()
      endif()
     ExternalProject_Add(
@@ -355,7 +355,7 @@ if(builtin_afterimage)
       UPDATE_COMMAND ${CMAKE_COMMAND} -E remove_directory zlib
       CONFIGURE_COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/builtins/zlib zlib
       BUILD_COMMAND nmake -nologo -f libAfterImage.mak FREETYPEDIRI=-I${FREETYPE_INCLUDE_DIR}
-                    CFG=${astepbld} NMAKECXXFLAGS=${CMAKE_CXX_FLAGS}
+      CFG=${astepbld} NMAKECXXFLAGS=${CMAKE_CXX_FLAGS}
       INSTALL_COMMAND  ${CMAKE_COMMAND} -E copy_if_different libAfterImage.lib <INSTALL_DIR>/lib/.
       LOG_DOWNLOAD 1 LOG_CONFIGURE 1 LOG_BUILD 1 LOG_INSTALL 1 BUILD_IN_SOURCE 1
       BUILD_BYPRODUCTS ${AFTERIMAGE_LIBRARIES})
