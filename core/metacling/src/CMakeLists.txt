@@ -97,6 +97,45 @@ if(MSVC)
       ?nothrow@std@@3Unothrow_t@1@B
       cling_runtime_internal_throwIfInvalidPointer
   )
+
+   if (${CMAKE_GENERATOR_PLATFORM} MATCHES x64)
+   else()
+   set (cling_exports ${cling_exports}
+      ??2@YAPAXI@Z
+      ??3@YAXPAX@Z
+      ??3@YAXPAXI@Z
+      ??_U@YAPAXI@Z
+      ??_V@YAXPAX@Z
+      ??_V@YAXPAXI@Z
+      ??6?$basic_ostream@DU?$char_traits@D@std@@@std@@QAEAAV01@H@Z
+      ??6?$basic_ostream@DU?$char_traits@D@std@@@std@@QAEAAV01@M@Z
+      ??6?$basic_ostream@DU?$char_traits@D@std@@@std@@QAEAAV01@N@Z
+      ??$?6U?$char_traits@D@std@@@std@@YAAAV?$basic_ostream@DU?$char_traits@D@std@@@0@AAV10@D@Z
+      ?_Facet_Register@std@@YAXPAV_Facet_base@1@@Z
+      ??1Value@cling@@QAE@XZ
+      ?isValid@Value@cling@@QBE_NXZ
+      ?kEmptyCollection@valuePrinterInternal@cling@@3QBDB
+      ?AssertOnUnsupportedTypeCast@Value@cling@@IBEXXZ
+      ?setValueNoAlloc@internal@runtime@cling@@YAXPAX00D@Z
+      ?setValueNoAlloc@internal@runtime@cling@@YAXPAX00DM@Z
+      ?setValueNoAlloc@internal@runtime@cling@@YAXPAX00DN@Z
+      ?setValueNoAlloc@internal@runtime@cling@@YAXPAX00DO@Z
+      ?setValueNoAlloc@internal@runtime@cling@@YAXPAX00D_K@Z
+      ?setValueNoAlloc@internal@runtime@cling@@YAXPAX00DPBX@Z
+      ?setValueWithAlloc@internal@runtime@cling@@YAPAXPAX00D@Z
+      ?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PBM@Z
+      ?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PBN@Z
+      ?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PBH@Z
+      ?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PBX@Z
+      ?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PB_N@Z
+      ?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PAPBX@Z
+      ?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PAPBD@Z
+      ?printValue@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PBV23@@Z
+      ??$toUTF8@D@cling@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@QBDID@Z
+      ?EvaluateDynamicExpression@internal@runtime@cling@@YA?AVValue@3@PAVInterpreter@3@PAVDynamicExprInfo@123@PAVDeclContext@clang@@@Z
+
+   )
+   endif()
 #      //??2@YAPAXI@Z
 #      //??3@YAXPAX@Z
 #      //??3@YAXPAXI@Z
