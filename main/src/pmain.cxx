@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <errno.h>
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #include <io.h>
 #else
 #include <sys/time.h>

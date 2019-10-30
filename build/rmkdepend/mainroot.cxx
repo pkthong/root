@@ -34,7 +34,7 @@ extern "C" {
 #include "def.h"
 }
 
-#ifndef WIN32
+#if !defined(_WIN32) && !defined(_WIN64)
 #include <unistd.h>
 #else
 extern "C" int unlink(const char *FILENAME);
