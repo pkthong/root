@@ -68,42 +68,23 @@ int _debugmask;
 
 char *ProgramName;
 
-char *directives[] = {
-   "if",
-   "ifdef",
-   "ifndef",
-   "else",
-   "endif",
-   "define",
-   "undef",
-   "include",
-   "line",
-   "pragma",
-   "error",
-   "ident",
-   "sccs",
-   "elif",
-   "eject",
-   "warning",
-   NULL
-};
+char *directives[] = {"if",     "ifdef", "ifndef", "else", "endif", "define", "undef",   "include", "line",
+                      "pragma", "error", "ident",  "sccs", "elif",  "eject",  "warning", NULL};
 
 #define MAKEDEPEND
 #include "imakemdep.h" /* from config sources */
 #undef MAKEDEPEND
 
-struct inclist inclist[ MAXFILES ],
-         *inclistp = inclist,
-                     maininclist;
+struct inclist inclist[MAXFILES], *inclistp = inclist, maininclist;
 
-char *filelist[ MAXFILES ];
-char *targetlist[ MAXFILES ];
-char *includedirs[ MAXDIRS + 1 ];
-char *notdotdot[ MAXDIRS ];
+char *filelist[MAXFILES];
+char *targetlist[MAXFILES];
+char *includedirs[MAXDIRS + 1];
+char *notdotdot[MAXDIRS];
 char *objprefix = "";
 char *objsuffix = ".o";
 char *startat = "# DO NOT DELETE";
-char  *isysroot = "";
+char *isysroot = "";
 int width = 78;
 boolean append = FALSE;
 boolean printed = FALSE;
@@ -111,22 +92,22 @@ boolean verbose = FALSE;
 boolean show_where_not = FALSE;
 boolean warn_multiple = FALSE; /* Warn on multiple includes of same file */
 
-void freefile(struct filepointer*);
-void redirect(char*, char*);
+void freefile(struct filepointer *);
+void redirect(char *, char *);
 
 static
 #ifdef SIGNALRETURNSINT
-int
+   int
 #else
-void
+   void
 #endif
-catch (int sig)
+   catch (int sig)
 {
    fflush(stdout);
    fatalerr("got signal %d\n", sig);
 }
 
-#if defined(USG) || (defined(i386) && defined(SYSV)) || defined(WIN32) || defined(__EMX__) || defined(Lynx_22)
+#if defined(USG) || (defined(i386) && defined(SYSV)) || defined(_WIN32) ||defined(_WIN64) || defined(__EMX__) || defined(Lynx_22)
 #define USGISH
 #endif
 
@@ -143,18 +124,16 @@ struct sigaction sig_act;
 extern void define2(char *name, char *val, struct inclist *file);
 extern void define(char *def, struct inclist *file);
 extern void undefine(char *symbol, struct inclist *file);
-extern int find_includes(struct filepointer *filep, struct inclist *file,
-                            struct inclist *file_red, int recursion,
-                            boolean failOK);
+extern int
+find_includes(struct filepointer *filep, struct inclist *file, struct inclist *file_red, int recursion, boolean failOK);
 extern void recursive_pr_include(struct inclist *head, char *file, char *base, char *dep);
 extern void inc_clean();
 
-int main_orig(argc, argv)
-int argc;
+int main_orig(argc, argv) int argc;
 char **argv;
 {
    register char **fp = filelist;
-   register char  **tp = targetlist;
+   register char **tp = targetlist;
    register char **incp = includedirs;
    register char *p;
    register struct inclist *ip;
@@ -192,23 +171,20 @@ char **argv;
       close(afd);
       for (p = args; *p; p++) {
          if (quotechar) {
-            if (quotechar == '\\' ||
-                  (*p == quotechar && p[-1] != '\\'))
+            if (quotechar == '\\' || (*p == quotechar && p[-1] != '\\'))
                quotechar = '\0';
             continue;
          }
          switch (*p) {
-            case '\\':
-            case '"':
-            case '\'':
-               quotechar = *p;
-               break;
-            case ' ':
-            case '\n':
-               *p = '\0';
-               if (p > args && p[-1])
-                  nargc++;
-               break;
+         case '\\':
+         case '"':
+         case '\'': quotechar = *p; break;
+         case ' ':
+         case '\n':
+            *p = '\0';
+            if (p > args && p[-1])
+               nargc++;
+            break;
          }
       }
       if (p[-1])
@@ -217,7 +193,8 @@ char **argv;
       nargv[0] = argv[0];
       argc = 1;
       for (p = args; argc < nargc; p += strlen(p) + 1)
-         if (*p) nargv[argc++] = p;
+         if (*p)
+            nargv[argc++] = p;
       argv = nargv;
    }
    for (argc--, argv++; argc; argc--, argv++) {
@@ -236,137 +213,142 @@ char **argv;
          continue;
       }
       switch (argv[0][1]) {
-         case '-':
-            endmarker = &argv[0][2];
-            if (endmarker[0] == '\0') endmarker = "--";
+      case '-':
+         endmarker = &argv[0][2];
+         if (endmarker[0] == '\0')
+            endmarker = "--";
+         break;
+      case 't':
+         if (endmarker)
             break;
-         case 't':
-            if (endmarker) break;
-            if (numfiles == 0) {
-               fatalerr("-t should follow a file name\n");
-            } else {
-               *(tp - 1) = argv[0] + 2;
+         if (numfiles == 0) {
+            fatalerr("-t should follow a file name\n");
+         } else {
+            *(tp - 1) = argv[0] + 2;
+         }
+         break;
+      case 'D':
+         if (argv[0][2] == '\0') {
+            argv++;
+            argc--;
+         }
+         for (p = argv[0] + 2; *p; p++)
+            if (*p == '=') {
+               *p = ' ';
+               break;
             }
+         define(argv[0] + 2, &maininclist);
+         break;
+      case 'I':
+         if (incp >= includedirs + MAXDIRS)
+            fatalerr("Too many -I flags.\n");
+         *incp++ = argv[0] + 2;
+         if (**(incp - 1) == '\0') {
+            *(incp - 1) = *(++argv);
+            argc--;
+         }
+         break;
+      case 'U':
+         /* Undef's override all -D's so save them up */
+         numundefs++;
+         if (numundefs == 1)
+            undeflist = malloc(sizeof(char *));
+         else
+            undeflist = realloc(undeflist, numundefs * sizeof(char *));
+         if (argv[0][2] == '\0') {
+            argv++;
+            argc--;
+         }
+         undeflist[numundefs - 1] = argv[0] + 2;
+         break;
+      case 'Y': defincdir = argv[0] + 2; break;
+      case 'i':
+         if (!strcmp(argv[0] + 2, "sysroot")) {
+            argv++;
+            argc--;
+            isysroot = argv[0];
+         }
+         break;
+         /* do not use if endmarker processing */
+      case 'a':
+         if (endmarker)
             break;
-         case 'D':
-            if (argv[0][2] == '\0') {
-               argv++;
-               argc--;
-            }
-            for (p = argv[0] + 2; *p ; p++)
-               if (*p == '=') {
-                  *p = ' ';
-                  break;
-               }
-            define(argv[0] + 2, &maininclist);
+         append = TRUE;
+         break;
+      case 'w':
+         if (endmarker)
             break;
-         case 'I':
-            if (incp >= includedirs + MAXDIRS)
-               fatalerr("Too many -I flags.\n");
-            *incp++ = argv[0] + 2;
-            if (**(incp - 1) == '\0') {
-               *(incp - 1) = *(++argv);
-               argc--;
-            }
+         if (argv[0][2] == '\0') {
+            argv++;
+            argc--;
+            width = atoi(argv[0]);
+         } else
+            width = atoi(argv[0] + 2);
+         break;
+      case 'o':
+         if (endmarker)
             break;
-         case 'U':
-            /* Undef's override all -D's so save them up */
-            numundefs++;
-            if (numundefs == 1)
-               undeflist = malloc(sizeof(char *));
-            else
-               undeflist = realloc(undeflist,
-                                   numundefs * sizeof(char *));
-            if (argv[0][2] == '\0') {
-               argv++;
-               argc--;
-            }
-            undeflist[numundefs - 1] = argv[0] + 2;
+         if (argv[0][2] == '\0') {
+            argv++;
+            argc--;
+            objsuffix = argv[0];
+         } else
+            objsuffix = argv[0] + 2;
+         break;
+      case 'p':
+         if (endmarker)
             break;
-         case 'Y':
-            defincdir = argv[0] + 2;
+         if (argv[0][2] == '\0') {
+            argv++;
+            argc--;
+            objprefix = argv[0];
+         } else
+            objprefix = argv[0] + 2;
+         break;
+      case 'v':
+         if (endmarker)
             break;
-         case 'i':
-            if (!strcmp(argv[0] + 2, "sysroot")) {
-               argv++;
-               argc--;
-               isysroot = argv[0];
-            }
-            break;
-            /* do not use if endmarker processing */
-         case 'a':
-            if (endmarker) break;
-            append = TRUE;
-            break;
-         case 'w':
-            if (endmarker) break;
-            if (argv[0][2] == '\0') {
-               argv++;
-               argc--;
-               width = atoi(argv[0]);
-            } else
-               width = atoi(argv[0] + 2);
-            break;
-         case 'o':
-            if (endmarker) break;
-            if (argv[0][2] == '\0') {
-               argv++;
-               argc--;
-               objsuffix = argv[0];
-            } else
-               objsuffix = argv[0] + 2;
-            break;
-         case 'p':
-            if (endmarker) break;
-            if (argv[0][2] == '\0') {
-               argv++;
-               argc--;
-               objprefix = argv[0];
-            } else
-               objprefix = argv[0] + 2;
-            break;
-         case 'v':
-            if (endmarker) break;
-            verbose = TRUE;
+         verbose = TRUE;
 #ifdef DEBUG
-            if (argv[0][2])
-               _debugmask = atoi(argv[0] + 2);
+         if (argv[0][2])
+            _debugmask = atoi(argv[0] + 2);
 #endif
+         break;
+      case 's':
+         if (endmarker)
             break;
-         case 's':
-            if (endmarker) break;
-            startat = argv[0] + 2;
-            if (*startat == '\0') {
-               startat = *(++argv);
-               argc--;
-            }
-            if (*startat != '#')
-               fatalerr("-s flag's value should start %s\n",
-                        "with '#'.");
+         startat = argv[0] + 2;
+         if (*startat == '\0') {
+            startat = *(++argv);
+            argc--;
+         }
+         if (*startat != '#')
+            fatalerr("-s flag's value should start %s\n", "with '#'.");
+         break;
+      case 'f':
+         if (endmarker)
             break;
-         case 'f':
-            if (endmarker) break;
-            makefile = argv[0] + 2;
-            if (*makefile == '\0') {
-               makefile = *(++argv);
-               argc--;
-            }
-            break;
+         makefile = argv[0] + 2;
+         if (*makefile == '\0') {
+            makefile = *(++argv);
+            argc--;
+         }
+         break;
 
-         case 'm':
-            warn_multiple = TRUE;
-            break;
+      case 'm':
+         warn_multiple = TRUE;
+         break;
 
-            /* Ignore -O, -g so we can just pass ${CFLAGS} to
-               makedepend
-             */
-         case 'O':
-         case 'g':
+         /* Ignore -O, -g so we can just pass ${CFLAGS} to
+            makedepend
+          */
+      case 'O':
+      case 'g': break;
+      default:
+         if (endmarker)
             break;
-         default:
-            if (endmarker) break;
-            /*  fatalerr("unknown opt = %s\n", argv[0]); */
-            warning("ignoring option %s\n", argv[0]);
+         /*  fatalerr("unknown opt = %s\n", argv[0]); */
+         warning("ignoring option %s\n", argv[0]);
       }
    }
    /* Now do the undefs from the command line */
@@ -387,14 +369,16 @@ char **argv;
          /* can have more than one component */
          if (emxinc) {
             char *beg, *end;
-            beg = (char*)strdup(emxinc);
+            beg = (char *)strdup(emxinc);
             for (;;) {
-               end = (char*)strchr(beg, ';');
-               if (end) *end = 0;
+               end = (char *)strchr(beg, ';');
+               if (end)
+                  *end = 0;
                if (incp >= includedirs + MAXDIRS)
                   fatalerr("Too many include dirs\n");
                *incp++ = beg;
-               if (!end) break;
+               if (!end)
+                  break;
                beg = end + 1;
             }
          }
@@ -439,9 +423,9 @@ char **argv;
    signal(SIGSYS, catch);
 #endif
 #else
-   sig_act.sa_handler = catch ;
+   sig_act.sa_handler = catch;
 #ifdef _POSIX_SOURCE
-sigemptyset(&sig_act.sa_mask);
+   sigemptyset(&sig_act.sa_mask);
    sigaddset(&sig_act.sa_mask, SIGINT);
    sigaddset(&sig_act.sa_mask, SIGQUIT);
 #ifdef SIGBUS
@@ -455,19 +439,15 @@ sigemptyset(&sig_act.sa_mask);
    sigaddset(&sig_act.sa_mask, SIGSYS);
 #endif
 #else
-   sig_act.sa_mask = ((1 << (SIGINT - 1))
-                      | (1 << (SIGQUIT - 1))
+   sig_act.sa_mask = ((1 << (SIGINT - 1)) | (1 << (SIGQUIT - 1))
 #ifdef SIGBUS
                       | (1 << (SIGBUS - 1))
 #endif
-                      | (1 << (SIGILL - 1))
-                      | (1 << (SIGSEGV - 1))
-                      | (1 << (SIGHUP - 1))
-                      | (1 << (SIGPIPE - 1))
+                      | (1 << (SIGILL - 1)) | (1 << (SIGSEGV - 1)) | (1 << (SIGHUP - 1)) | (1 << (SIGPIPE - 1))
 #ifdef SIGSYS
                       | (1 << (SIGSYS - 1))
 #endif
-                     );
+   );
 #endif /* _POSIX_SOURCE */
    sig_act.sa_flags = 0;
    sigaction(SIGHUP, &sig_act, (struct sigaction *)0);
@@ -521,8 +501,7 @@ static int elim_cr(char *buf, int sz)
 }
 #endif
 
-struct filepointer *getfile(file)
-         char *file;
+struct filepointer *getfile(file) char *file;
 {
    register int fd;
    struct filepointer *content;
@@ -533,7 +512,7 @@ struct filepointer *getfile(file)
       warning("cannot open \"%s\"\n", file);
       content->f_p = content->f_base = content->f_end = (char *)malloc(1);
       *content->f_p = '\0';
-      return(content);
+      return (content);
    }
    fstat(fd, &st);
    content->f_base = (char *)malloc(st.st_size + 1);
@@ -550,53 +529,48 @@ struct filepointer *getfile(file)
    content->f_end = content->f_base + st.st_size;
    *content->f_end = '\0';
    content->f_line = 0;
-   return(content);
+   return (content);
 }
 
-void
-freefile(fp)
-struct filepointer *fp;
+void freefile(fp) struct filepointer *fp;
 {
    free(fp->f_base);
    free(fp);
 }
 
-char *copy(str)
-register char *str;
+char *copy(str) register char *str;
 {
    register char *p = (char *)malloc(strlen(str) + 1);
 
    strcpy(p, str);
-   return(p);
+   return (p);
 }
 
-int match(str, list)
-register char *str, **list;
+int match(str, list) register char *str, **list;
 {
    register int i;
 
    for (i = 0; *list; i++, list++)
       if (strcmp(str, *list) == 0)
-         return(i);
-   return(-1);
+         return (i);
+   return (-1);
 }
 
 /*
  * Get the next line.  We only return lines beginning with '#' since that
  * is all this program is ever interested in.
  */
-char *rgetline(filep)
-register struct filepointer *filep;
+char *rgetline(filep) register struct filepointer *filep;
 {
-   register char *p, /* walking pointer */
-   *eof, /* end of file pointer */
-   *bol; /* beginning of line pointer */
+   register char *p,    /* walking pointer */
+      *eof,             /* end of file pointer */
+      *bol;             /* beginning of line pointer */
    register int lineno; /* line number */
 
    p = filep->f_p;
    eof = filep->f_end;
    if (p >= eof)
-      return((char *)NULL);
+      return ((char *)NULL);
    lineno = filep->f_line;
 
    for (bol = p--; ++p < eof;) {
@@ -632,9 +606,10 @@ register struct filepointer *filep;
 
             *p++ = '\0';
             /* punt lines with just # (yacc generated) */
-            for (cp = bol + 1;
-                  (*cp == ' ' || *cp == '\t'); cp++) {};
-            if (*cp) goto done;
+            for (cp = bol + 1; (*cp == ' ' || *cp == '\t'); cp++) {
+            };
+            if (*cp)
+               goto done;
          }
          bol = p + 1;
       }
@@ -644,31 +619,30 @@ register struct filepointer *filep;
 done:
    filep->f_p = p;
    filep->f_line = lineno;
-   return(bol);
+   return (bol);
 }
 
 /*
  * Strip the file name down to what we want to see in the Makefile.
  * It will have objprefix and objsuffix around it.
  */
-char *base_name(file)
-register char *file;
+char *base_name(file) register char *file;
 {
    register char *p;
 
    file = copy(file);
-   for (p = file + strlen(file); p > file && *p != '.'; p--) ;
+   for (p = file + strlen(file); p > file && *p != '.'; p--)
+      ;
 
    if (*p == '.')
       *p = '\0';
-   return(file);
+   return (file);
 }
 
 #if defined(USG) && !defined(CRAY) && !defined(SVR4) && !defined(__EMX__) && !defined(clipper) && !defined(__clipper__)
-int rename(from, to)
-char *from, *to;
+int rename(from, to) char *from, *to;
 {
-   (void) unlink(to);
+   (void)unlink(to);
    if (link(from, to) == 0) {
       unlink(from);
       return 0;
@@ -678,15 +652,11 @@ char *from, *to;
 }
 #endif /* USGISH */
 
-void
-redirect(line, makefile)
-char *line,
-*makefile;
+void redirect(line, makefile) char *line, *makefile;
 {
    struct stat st;
    FILE *fdin = 0, *fdout = 0;
-   char backup[ BUFSIZ ],
-   buf[ BUFSIZ ];
+   char backup[BUFSIZ], buf[BUFSIZ];
    boolean found = FALSE;
    int len;
 
@@ -736,8 +706,7 @@ char *line,
       }
       if (!found) {
          if (verbose)
-            warning("Adding new delimiting line \"%s\" and dependencies...\n",
-                    line);
+            warning("Adding new delimiting line \"%s\" and dependencies...\n", line);
          puts(line); /* same as fputs(fdout); but with newline */
       } else if (append) {
          while (fgets(buf, BUFSIZ, fdin)) {
