@@ -197,7 +197,7 @@ public:
       }
 
       RAttrBox Border() { return {FromOption, "border", *this}; }
-
+      
       /// The position (offset) of the pad.
       DrawingOpts &SetPos(const RPadPos &pos) { Set("pos", pos); return *this; }
       RPadPos GetPos() const { return Get<RPadPos>("pos"); }
@@ -214,9 +214,6 @@ private:
    /// Drawing options, containing the size (in parent coordinates!)
    DrawingOpts fOpts;
 
-   /// Position of the pad in the parent's (!) coordinate system.
-   RPadPos fPos = fOpts.GetPos();
-
    /// Size of the pad in the parent's (!) coordinate system.
    RPadExtent fSize = fOpts.GetSize(); // {640_px, 400_px};
 
@@ -227,7 +224,7 @@ public:
    RPad() = default;
 
    /// Create a child pad.
-   RPad(RPadBase &parent, const RPadPos &pos, const RPadExtent &size): fParent(&parent), fPos(pos), fSize(size) {}
+   RPad(RPadBase &parent, const RPadExtent &size): fParent(&parent), fSize(size) {}
 
    /// Destructor to have a vtable.
    virtual ~RPad();
@@ -243,9 +240,6 @@ public:
 
    /// Access to the top-most canvas (non-const version).
    RCanvas *GetCanvas() override { return fParent ? fParent->GetCanvas() : nullptr; }
-
-   /// Get the position of the pad in parent (!) coordinates.
-   const RPadPos &GetPos() const { return fPos; }
 
    /// Get the size of the pad in parent (!) coordinates.
    const RPadExtent &GetSize() const { return fSize; }
