@@ -89,7 +89,7 @@ include(CheckCCompilerFlag)
 
 #---C++ standard----------------------------------------------------------------------
 if(MSVC)
-set(CMAKE_CXX_STANDARD 17 CACHE STRING "")
+set(CMAKE_CXX_STANDARD 14 CACHE STRING "")
 else()
 set(CMAKE_CXX_STANDARD 11 CACHE STRING "")
 endif()
