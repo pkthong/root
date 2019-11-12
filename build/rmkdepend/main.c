@@ -53,7 +53,7 @@ in this Software without prior written authorization from the X Consortium.
 #endif
 
 #include <stdarg.h>
-#ifndef WIN32
+#if !defined(_WIN32) && !defined(_WIN64)
 #include <unistd.h>
 #else
 #include <io.h>

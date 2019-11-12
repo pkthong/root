@@ -38,7 +38,7 @@ MA  02110-1301  USA
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #  include <io.h>
 typedef long off_t;
 #else
@@ -166,7 +166,7 @@ typedef long off_t;
 
 static int aux_rand()
 {
-#ifndef WIN32
+#if !defined(_WIN32) && !defined(_WIN64)
    int frnd = open("/dev/urandom", O_RDONLY);
    if (frnd < 0) frnd = open("/dev/random", O_RDONLY);
    int r;
