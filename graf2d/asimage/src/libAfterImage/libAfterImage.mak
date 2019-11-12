@@ -52,7 +52,7 @@ DISTCLEAN: CLEAN
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-CPP_PROJ=$(FREETYPEDIRI) /nologo /W3 /O2 /D "WIN32" /D "NDEBUG" /D "NO_DEBUG_OUTPUT" /D "_MBCS" /D "_LIB" /D "_WIN64" /Fp"$(INTDIR)\libAfterImage.pch" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c  $(NMAKECXXFLAGS) /Z7
+CPP_PROJ=$(FREETYPEDIRI) /nologo /W3 /O2 /D "WIN32" /D "NDEBUG" /D "NO_DEBUG_OUTPUT" /D "_MBCS" /D "_LIB" /D "$(HOST_ARCH)" /Fp"$(INTDIR)\libAfterImage.pch" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c  $(NMAKECXXFLAGS) /Z7
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\libAfterImage.bsc"
 BSC32_SBRS= \

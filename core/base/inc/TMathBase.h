@@ -198,7 +198,7 @@ inline Long_t TMath::Min(Long_t a, Long_t b)
 inline ULong_t TMath::Min(ULong_t a, ULong_t b)
    { return a <= b ? a : b; }
 
-#if !defined(_WIN32)
+#if !defined(_WIN64)
    inline Long64_t TMath::Min(Long64_t a, Long64_t b)
    { return a <= b ? a : b; }
 

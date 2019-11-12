@@ -39,7 +39,8 @@ MA  02110-1301  USA
 #include <fcntl.h>
 
 #if defined(_WIN32) || defined(_WIN64)
-#  include <io.h>
+#include <io.h>
+typedef long off_t;
 #else
 #include <unistd.h>
 #include <sys/time.h>
