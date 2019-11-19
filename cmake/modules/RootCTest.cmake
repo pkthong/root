@@ -13,9 +13,9 @@ include(CTest)
 set(ROOT_DIR ${CMAKE_BINARY_DIR})
 
 #---Test products should not be poluting the standard destinations--------------------------------
-unset(CMAKE_LIBRARY_OUTPUT_DIRECTORY)
-unset(CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
-unset(CMAKE_RUNTIME_OUTPUT_DIRECTORY)
+#unset(CMAKE_LIBRARY_OUTPUT_DIRECTORY)
+#unset(CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
+#unset(CMAKE_RUNTIME_OUTPUT_DIRECTORY)
 
 if(WIN32)
   foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
