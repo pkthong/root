@@ -99,6 +99,14 @@ if(MSVC)
   )
 
    if (${CMAKE_GENERATOR_PLATFORM} MATCHES x64)
+      set (cling_exports ${cling_exports}
+         ??2@YAPEAX_K@Z
+         ??2@YAPEAX_KHPEBDH@Z
+         ??3@YAXPEAX@Z
+         ??_U@YAPEAX_K@Z
+         ??_U@YAPEAX_KHPEBDH@Z
+         ??_V@YAXPEAX@Z
+         )
    else()
    set (cling_exports ${cling_exports}
       ??2@YAPAXI@Z
