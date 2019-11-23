@@ -194,10 +194,12 @@ EDataType TDataType::GetType(const std::type_info &typeinfo)
       retType = kUInt_t;
    } else if (!strcmp(typeid(int).name(), typeinfo.name())) {
       retType = kInt_t;
+#if !defined(_WIN64)
    } else if (!strcmp(typeid(ULong_t).name(), typeinfo.name())) {
       retType = kULong_t;
    } else if (!strcmp(typeid(Long_t).name(), typeinfo.name())) {
       retType = kLong_t;
+#endif
    } else if (!strcmp(typeid(ULong64_t).name(), typeinfo.name())) {
       retType = kULong64_t;
    } else if (!strcmp(typeid(Long64_t).name(), typeinfo.name())) {
