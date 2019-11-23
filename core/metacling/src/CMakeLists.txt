@@ -103,9 +103,11 @@ if(MSVC)
          ??2@YAPEAX_K@Z
          ??2@YAPEAX_KHPEBDH@Z
          ??3@YAXPEAX@Z
+         ??3@YAXPEAX_K@Z
          ??_U@YAPEAX_K@Z
          ??_U@YAPEAX_KHPEBDH@Z
          ??_V@YAXPEAX@Z
+         ?_Facet_Register@std@@YAXPEAV_Facet_base@1@@Z
          )
    else()
    set (cling_exports ${cling_exports}
