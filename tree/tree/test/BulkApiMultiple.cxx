@@ -10,6 +10,7 @@
 #include "ROOT/TTreeReaderFast.hxx"
 #include "ROOT/TTreeReaderValueFast.hxx"
 #include "ROOT/TBulkBranchRead.hxx"
+#include <memory>
 
 #include "gtest/gtest.h"
 
@@ -21,11 +22,12 @@ public:
 protected:
    virtual void SetUp()
    {
-      auto hfile = new TFile(fFileName.c_str(), "RECREATE", "TTree float and double micro benchmark ROOT file");
+	   // Poliyc
+      auto hfile = std::make_unique<TFile>(fFileName.c_str(), "RECREATE", "TTree float and double micro benchmark ROOT file");
       hfile->SetCompressionLevel(0); // No compression at all.
 
       // Otherwise, we keep with the current ROOT defaults.
-      auto tree = new TTree("T", "A ROOT tree of floats.");
+      auto tree =std::make_unique<TTree>("T", "A ROOT tree of floats.");
       float f = 2;
       double g = 3;
       TBranch *branch2 = tree->Branch("myFloat", &f, 320000, 1);
@@ -37,25 +39,23 @@ protected:
          f ++;
          g ++;
       }
-      hfile = tree->GetCurrentFile();
-      hfile->Write();
+     
+      tree->Write();
       tree->Print();
       printf("Successful write of all events.\n");
-      hfile->Close();
 
-      delete hfile;
    }
 };
 
 TEST_F(BulkApiMultipleTest, stdRead)
 {
-   auto hfile = TFile::Open(fFileName.c_str());
+   auto hfile = std::unique_ptr<TFile>(TFile::Open(fFileName.c_str()));
    printf("Starting read of file %s.\n", fFileName.c_str());
    TStopwatch sw;
 
    printf("Using standard read APIs.\n");
    // Read via standard APIs.
-   TTreeReader myReader("T", hfile);
+   TTreeReader myReader("T", hfile.get());
    TTreeReaderValue<float> myF(myReader, "myFloat");
    TTreeReaderValue<double> myG(myReader, "myDouble");
    Long64_t idx = 0;
@@ -84,12 +84,12 @@ TEST_F(BulkApiMultipleTest, stdRead)
 
 TEST_F(BulkApiMultipleTest, fastRead)
 {
-   auto hfile = TFile::Open(fFileName.c_str());
+   auto hfile = std::unique_ptr<TFile>(TFile::Open(fFileName.c_str()));
    printf("Starting read of file %s.\n", fFileName.c_str());
    TStopwatch sw;
 
    printf("Using TTreeReaderFast.\n");
-   ROOT::Experimental::TTreeReaderFast myReader("T", hfile);
+   ROOT::Experimental::TTreeReaderFast myReader("T", hfile.get());
    ROOT::Experimental::TTreeReaderValueFast<float> myF(myReader, "myFloat");
    ROOT::Experimental::TTreeReaderValueFast<double> myG(myReader, "myDouble");
    myReader.SetEntry(0);

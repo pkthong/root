@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <memory>
 
 #include "Bytes.h"
 #include "TBranch.h"
@@ -25,7 +26,7 @@ public:
 protected:
    virtual void SetUp()
    {
-      auto hfile = new TFile(fFileName.c_str(), "RECREATE", "TTree float micro benchmark ROOT file");
+      auto hfile = std::unique_ptr<TFile>(new TFile(fFileName.c_str(), "RECREATE", "TTree float micro benchmark ROOT file"));
       hfile->SetCompressionLevel(0); // No compression at all.
 
       auto tree = new TTree("T", "A ROOT tree of variable-length primitive branches.");
@@ -59,12 +60,11 @@ protected:
          myLen = ev % 10;
          tree->Fill();
       } 
-      hfile = tree->GetCurrentFile();
-      hfile->Write();
+
+      tree->Write();
       tree->Print();
       printf("Successful write of all events.\n");
 
-      delete hfile;
    }
 };
 
@@ -73,13 +73,13 @@ constexpr Long64_t BulkApiVariableTest::fEventCount;
 
 TEST_F(BulkApiVariableTest, stdRead)
 {
-   auto hfile = TFile::Open(fFileName.c_str());
+   auto hfile = std::unique_ptr<TFile>(TFile::Open(fFileName.c_str()));
    printf("Starting read of file %s.\n", fFileName.c_str());
    TStopwatch sw;
 
    printf("Using standard read APIs.\n");
 
-   TTreeReader myReader("T", hfile);
+   TTreeReader myReader("T", hfile.get());
    TTreeReaderArray<float> myF(myReader, "f");
    TTreeReaderArray<double> myD(myReader, "d");
    TTreeReaderValue<int> myI(myReader, "myLen");
@@ -136,7 +136,7 @@ TEST_F(BulkApiVariableTest, stdRead)
 
 TEST_F(BulkApiVariableTest, serializedRead)
 {
-   auto hfile = TFile::Open(fFileName.c_str());
+   auto hfile = std::unique_ptr<TFile>(TFile::Open(fFileName.c_str()));
    printf("Starting read of file %s.\n", fFileName.c_str());
    TStopwatch sw;
 

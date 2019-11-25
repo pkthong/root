@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <memory>
 
 #include "Bytes.h"
 #include "TBranch.h"
@@ -13,6 +14,7 @@
 #include "ROOT/TBulkBranchRead.hxx"
 
 
+
 #include "gtest/gtest.h"
 
 class BulkApiTest : public ::testing::Test {
@@ -23,7 +25,7 @@ public:
 protected:
    virtual void SetUp()
    {
-      auto hfile = TFile::Open(fFileName.c_str(), "recreate", "TTree float micro benchmark ROOT file");
+      auto hfile = std::unique_ptr<TFile>(TFile::Open(fFileName.c_str(), "recreate", "TTree float micro benchmark ROOT file"));
       hfile->SetCompressionLevel(0); // No compression at all.
 
       // Otherwise, we keep with the current ROOT defaults.
@@ -34,25 +36,26 @@ protected:
          tree->Fill();
          ++f;
       }
-      hfile = tree->GetCurrentFile();
-      hfile->Write();
+      //hfile = tree->GetCurrentFile();
+      //hfile->Write();
+      tree->Write();
       tree->Print();
       printf("Successful write of all events.\n");
-      hfile->Close();
+      //hfile->Close();
 
-      delete hfile;
+      //delete hfile;
    }
 };
 
 TEST_F(BulkApiTest, stdRead)
 {
-   auto hfile = TFile::Open(fFileName.c_str());
+   auto hfile = std::unique_ptr<TFile>(TFile::Open(fFileName.c_str()));
    printf("Starting read of file %s.\n", fFileName.c_str());
    TStopwatch sw;
 
    printf("Using standard read APIs.\n");
    // Read via standard APIs.
-   TTreeReader myReader("T", hfile);
+   TTreeReader myReader("T", hfile.get());
    TTreeReaderValue<float> myF(myReader, "myFloat");
    Long64_t idx = 0;
    float idx_f = 1;
@@ -76,7 +79,7 @@ TEST_F(BulkApiTest, stdRead)
 
 TEST_F(BulkApiTest, simpleRead)
 {
-   auto hfile = TFile::Open(fFileName.c_str());
+   auto hfile = std::unique_ptr<TFile>(TFile::Open(fFileName.c_str()));
    printf("Starting read of file %s.\n", fFileName.c_str());
    TStopwatch sw;
 
@@ -117,12 +120,12 @@ TEST_F(BulkApiTest, simpleRead)
 
 TEST_F(BulkApiTest, fastRead)
 {
-   auto hfile = TFile::Open(fFileName.c_str());
+   auto hfile = std::unique_ptr<TFile>(TFile::Open(fFileName.c_str()));
    printf("Starting read of file %s.\n", fFileName.c_str());
    TStopwatch sw;
 
    printf("Using TTreeReaderFast.\n");
-   ROOT::Experimental::TTreeReaderFast myReader("T", hfile);
+   ROOT::Experimental::TTreeReaderFast myReader("T", hfile.get());
    ROOT::Experimental::TTreeReaderValueFast<float> myF(myReader, "myFloat");
    myReader.SetEntry(0);
    if (ROOT::Internal::TTreeReaderValueBase::kSetupMatch != myF.GetSetupStatus()) {

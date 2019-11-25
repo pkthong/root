@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <memory>
 
 #include "Bytes.h"
 #include "Rtypes.h"
@@ -28,7 +29,7 @@ public:
 protected:
    virtual void SetUp()
    {
-      TFile *hfile = new TFile(fFileName.c_str(), "RECREATE", "TTree silly-struct benchmark");
+      auto hfile = std::make_unique<TFile>(fFileName.c_str(), "RECREATE", "TTree silly-struct benchmark");
       hfile->SetCompressionLevel(0); // No compression at all.
 
       TTree *tree = new TTree("T", "A ROOT tree of silly-struct branches.");
@@ -50,12 +51,10 @@ protected:
          nb += tree->Fill();
       } 
 
-      hfile = tree->GetCurrentFile();
-      hfile->Write();
+      tree->Write();
       tree->Print();
       printf("Successful write of all events, nb = %d.\n", nb);
 
-      delete hfile;
    }
 };
 
@@ -64,9 +63,9 @@ constexpr Long64_t BulkApiSillyStructTest::fEventCount;
 
 TEST_F(BulkApiSillyStructTest, stdReadStruct)
 {
-   auto hfile  = TFile::Open(fFileName.c_str());
+   auto hfile  = std::unique_ptr<TFile>(TFile::Open(fFileName.c_str()));
 
-   TTreeReader myReader("T", hfile);
+   TTreeReader myReader("T", hfile.get());
    TTreeReaderValue<SillyStruct>  ss(myReader, "myEvent");
 
    int    evI = 0;
@@ -84,9 +83,9 @@ TEST_F(BulkApiSillyStructTest, stdReadStruct)
 
 TEST_F(BulkApiSillyStructTest, stdReadSplitBranch)
 {
-   auto hfile  = TFile::Open(fFileName.c_str());
+   auto hfile  = std::unique_ptr<TFile>(TFile::Open(fFileName.c_str()));
 
-   TTreeReader myReader("T", hfile);
+   TTreeReader myReader("T", hfile.get());
    TTreeReaderValue<float>        myF(myReader, "f");
    TTreeReaderValue<int>          myI(myReader, "i");
    TTreeReaderValue<double>       myD(myReader, "d");
@@ -109,7 +108,7 @@ TEST_F(BulkApiSillyStructTest, fastRead)
    TBufferFile bufF(TBuffer::kWrite, 10000);
    TBufferFile bufI(TBuffer::kWrite, 10000);
    TBufferFile bufD(TBuffer::kWrite, 10000);
-   auto hfile  = TFile::Open(fFileName.c_str());
+   auto hfile  = std::unique_ptr<TFile>(TFile::Open(fFileName.c_str()));
    auto tree = dynamic_cast<TTree*>(hfile->Get("T"));
    ASSERT_TRUE(tree);
    TBranch *branchF = tree->GetBranch("f");
