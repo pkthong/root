@@ -690,8 +690,13 @@ endif()
 #---compiledata.h--------------------------------------------------------------------------------------------
 
 if(WIN32)
+   if(CMAKE_GENERATOR_PLATFORM MATCHES x64)
+      set(compileDataIn ${CMAKE_SOURCE_DIR}/cmake/scripts/compiledata.win64.in)
+   else()
+      set(compileDataIn ${CMAKE_SOURCE_DIR}/cmake/scripts/compiledata.win32.in)
+   endif()
   # We cannot use the compiledata.sh script for windows
-  configure_file(${CMAKE_SOURCE_DIR}/cmake/scripts/compiledata.win32.in ${CMAKE_BINARY_DIR}/include/compiledata.h NEWLINE_STYLE UNIX)
+  configure_file(${compileDataIn} ${CMAKE_BINARY_DIR}/include/compiledata.h NEWLINE_STYLE UNIX)
 else()
   execute_process(COMMAND ${CMAKE_SOURCE_DIR}/build/unix/compiledata.sh
     ${CMAKE_BINARY_DIR}/include/compiledata.h "${CMAKE_CXX_COMPILER}"
