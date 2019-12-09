@@ -76,7 +76,7 @@ if(MSVC)
     set(init_symbol initlibPyROOT)
   endif()
   add_custom_command(TARGET PyROOT POST_BUILD
-                     COMMAND link -dll -nologo -IGNORE:4001 -machine:ix86 -export:${init_symbol}
+                     COMMAND link -dll -nologo -IGNORE:4001 -machine:x64 -export:${init_symbol}
                      $<TARGET_LINKER_FILE:PyROOT> msvcrt.lib
                      -out:$<TARGET_FILE_DIR:PyROOT>/libPyROOT.pyd)
   install(FILES  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libPyROOT.pyd
