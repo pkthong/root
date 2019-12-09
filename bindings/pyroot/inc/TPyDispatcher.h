@@ -65,7 +65,9 @@ public:
    PyObject* Dispatch() { return DispatchVA( 0 ); }
    PyObject* Dispatch( const char* param ) { return DispatchVA( "s", param ); }
    PyObject* Dispatch( Double_t param )    { return DispatchVA( "d", param ); }
+#if !defined(_WIN64)
    PyObject* Dispatch( Long_t param )      { return DispatchVA( "l", param ); }
+#endif
    PyObject* Dispatch( Long64_t param )    { return DispatchVA( "L", param ); }
 
 // further selection of pre-defined, existing dispatches
