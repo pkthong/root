@@ -27,12 +27,16 @@
 #include "clang/Frontend/CodeGenOptions.h"
 #include "clang/Basic/CharInfo.h"
 
+#include <sstream>
+#include <fstream>
+
 using namespace cling;
 using namespace clang;
 using namespace llvm;
 using namespace llvm::legacy;
 
 namespace {
+
   class KeepLocalGVPass: public ModulePass {
     static char ID;
 
@@ -119,6 +123,8 @@ char UniqueCUDAStructorName::ID = 0;
 BackendPasses::~BackendPasses() {
   //delete m_PMBuilder->Inliner;
 }
+
+static void llvm_module_to_file(const llvm::Module& module, const char* filename);
 
 void BackendPasses::CreatePasses(llvm::Module& M, int OptLevel)
 {
@@ -218,6 +224,8 @@ void BackendPasses::CreatePasses(llvm::Module& M, int OptLevel)
 
 void BackendPasses::runOnModule(Module& M, int OptLevel) {
 
+
+
   if (OptLevel < 0)
     OptLevel = 0;
   if (OptLevel > 3)
@@ -243,4 +251,14 @@ void BackendPasses::runOnModule(Module& M, int OptLevel) {
   m_FPM[OptLevel]->doFinalization();
 
   m_MPM[OptLevel]->run(M);
+  llvm_module_to_file(M, "module.ll");
+}
+
+static void llvm_module_to_file(const llvm::Module& module, const char* filename) {
+  std::string str;
+  llvm::raw_string_ostream os(str);
+  module.print(os, nullptr);
+
+  std::ofstream of(filename);
+  of << os.str();
 }

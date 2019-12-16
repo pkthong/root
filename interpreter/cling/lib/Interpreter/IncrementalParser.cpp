@@ -7,6 +7,7 @@
 // LICENSE.TXT for details.
 //------------------------------------------------------------------------------
 
+#include "llvm/IR/LegacyPassManager.h"
 #include "IncrementalParser.h"
 
 #include "ASTTransformer.h"
@@ -57,8 +58,67 @@
 #include "llvm/Support/MemoryBuffer.h"
 
 #include <stdio.h>
+#include <sstream>
+#include <fstream>
+
+#include "llvm/Target/TargetMachine.h"
+#include "llvm/Support/TargetRegistry.h"
+
 
 using namespace clang;
+
+static void llvm_module_to_file(const llvm::Module& module, const char* filename) {
+  std::string str;
+  llvm::raw_string_ostream os(str);
+  module.print(os, nullptr);
+
+  std::ofstream of(filename);
+  of << os.str();
+}
+
+static std::unique_ptr<llvm::TargetMachine>
+CreateHostTargetMachine(const clang::CompilerInstance& CI) {
+  const clang::TargetOptions& TargetOpts = CI.getTargetOpts();
+  const clang::CodeGenOptions& CGOpt = CI.getCodeGenOpts();
+  const std::string& Triple = TargetOpts.Triple;
+
+  std::string Error;
+  const llvm::Target *TheTarget = llvm::TargetRegistry::lookupTarget(Triple, Error);
+  if (!TheTarget) {
+    cling::errs() << "cling::IncrementalExecutor: unable to find target:\n"
+                  << Error;
+    return std::unique_ptr<llvm::TargetMachine>();
+  }
+
+// We have to use large code model for PowerPC64 because TOC and text sections
+// can be more than 2GB apart.
+#if defined(__powerpc64__) || defined(__PPC64__)
+  llvm::CodeModel::Model CMModel = CodeModel::Large;
+#else
+  llvm::CodeModel::Model CMModel = llvm::CodeModel::JITDefault;
+#endif
+  llvm::CodeGenOpt::Level OptLevel = llvm::CodeGenOpt::Default;
+  switch (CGOpt.OptimizationLevel) {
+    case 0: OptLevel = llvm::CodeGenOpt::None; break;
+    case 1: OptLevel = llvm::CodeGenOpt::Less; break;
+    case 2: OptLevel = llvm::CodeGenOpt::Default; break;
+    case 3: OptLevel = llvm::CodeGenOpt::Aggressive; break;
+    default: OptLevel = llvm::CodeGenOpt::Default;
+  }
+
+  std::string MCPU;
+  std::string FeaturesStr;
+
+  auto TM = std::unique_ptr<llvm::TargetMachine>(TheTarget->createTargetMachine(
+      Triple, MCPU, FeaturesStr, llvm::TargetOptions(),
+      Optional<llvm::Reloc::Model>(), CMModel, OptLevel));
+#if defined(LLVM_ON_WIN32)
+  TM->Options.EmulatedTLS = false;
+#else
+  TM->Options.EmulatedTLS = true;
+#endif
+  return TM;
+}
 
 namespace {
 
@@ -258,6 +318,12 @@ namespace cling {
     std::vector<std::unique_ptr<ASTConsumer>> Consumers;
     HandlePlugins(*m_CI, Consumers);
     std::unique_ptr<ASTConsumer> WrappedConsumer;
+
+    std::unique_ptr<llvm::TargetMachine> TM(CreateHostTargetMachine(*m_CI));
+    m_BackendPasses.reset(new BackendPasses(m_CI->getCodeGenOpts(),
+          m_CI->getTargetOpts(),
+          m_CI->getLangOpts(),
+          *TM));
 
     DiagnosticsEngine& Diag = m_CI->getDiagnostics();
     if (m_CI->getFrontendOpts().ProgramAction != frontend::ParseSyntaxOnly) {
@@ -673,7 +739,14 @@ namespace cling {
       std::unique_ptr<llvm::Module> M(getCodeGenerator()->ReleaseModule());
 
       if (M)
-        T->setModule(std::move(M));
+      {
+         const std::string codegenName = "codegen" + std::to_string(this->m_ModuleNo) + ".ll";
+         llvm_module_to_file(*M.get(), codegenName.c_str());
+//         m_BackendPasses->runOnModule(*M.get(), 3);
+//         const std::string codegenNameOpt = "codegen" + std::to_string(this->m_ModuleNo) + "opt.ll";
+//         llvm_module_to_file(*M.get(), codegenNameOpt.c_str());
+         T->setModule(std::move(M));
+      }
 
       if (T->getIssuedDiags() != Transaction::kNone) {
         // Module has been released from Codegen, reset the Diags now.

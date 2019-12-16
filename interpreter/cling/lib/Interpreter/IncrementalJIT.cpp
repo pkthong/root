@@ -360,7 +360,7 @@ IncrementalJIT::lookupSymbol(llvm::StringRef Name, void *InAddr, bool Jit) {
   }
   return std::make_pair(Addr, false);
 }
-    
+
 llvm::JITSymbol
 IncrementalJIT::getSymbolAddressWithoutMangling(const std::string& Name,
                                                 bool AlsoInProcess) {
@@ -434,7 +434,9 @@ void IncrementalJIT::addModule(const std::shared_ptr<llvm::Module>& module) {
       /// It is used to resolve symbols during module linking.
 
       uint64_t addr = uint64_t(getParent().NotifyLazyFunctionCreators(*NameNP));
-      return JITSymbol(addr, llvm::JITSymbolFlags::Weak);
+      // PTDebug: Disable lazy emit
+      return m_LazyEmitLayer.findSymbol(*NameNP, false);
+//      return JITSymbol(addr, llvm::JITSymbolFlags::Weak);
     });
 
   if (auto H = m_LazyEmitLayer.addModule(module, std::move(Resolver)))

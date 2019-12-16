@@ -12,6 +12,8 @@
 
 #include <array>
 #include <memory>
+#include "llvm/IR/LegacyPassManager.h"
+#include "llvm/IR/PassManager.h"
 
 namespace llvm {
   class Function;

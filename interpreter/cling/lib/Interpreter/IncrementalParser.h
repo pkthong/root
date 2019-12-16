@@ -19,6 +19,7 @@
 #include <vector>
 #include <deque>
 #include <memory>
+#include "BackendPasses.h"
 
 namespace llvm {
   struct GenericValue;
@@ -101,6 +102,9 @@ namespace cling {
     std::unique_ptr<IncrementalCUDADeviceCompiler> m_CUDACompiler;
 
   public:
+    // optimizer etc passes
+    std::unique_ptr<BackendPasses> m_BackendPasses;
+
     enum EParseResult {
       kSuccess,
       kSuccessWithWarnings,
