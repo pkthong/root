@@ -41,6 +41,7 @@
 #include "TRefArray.h"
 // Local
 #include "stressIterators.h"
+#include <typeinfo>
 
 const char * const cszValue("value");
 
@@ -78,6 +79,14 @@ void fill_container<TMap>(TMap* _container, Int_t _count)
 
 void stressIterators()
 {
+   printf("dynamicCast test\n");
+
+   TObjString s("TestString");
+   printf("%s", typeid(s).name());
+   TObject * ptr = &s;
+
+   TObjString * bPtr = dynamic_cast<TObjString*>(ptr);
+
    const Int_t size = 15;
 
    ostringstream ss;
@@ -87,8 +96,8 @@ void stressIterators()
       TList list;
       fill_container(&list, size);
 
-      cout << "#1 ====================================" << endl;
-      cout << "-----> " << "TestContainer_for_each<TList>(list, list.GetSize())" << endl;
+//      cout << "#1 ====================================" << endl;
+//      cout << "-----> " << "TestContainer_for_each<TList>(list, list.GetSize())" << endl;
       TestContainer_for_each<TList>(list, list.GetSize());
 
       cout << "\n#2 ====================================" << endl;

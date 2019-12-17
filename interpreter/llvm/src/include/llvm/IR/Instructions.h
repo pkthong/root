@@ -4195,10 +4195,11 @@ private:
   }
 
 public:
-  using DerefFnTy = BasicBlock *(*)(Value *);
+  using DerefFnTy = std::pointer_to_unary_function<Value *, BasicBlock *>;
   using handler_iterator = mapped_iterator<op_iterator, DerefFnTy>;
   using handler_range = iterator_range<handler_iterator>;
-  using ConstDerefFnTy = const BasicBlock *(*)(const Value *);
+  using ConstDerefFnTy =
+      std::pointer_to_unary_function<const Value *, const BasicBlock *>;
   using const_handler_iterator =
       mapped_iterator<const_op_iterator, ConstDerefFnTy>;
   using const_handler_range = iterator_range<const_handler_iterator>;

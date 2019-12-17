@@ -172,8 +172,8 @@ PassManagerBuilder::PassManagerBuilder() {
     MergeFunctions = false;
     PrepareForLTO = false;
     EnablePGOInstrGen = RunPGOInstrGen;
-    PGOInstrGen = StringRef(PGOOutputFile);
-    PGOInstrUse = StringRef(RunPGOInstrUse);
+    PGOInstrGen = PGOOutputFile;
+    PGOInstrUse = RunPGOInstrUse;
     PrepareForThinLTO = EnablePrepareForThinLTO;
     PerformThinLTO = false;
     DivergentTarget = false;

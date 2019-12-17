@@ -301,6 +301,8 @@ IncrementalJIT::IncrementalJIT(IncrementalExecutor& exe,
   // Enable JIT symbol resolution from the binary.
   llvm::sys::DynamicLibrary::LoadLibraryPermanently(0, 0);
 
+  llvm::DebugFlag = true;
+
   // Make debug symbols available.
   m_GDBListener = 0; // JITEventListener::createGDBRegistrationListener();
 

@@ -611,8 +611,11 @@ const void* DLSym(const std::string& Name, std::string* Err) {
     // In reverse so user loaded modules are searched first
     for (auto It = Modules.begin(), End = Modules.end(); It < End; ++It) {
       GetModuleFileName(*It, lpFilename, MAX_PATH);
-      if (!_tcsstr(lpFilename, _T("msvcp_")) &&
-          !_tcsstr(lpFilename, _T("VCRUNTIME"))) {
+      if (!_tcsstr(lpFilename, _T("msvcp_")) 
+#if !defined(_WIN64)
+		  && !_tcsstr(lpFilename, _T("VCRUNTIME"))
+#endif
+		  ) {
         if (void* Addr = ::GetProcAddress(*It, s.c_str())) {
           return CheckImp(Addr, dllimp);
         }

@@ -155,8 +155,7 @@ const char *DataLayout::getManglingComponent(const Triple &T) {
   if (T.isOSBinFormatMachO())
     return "-m:o";
   if (T.isOSWindows() && T.isOSBinFormatCOFF())
-	  // PTDebug: changed to 'x'
-    return T.getArch() == Triple::x86 ? "-m:x" : "-m:x";
+    return T.getArch() == Triple::x86 ? "-m:x" : "-m:w";
   return "-m:e";
 }
 
