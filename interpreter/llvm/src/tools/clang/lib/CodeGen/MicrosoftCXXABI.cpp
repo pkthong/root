@@ -3655,10 +3655,6 @@ MSRTTIBuilder::getCompleteObjectLocator(const VPtrInfo &Info) {
       ->second.hasVtorDisp())
       VFPtrOffset = Info.NonVirtualOffset.getQuantity() + 4;
 
-  //PTDebug - Adding to see if I can inject a constant into the struct
-  VFPtrOffset = 555;
-
-
   // Forward-declare the complete object locator.
   llvm::StructType *Type = ABI.getCompleteObjectLocatorType();
   auto COL = new llvm::GlobalVariable(Module, Type, /*Constant=*/true, Linkage,
