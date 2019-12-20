@@ -13,6 +13,8 @@
 A specialized TSelector for TTree::Draw.
 */
 
+#include <inttypes.h>
+
 #include "TSelectorDraw.h"
 #include "TROOT.h"
 #include "TH2.h"
@@ -1519,8 +1521,8 @@ void TSelectorDraw::TakeAction()
       Bool_t candle = (fAction == 7);
       // Using CINT to avoid a dependency in TParallelCoord
       if (!fOption.Contains("goff"))
-         gROOT->ProcessLine(TString::Format("TParallelCoord::BuildParallelCoord((TSelectorDraw*)0x%lx,0x%lx)",
-                                (ULong_t)this, (ULong_t)candle));
+         gROOT->ProcessLine(TString::Format("TParallelCoord::BuildParallelCoord((TSelectorDraw*)0x%" PRIxPTR ",0x%" PRIxPTR ")",
+                                (uintptr_t)this, (uintptr_t)candle));
    } else if (fAction == 8) {
       //gROOT->ProcessLineFast(TString::Format("(new TGL5DDataSet((TTree *)0x%1x))->Draw(\"%s\");", fTree, fOption.Data()));
    }

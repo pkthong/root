@@ -13,6 +13,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <inttypes.h>
 
 #include "Riostream.h"
 #include "TROOT.h"
@@ -3375,8 +3376,8 @@ void THistPainter::DrawPanel()
    }
    TVirtualPadEditor *editor = TVirtualPadEditor::GetPadEditor();
    editor->Show();
-   gROOT->ProcessLine(Form("((TCanvas*)0x%lx)->Selected((TVirtualPad*)0x%lx,(TObject*)0x%lx,1)",
-                           (ULong_t)gPad->GetCanvas(), (ULong_t)gPad, (ULong_t)fH));
+   gROOT->ProcessLine(Form("((TCanvas*)0x%" PRIxPTR ")->Selected((TVirtualPad*)0x%" PRIxPTR ",(TObject*)0x%" PRIxPTR ",1)",
+                           (uintptr_t)gPad->GetCanvas(), (uintptr_t)gPad, (uintptr_t)fH));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -4401,8 +4402,8 @@ void THistPainter::Paint(Option_t *option)
    if (Hoption.Spec) {
       if (!TableInit()) return;
       if (!TClass::GetClass("TSpectrum2Painter")) gSystem->Load("libSpectrumPainter");
-      gROOT->ProcessLineFast(Form("TSpectrum2Painter::PaintSpectrum((TH2F*)0x%lx,\"%s\",%d)",
-                                  (ULong_t)fH, option, Hoption.Spec));
+      gROOT->ProcessLineFast(Form("TSpectrum2Painter::PaintSpectrum((TH2F*)0x%" PRIxPTR ",\"%s\",%d)",
+                                  (uintptr_t)fH, option, Hoption.Spec));
       return;
    }
 
@@ -6887,7 +6888,7 @@ void THistPainter::PaintH3(Option_t *option)
       PaintTF3();
       return;
    } else {
-      cmd = Form("TPolyMarker3D::PaintH3((TH1 *)0x%lx,\"%s\");",(Long_t)fH,option);
+      cmd = Form("TPolyMarker3D::PaintH3((TH1 *)0x%" PRIxPTR ",\"%s\");",(uintptr_t)fH,option);
    }
 
    if (strstr(opt,"fb")) Hoption.FrontBox = 0;
@@ -10607,7 +10608,7 @@ void THistPainter::SetShowProjection(const char *option,Int_t nbins)
    else                fShowOption = option+2;
    fShowProjection = projection+100*nbins;
    gROOT->MakeDefCanvas();
-   gPad->SetName(Form("c_%lx_projection_%d", (ULong_t)fH, fShowProjection));
+   gPad->SetName(Form("c_%" PRIxPTR "_projection_%d", (uintptr_t)fH, fShowProjection));
    gPad->SetGrid();
 }
 
